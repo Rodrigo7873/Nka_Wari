@@ -47,7 +47,7 @@ class Karfa(models.Model):
     # Montants
     montant_initial = models.DecimalField(
         max_digits=15,
-        decimal_places=2,
+        decimal_places=0,
         validators=[MinValueValidator(0)],
         verbose_name='Montant initial (GNF)'
     )
@@ -156,7 +156,7 @@ class Karfa(models.Model):
         Effectue une restitution (totale ou partielle).
         Crée automatiquement un mouvement.
         """
-        from . import mouvement
+        from .mouvement import MouvementKarfa
         
         if montant > self.montant_actuel:
             raise ValueError("Le montant à restituer dépasse le montant actuel.")
@@ -184,3 +184,20 @@ class Karfa(models.Model):
         )
         
         return self
+    
+    def archiver_si_30j(self):
+        """
+        Auto-archivage après 30 jours pour les KARFA rendus totalement
+        """
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        if self.statut == self.STATUT_RENDU_TOTAL and self.date_rendu_total:
+            if not self.archive:
+                delta = timezone.now() - self.date_rendu_total
+                if delta.days >= 30:
+                    self.archive = True
+                    self.date_archivage = timezone.now()
+                    self.save()
+                    return True
+        return False

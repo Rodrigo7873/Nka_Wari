@@ -54,14 +54,14 @@ class MouvementKarfa(models.Model):
     # Montant du mouvement (toujours positif)
     montant = models.DecimalField(
         max_digits=15,
-        decimal_places=2,
+        decimal_places=0,
         verbose_name='Montant (GNF)'
     )
     
     # Solde après l'opération
     solde_apres = models.DecimalField(
         max_digits=15,
-        decimal_places=2,
+        decimal_places=0,
         verbose_name='Solde après opération (GNF)'
     )
     
