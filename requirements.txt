@@ -1,0 +1,18 @@
+# Django et DRF
+Django>=4.2.0,<5.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.0.0
+
+# Configuration
+python-decouple>=3.8
+python-dotenv>=1.0.0
+
+# Base de données
+psycopg2-binary>=2.9.0
+
+# Images
+Pillow>=10.0.0
+
+# Utilitaires
+requests>=2.31.0
+python-dateutil>=2.8.0

@@ -1,0 +1,18 @@
+-r requirements.txt
+
+# Tests
+pytest>=7.4.0
+pytest-django>=4.5.0
+pytest-cov>=4.1.0
+factory-boy>=3.3.0
+
+# Qualité de code
+black>=23.0.0
+flake8>=6.0.0
+isort>=5.12.0
+
+# Debug
+django-debug-toolbar>=4.0.0
+
+# Documentation
+mkdocs>=1.5.0
