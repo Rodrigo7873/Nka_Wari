@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Mes Karfa</h1>
+    
+    <a href="/creer/" style="display: inline-block; background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px;">+ Nouveau Karfa</a>
+    
+    <div style="background: linear-gradient(135deg, #3498db, #2c3e50); color: white; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+        <h2 style="margin-top: 0;">Solde Total</h2>
+        <p>Disponible: 800000 GNF<br>Engagé: 200000 GNF<br><strong>Total: 1000000 GNF</strong></p>
+    </div>
+    
+    {% for karfa in karfas %}
+        <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between;">
+                <strong>{{ karfa.beneficiaire }}</strong>
+                <span style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 20px;">{{ karfa.get_statut_display }}</span>
+            </div>
+            <p style="color: #666;">{{ karfa.motif|default:"Sans motif" }}</p>
+            <p style="font-size: 24px; color: #27ae60; margin: 10px 0;">{{ karfa.montant_actuel }} GNF</p>
+            <small style="color: #999;">Créé le {{ karfa.date_creation|date:"d/m/Y" }}</small>
+        </div>
+    {% empty %}
+        <p style="padding: 20px; background: #f8f9fa; border-radius: 8px;">Aucun Karfa actif.</p>
+    {% endfor %}
+{% endblock %}

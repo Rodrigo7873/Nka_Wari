@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>N'Ka Wari</title>
+    <link rel="stylesheet" href="{% static 'css/karfa.css' %}">
+</head>
+<body style="background: #f0f2f5 !important; margin: 0; padding: 30px;">
+    <div style="max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px;">
+        <nav style="background: #2c3e50; padding: 15px; border-radius: 12px; margin-bottom: 30px;">
+            <a href="/" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Karfa</a>
+            <a href="#" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Dettes</a>
+            <a href="#" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Comptes</a>
+            <a href="#" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Paramètres</a>
+        </nav>
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

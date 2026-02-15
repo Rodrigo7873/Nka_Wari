@@ -1,0 +1,9 @@
+{% if type == "submit" %}
+<button type="submit" class="btn btn-{{ variant|default:'primary' }} btn-{{ size|default:'md' }}" {% if disabled %}disabled{% endif %}>
+    {{ text }}
+</button>
+{% elif type == "link" %}
+<a href="{{ url }}" class="btn btn-{{ variant|default:'primary' }} btn-{{ size|default:'md' }}">
+    {{ text }}
+</a>
+{% endif %}
