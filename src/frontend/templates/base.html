@@ -1,20 +1,63 @@
-{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>N'Ka Wari</title>
-    <link rel="stylesheet" href="{% static 'css/karfa.css' %}">
+    <style>
+        /* fond gris partout */
+        html, body {
+            background-color: #0e1b2f !important;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        /* tout ce qui est blanc, on le remet à plus tard */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* conteneur principal blanc */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        nav a {
+            color: white;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+    </style>
 </head>
-<body style="background: #f0f2f5 !important; margin: 0; padding: 30px;">
-    <div style="max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px;">
-        <nav style="background: #2c3e50; padding: 15px; border-radius: 12px; margin-bottom: 30px;">
-            <a href="/" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Karfa</a>
-            <a href="#" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Dettes</a>
-            <a href="#" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Comptes</a>
-            <a href="#" style="color: white; text-decoration: none; margin-right: 20px; padding: 8px 16px;">Paramètres</a>
-        </nav>
-        
+<body>
+    <div class="app-container">
+ <nav>
+    <a href="/">Karfa</a>
+    <a href="/dettes/">Dettes</a>
+    <a href="/comptes/">Comptes</a>
+    <a href="/parametres/">Paramètres</a>
+</nav>
+
+{% if messages %}
+    {% for message in messages %}
+        <div style="background: {% if message.tags == 'success' %}#d4edda{% else %}#fff3cd{% endif %}; color: {% if message.tags == 'success' %}#155724{% else %}#856404{% endif %}; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
         {% block content %}{% endblock %}
     </div>
 </body>

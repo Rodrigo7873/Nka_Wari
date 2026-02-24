@@ -1,26 +1,360 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block content %}
-    <h1>Mes Karfa</h1>
-    
-    <a href="/creer/" style="display: inline-block; background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px;">+ Nouveau Karfa</a>
-    
-    <div style="background: linear-gradient(135deg, #3498db, #2c3e50); color: white; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
-        <h2 style="margin-top: 0;">Solde Total</h2>
-        <p>Disponible: 800000 GNF<br>Engagé: 200000 GNF<br><strong>Total: 1000000 GNF</strong></p>
-    </div>
-    
-    {% for karfa in karfas %}
-        <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin-bottom: 15px;">
-            <div style="display: flex; justify-content: space-between;">
-                <strong>{{ karfa.beneficiaire }}</strong>
-                <span style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 20px;">{{ karfa.get_statut_display }}</span>
+<style>
+    /* Variables et Typographie */
+    .karfa-dashboard {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f9fafb;
+        color: #1f2937;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        box-sizing: border-box;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* En-tête et Boutons */
+    .dashboard-header {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .dashboard-header {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .dashboard-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 999px;
+        /* Boutons arrondis exigés */
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* + Nouveau Karfa (vert) */
+    .btn-green {
+        background-color: #10b981;
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-green:hover {
+        background-color: #059669;
+        transform: translateY(-1px);
+    }
+
+    /* Liste Karfa (bleu) */
+    .btn-blue {
+        background-color: #3b82f6;
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-blue:hover {
+        background-color: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    /* Exporter (gris) */
+    .btn-gray {
+        background-color: #6b7280;
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(107, 114, 128, 0.3);
+    }
+
+    .btn-gray:hover {
+        background-color: #4b5563;
+        transform: translateY(-1px);
+    }
+
+    /* Carte de solde (Dégradé) */
+    .balance-card {
+        background: linear-gradient(135deg, #1e2b3c 0%, #2c3e50 100%);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        color: white;
+        margin-bottom: 3rem;
+        box-shadow: 0 10px 25px -5px rgba(30, 43, 60, 0.4);
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    @media (min-width: 768px) {
+        .balance-card {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .balance-main {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .balance-label {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.8;
+    }
+
+    .balance-amount {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .balance-stats-wrapper {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .balance-stats {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.25rem 2rem;
+        border-radius: 1rem;
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 140px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.8;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Dernières opérations */
+    .operations-section {
+        background-color: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f3f4f6;
+    }
+
+    .operations-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #111827;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .op-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .op-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .op-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .op-left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+    }
+
+    .op-beneficiary {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 1rem;
+    }
+
+    .op-date {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .op-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1rem;
+        text-align: right;
+        flex: 1;
+    }
+
+    .op-type {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+    }
+
+    .type-ajout {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .type-retrait {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .op-amount {
+        font-weight: 700;
+        font-size: 1.125rem;
+        min-width: 120px;
+        white-space: nowrap;
+    }
+
+    .amount-positive {
+        color: #10b981;
+    }
+
+    .amount-negative {
+        color: #ef4444;
+    }
+</style>
+
+<div class="karfa-dashboard">
+    <div class="dashboard-container">
+
+        <!-- EN-TÊTE AVEC BOUTONS FONCTIONNELS -->
+        <header class="dashboard-header">
+            <h1 class="dashboard-title">Mon Dashboard Karfa</h1>
+
+            <div class="header-actions">
+                <!-- Liens corrigés -->
+                <a href="{% url 'karfa:karfa_create' %}" class="btn btn-green">
+                    <span>+</span> Nouveau Karfa
+                </a>
+                <a href="{% url 'karfa:liste_tous_karfa' %}" class="btn btn-blue">
+                    <span>📋</span> Liste Karfa
+                </a>
+                <a href="{% url 'karfa:export_karfa_csv' %}" class="btn btn-gray">
+                    <span>📥</span> Exporter CSV
+                </a>
             </div>
-            <p style="color: #666;">{{ karfa.motif|default:"Sans motif" }}</p>
-            <p style="font-size: 24px; color: #27ae60; margin: 10px 0;">{{ karfa.montant_actuel }} GNF</p>
-            <small style="color: #999;">Créé le {{ karfa.date_creation|date:"d/m/Y" }}</small>
+        </header>
+
+        <!-- CARTE DE SOLDE -->
+        <div class="balance-card">
+            <!-- Total -->
+            <div class="balance-main">
+                <span class="balance-label">Total</span>
+                <!-- Formatage avec |milliers et GNF -->
+                <span class="balance-amount">{{ solde_total|default:0|milliers }} GNF</span>
+            </div>
+
+            <!-- Disponible & Engagé -->
+            <div class="balance-stats-wrapper">
+                <div class="balance-stats">
+                    <span class="stat-label">Disponible</span>
+                    <!-- Formatage avec |milliers et GNF -->
+                    <span class="stat-value">{{ solde_disponible|default:0|milliers }} GNF</span>
+                </div>
+                <div class="balance-stats">
+                    <span class="stat-label">Engagé (Karfa)</span>
+                    <!-- Formatage avec |milliers et GNF -->
+                    <span class="stat-value">{{ total_engage|default:0|milliers }} GNF</span>
+                </div>
+            </div>
         </div>
-    {% empty %}
-        <p style="padding: 20px; background: #f8f9fa; border-radius: 8px;">Aucun Karfa actif.</p>
-    {% endfor %}
+
+        <!-- DERNIÈRES OPÉRATIONS -->
+        <section class="operations-section">
+            <h2 class="operations-title">Dernières opérations</h2>
+
+            <div class="op-list">
+                <!-- Limite aux 5 premières opérations avec le filter slice -->
+                {% for op in dernieres_ops|slice:":5" %}
+                <div class="op-item">
+                    <!-- Bénéficiaire et Date -->
+                    <div class="op-left">
+                        <span class="op-beneficiary">{{ op.karfa.beneficiaire|default:"Bénéficiaire" }}</span>
+                        <span class="op-date">{{ op.date|date:"d/m/Y H:i" }}</span>
+                    </div>
+
+                    <!-- Type et Montant -->
+                    <div class="op-right">
+                        {% if op.type == 'AJOUT' %}
+                        <span class="op-type type-ajout">{{ op.get_type_display|default:"AJOUT" }}</span>
+                        <!-- Formatage avec |milliers et GNF -->
+                        <span class="op-amount amount-positive">+ {{ op.montant|default:0|milliers }} GNF</span>
+                        {% else %}
+                        <span class="op-type type-retrait">{{ op.get_type_display|default:"RETRAIT" }}</span>
+                        <!-- Formatage avec |milliers et GNF -->
+                        <span class="op-amount amount-negative">- {{ op.montant|default:0|milliers }} GNF</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; color: #6b7280; padding: 2rem 0;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                    <div>Aucune opération récente à afficher.</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div style="text-align: right; margin-top: 1.5rem;">
+                <a href="{% url 'karfa:toutes_operations' %}"
+                    style="color: #3b82f6; text-decoration: none; font-weight: 500;">
+                    Voir plus &rarr;
+                </a>
+            </div>
+        </section>
+
+    </div>
+</div>
+
 {% endblock %}

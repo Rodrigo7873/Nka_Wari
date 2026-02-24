@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Remboursement</h1>
+
+<div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin: 20px 0;">
+    <p><strong>Personne :</strong> {{ dette.personne }}</p>
+    <p><strong>Montant total :</strong> {{ dette.montant }} GNF</p>
+    <p><strong>Reste à payer :</strong> {{ dette.montant_restant }} GNF</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Montant remboursé <span style="color: red;">*</span></label>
+        <input type="number" name="montant" required min="1" max="{{ dette.montant_restant }}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+    </div>
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Note (optionnelle)</label>
+        <textarea name="note" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+    </div>
+    <button type="submit" style="background: #3498db; color: white; padding: 12px 25px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+        Valider le remboursement
+    </button>
+</form>
+{% endblock %}

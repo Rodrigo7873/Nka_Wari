@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<style>
+    /* Variables et Typographie */
+    .tous-karfa-container {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: #f9fafb;
+        color: #1f2937;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        box-sizing: border-box;
+    }
+
+    .wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* En-tête de la page */
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 640px) {
+        .page-header {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .page-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 0;
+    }
+
+    /* Actions et Boutons */
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        border-radius: 999px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .btn-light {
+        background-color: white;
+        color: #374151;
+        border-color: #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-light:hover {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+    }
+
+    /* Grille 1/2/3 colonnes */
+    .karfa-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        /* Mobile: 1 colonne */
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .karfa-grid {
+            grid-template-columns: repeat(2, 1fr);
+            /* Tablette: 2 colonnes */
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .karfa-grid {
+            grid-template-columns: repeat(3, 1fr);
+            /* Desktop: 3 colonnes */
+        }
+    }
+
+    /* Carte Karfa */
+    .karfa-card {
+        background-color: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        /* Ombre subtile */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .karfa-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        /* Ombre au survol */
+    }
+
+    /* Haut de la carte (Titre et Badge) */
+    .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2.5rem;
+    }
+
+    .card-title-group {
+        flex: 1;
+        padding-right: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0 0 0.25rem 0;
+        line-height: 1.3;
+    }
+
+    .card-motif {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        white-space: nowrap;
+    }
+
+    /* Couleurs de badges (à ajuster selon statut exact) */
+    .badge-actif {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-partiel {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-rendu {
+        background-color: #f3f4f6;
+        color: #4b5563;
+    }
+
+    /* Bas de la carte (Date et Montant) */
+    .card-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-top: auto;
+    }
+
+    .card-date {
+        font-size: 0.875rem;
+        color: #9ca3af;
+        margin-bottom: 0.25rem;
+    }
+
+    .card-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .amount-rendu {
+        color: #9ca3af;
+    }
+
+    .amount-actif {
+        color: #10b981;
+    }
+</style>
+
+<div class="tous-karfa-container">
+    <div class="wrapper">
+
+        <!-- En-tête avec boutons -->
+        <header class="page-header">
+            <h1 class="page-title">Tous les Karfa</h1>
+
+            <div class="header-actions">
+                <a href="{% url 'karfa:karfa_list' %}"
+                    style="background: #6c757d; color: white; padding: 8px 16px; border-radius: 30px; text-decoration: none;">
+                    &larr; Accueil
+                </a>
+                <!-- Bouton "Archives" fonctionnel -->
+                <a href="{% url 'karfa:liste_archives' %}" class="btn btn-light">
+                    <span>📦</span> Archives
+                </a>
+            </div>
+        </header>
+
+        <!-- Grille des éléments -->
+        <div class="karfa-grid">
+            {% for k in karfas %}
+            <!-- Carte cliquable menant au détail du Karfa -->
+            <a href="{% url 'karfa:detail_karfa' k.id %}" class="karfa-card">
+                <div class="card-top">
+                    <!-- Titre (bénéficiaire) et motif du Karfa -->
+                    <div class="card-title-group">
+                        <h3 class="card-title">{{ k.beneficiaire|default:"Bénéficiaire" }}</h3>
+                        <div class="card-motif">{{ k.motif|default:"Sans motif" }}</div>
+                    </div>
+
+                    <!-- Badge en haut à droite en fonction du statut -->
+                    {% if k.statut == 'RENDU_TOTAL' %}
+                    <span class="status-badge badge-rendu">{{ k.get_statut_display|default:"Rendu" }}</span>
+                    {% elif k.statut == 'PARTIELLEMENT_RENDU' %}
+                    <span class="status-badge badge-partiel">{{ k.get_statut_display|default:"Partiel" }}</span>
+                    {% else %}
+                    <span class="status-badge badge-actif">{{ k.get_statut_display|default:"Actif" }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="card-bottom">
+                    <!-- Date en bas à gauche en gris -->
+                    <div class="card-date">
+                        {{ k.date_creation|date:"d/m/Y"|default:"Récent" }}
+                    </div>
+
+                    <!-- Montant formaté avec |milliers et GNF en bas à droite -->
+                    <div
+                        class="card-amount {% if k.statut == 'RENDU_TOTAL' %}amount-rendu{% else %}amount-actif{% endif %}">
+                        {{ k.montant_actuel|default:0|milliers }} GNF
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <!-- État vide -->
+            <div
+                style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; background: white; border-radius: 1rem; border: 1px dashed #d1d5db;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #9ca3af;">🗂️</div>
+                <h3 style="color: #374151; margin-bottom: 0.5rem; font-weight: 600;">Aucun Karfa disponible</h3>
+                <p style="color: #6b7280; font-size: 0.875rem;">Vous n'avez pas encore de Karfa dans votre liste.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

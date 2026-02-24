@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>À propos</h1>
+
+<div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    <p><strong>Application :</strong> {{ infos.nom_app }}</p>
+    <p><strong>Développeur :</strong> {{ infos.developpeur }}</p>
+    <p><strong>Email :</strong> {{ infos.email }}</p>
+    <p><strong>Téléphone :</strong> {{ infos.telephone }}</p>
+    <p><strong>Localisation :</strong> {{ infos.localisation }}</p>
+    <p><strong>Remerciements :</strong> {{ infos.remerciements }}</p>
+</div>
+{% endblock %}

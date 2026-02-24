@@ -1,59 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}Créer un nouveau Karfa{% endblock %}
-
 {% block content %}
-<div class="container">
     <h1>Créer un nouveau Karfa</h1>
 
     <form method="post">
         {% csrf_token %}
 
-        <!-- Champ Bénéficiaire -->
-        <div class="form-group">
-            <label for="beneficiaire">Bénéficiaire <span class="required">*</span></label>
-            <input 
-                type="text" 
-                id="beneficiaire" 
-                name="beneficiaire" 
-                placeholder="Nom du bénéficiaire"
-                required
-                class="form-control"
-                value="test"
-            >
+        <div style="margin-bottom: 20px;">
+            <label for="beneficiaire" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                Bénéficiaire <span style="color: red;">*</span>
+            </label>
+            <input type="text" id="beneficiaire" name="beneficiaire" required
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
         </div>
 
-        <!-- Champ Montant -->
-        <div class="form-group">
-            <label for="montant">Montant (GNF) <span class="required">*</span></label>
-            <input 
-                type="number" 
-                id="montant" 
-                name="montant" 
-                placeholder="0"
-                min="1"
-                required
-                class="form-control"
-                value="50000"
-            >
+        <div style="margin-bottom: 20px;">
+            <label for="montant" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                Montant (GNF) <span style="color: red;">*</span>
+            </label>
+            <input type="number" id="montant" name="montant" required min="1"
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
         </div>
 
-        <!-- Champ Motif -->
-        <div class="form-group">
-            <label for="motif">Motif (optionnel)</label>
-            <textarea 
-                id="motif" 
-                name="motif" 
-                class="form-control" 
-                placeholder="Raison du dépôt..."
-                rows="3"
-            >Dépôt test</textarea>
+        <div style="margin-bottom: 20px;">
+            <label for="motif" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                Motif (optionnel)
+            </label>
+            <textarea id="motif" name="motif" rows="4"
+                      style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
         </div>
 
-        <!-- Bouton -->
-        <button type="submit" class="btn btn-success btn-lg">
+        <button type="submit"
+                style="background: #27ae60; color: white; padding: 12px 25px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
             Créer Karfa
         </button>
     </form>
-</div>
 {% endblock %}

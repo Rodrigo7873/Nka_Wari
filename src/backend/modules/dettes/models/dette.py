@@ -1,104 +1,52 @@
 from django.db import models
-from django.core.exceptions import ValidationError
-from modules.core.models.base_model import TimeStampedModel
-from modules.dettes.enums import StatutDette
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
 
-class Dette(TimeStampedModel):
-    """
-    Modèle représentant une dette ou une créance
-    """
-    sens = models.CharField(
-        max_length=20,
-        choices=[('JE_DOIS', 'Je dois'), ('ON_ME_DOIT', 'On me doit')],
-        verbose_name="Sens"
-    )
-    
-    montant = models.DecimalField(
-        max_digits=12,
-        decimal_places=0,
-        verbose_name="Montant (GNF)"
-    )
-    
-    montant_restant = models.DecimalField(
-        max_digits=12,
-        decimal_places=0,
-        verbose_name="Montant restant (GNF)"
-    )
-    
-    personne = models.CharField(
-        max_length=100,
-        verbose_name="Créancier/Débiteur"
-    )
-    
-    motif = models.TextField(
-        blank=True,
-        verbose_name="Motif"
-    )
-    
-    echeance = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name="Date d'échéance"
-    )
-    
-    garantie = models.TextField(
-        blank=True,
-        verbose_name="Garantie"
-    )
-    
-    statut = models.CharField(
-        max_length=25,
-        choices=StatutDette.choices,
-        default=StatutDette.NON_PAYEE,
-        verbose_name="Statut"
-    )
-    
-    date_dernier_paiement = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name="Dernier paiement"
-    )
+User = get_user_model()
 
-    class Meta:
-        verbose_name = "Dette"
-        verbose_name_plural = "Dettes"
-        ordering = ['-date_creation']
-        app_label = 'dettes'
+class Dette(models.Model):
+    SENS_CHOICES = [
+        ('JE_DOIS', 'Je dois'),
+        ('ON_ME_DOIT', 'On me doit'),
+    ]
+
+    STATUT_CHOICES = [
+        ('NON_PAYEE', 'Non payée'),
+        ('PARTIELLEMENT_PAYEE', 'Partiellement payée'),
+        ('PAYEE', 'Payée'),
+        ('EN_LITIGE', 'En litige'),
+    ]
+
+    sens = models.CharField(max_length=20, choices=SENS_CHOICES)
+    montant = models.DecimalField(max_digits=12, decimal_places=0)
+    montant_restant = models.DecimalField(max_digits=12, decimal_places=0, default=0)
+    personne = models.CharField(max_length=100)
+    motif = models.TextField(blank=True)
+    echeance = models.DateField(null=True, blank=True)
+    garantie = models.TextField(blank=True)
+    statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='NON_PAYEE')
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_dernier_paiement = models.DateTimeField(null=True, blank=True)
+    archive = models.BooleanField(default=False)
 
     def __str__(self):
-        if self.sens == 'JE_DOIS':
-            return f"Je dois {self.montant_restant} GNF à {self.personne}"
-        return f"{self.personne} me doit {self.montant_restant} GNF"
+        return f"{self.get_sens_display()} – {self.personne} – {self.montant} GNF"
+
+    class Meta:
+        app_label = 'dettes'
 
     def save(self, *args, **kwargs):
         if not self.pk:
             self.montant_restant = self.montant
         super().save(*args, **kwargs)
-    
-    def effectuer_paiement(self, montant, note=""):
-        """
-        Méthode simple pour enregistrer un paiement
-        """
-        from .remboursement import Remboursement
-        
-        if montant <= 0:
-            raise ValueError("Le montant doit être positif")
-        
-        if montant > self.montant_restant:
-            raise ValueError("Montant supérieur au restant dû")
-        
-        Remboursement.objects.create(
-            dette=self,
-            montant=montant,
-            note=note
-        )
-        
-        self.montant_restant -= montant
-        from django.utils import timezone
-        self.date_dernier_paiement = timezone.now()
-        
-        if self.montant_restant == 0:
-            self.statut = StatutDette.PAYEE
-        
-        self.save()
-        return True
+
+    # ✅ méthode ajoutée à l'intérieur de la classe
+    def archiver_si_payee_depuis_30j(self):
+        if self.statut == 'PAYEE' and self.date_dernier_paiement:
+            delta = timezone.now() - self.date_dernier_paiement
+            if delta.days >= 30 and not self.archive:
+                self.archive = True
+                self.save()
+                return True
+        return False
