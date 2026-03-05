@@ -23,7 +23,12 @@
             </div>
         {% endif %}
         
-        <button type="submit" style="width: 100%; background: #27ae60; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+        <button type="submit" 
+            style="width: 100%; background: #10b981; color: white; padding: 14px; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);"
+            onmouseover="this.style.background='#059669'; this.style.transform='translateY(-2px)';"
+            onmouseout="this.style.background='#10b981'; this.style.transform='translateY(0)';"
+        >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
             Se connecter
         </button>
     </form>

@@ -29,6 +29,7 @@ class Dette(models.Model):
     date_creation = models.DateTimeField(auto_now_add=True)
     date_dernier_paiement = models.DateTimeField(null=True, blank=True)
     archive = models.BooleanField(default=False)
+    date_archivage = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.get_sens_display()} – {self.personne} – {self.montant} GNF"
@@ -47,6 +48,7 @@ class Dette(models.Model):
             delta = timezone.now() - self.date_dernier_paiement
             if delta.days >= 30 and not self.archive:
                 self.archive = True
+                self.date_archivage = timezone.now()
                 self.save()
                 return True
         return False

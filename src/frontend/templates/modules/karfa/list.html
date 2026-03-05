@@ -88,14 +88,16 @@
 
     /* Exporter (gris) */
     .btn-gray {
-        background-color: #6b7280;
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(107, 114, 128, 0.3);
+        background-color: white;
+        color: #1e2b3c;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
     .btn-gray:hover {
-        background-color: #4b5563;
+        background-color: #f8fafc;
         transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     /* Carte de solde (Dégradé) */
@@ -208,20 +210,25 @@
 
     .op-left {
         display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        flex: 1;
+        align-items: center;
+        gap: 12px;
+        flex: 2;
+        min-width: 0;
     }
 
     .op-beneficiary {
         font-weight: 600;
         color: #1f2937;
-        font-size: 1rem;
+        font-size: 0.95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .op-date {
-        font-size: 0.875rem;
-        color: #6b7280;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        white-space: nowrap;
     }
 
     .op-right {
@@ -234,11 +241,13 @@
     }
 
     .op-type {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 999px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 6px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        border: 1px solid transparent;
     }
 
     .type-ajout {
@@ -277,38 +286,26 @@
             <div class="header-actions">
                 <!-- Liens corrigés -->
                 <a href="{% url 'karfa:karfa_create' %}" class="btn btn-green">
-                    <span>+</span> Nouveau Karfa
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Nouveau Karfa
                 </a>
                 <a href="{% url 'karfa:liste_tous_karfa' %}" class="btn btn-blue">
-                    <span>📋</span> Liste Karfa
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"></line><line x1="6" x2="6" y1="18" y2="11"></line><line x1="10" x2="10" y1="18" y2="11"></line><line x1="14" x2="14" y1="18" y2="11"></line><line x1="18" x2="18" y1="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg>
+                    Liste Karfa
                 </a>
                 <a href="{% url 'karfa:export_karfa_csv' %}" class="btn btn-gray">
-                    <span>📥</span> Exporter CSV
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Exporter
                 </a>
             </div>
         </header>
 
-        <!-- CARTE DE SOLDE -->
-        <div class="balance-card">
-            <!-- Total -->
-            <div class="balance-main">
-                <span class="balance-label">Total</span>
-                <!-- Formatage avec |milliers et GNF -->
-                <span class="balance-amount">{{ solde_total|default:0|milliers }} GNF</span>
-            </div>
-
-            <!-- Disponible & Engagé -->
-            <div class="balance-stats-wrapper">
-                <div class="balance-stats">
-                    <span class="stat-label">Disponible</span>
-                    <!-- Formatage avec |milliers et GNF -->
-                    <span class="stat-value">{{ solde_disponible|default:0|milliers }} GNF</span>
-                </div>
-                <div class="balance-stats">
-                    <span class="stat-label">Engagé (Karfa)</span>
-                    <!-- Formatage avec |milliers et GNF -->
-                    <span class="stat-value">{{ total_engage|default:0|milliers }} GNF</span>
-                </div>
+        <!-- CARTE DE SOLDE (Uniquement Engagé) -->
+        <div class="balance-card" style="justify-content: center; text-align: center;">
+            <div class="balance-main" style="align-items: center;">
+                <span class="balance-label" style="font-size: 1rem; opacity: 0.9; margin-bottom: 5px;">Total Engagé
+                    (Karfa Actifs)</span>
+                <span class="balance-amount" style="font-size: 3.5rem;">{{ total_engage|default:0|milliers }} GNF</span>
             </div>
         </div>
 
@@ -320,22 +317,20 @@
                 <!-- Limite aux 5 premières opérations avec le filter slice -->
                 {% for op in dernieres_ops|slice:":5" %}
                 <div class="op-item">
-                    <!-- Bénéficiaire et Date -->
+                    <!-- Infos Opération (Bénéficiaire, Date) -->
                     <div class="op-left">
                         <span class="op-beneficiary">{{ op.karfa.beneficiaire|default:"Bénéficiaire" }}</span>
-                        <span class="op-date">{{ op.date|date:"d/m/Y H:i" }}</span>
+                        <span class="op-date" style="color: #94a3b8; font-size: 0.8em;">• {{ op.date|date:"d/m/Y H:i" }}</span>
                     </div>
 
-                    <!-- Type et Montant -->
-                    <div class="op-right">
+                    <!-- Actions (Type, Montant) -->
+                    <div class="op-right" style="gap: 15px;">
                         {% if op.type == 'AJOUT' %}
-                        <span class="op-type type-ajout">{{ op.get_type_display|default:"AJOUT" }}</span>
-                        <!-- Formatage avec |milliers et GNF -->
-                        <span class="op-amount amount-positive">+ {{ op.montant|default:0|milliers }} GNF</span>
+                        <span class="op-type type-ajout" style="white-space: nowrap;">{{ op.get_type_display|default:"AJOUT" }}</span>
+                        <span class="op-amount amount-positive" style="white-space: nowrap;">+ {{ op.montant|default:0|milliers }} GNF</span>
                         {% else %}
-                        <span class="op-type type-retrait">{{ op.get_type_display|default:"RETRAIT" }}</span>
-                        <!-- Formatage avec |milliers et GNF -->
-                        <span class="op-amount amount-negative">- {{ op.montant|default:0|milliers }} GNF</span>
+                        <span class="op-type type-retrait" style="white-space: nowrap;">{{ op.get_type_display|default:"RETRAIT" }}</span>
+                        <span class="op-amount amount-negative" style="white-space: nowrap;">- {{ op.montant|default:0|milliers }} GNF</span>
                         {% endif %}
                     </div>
                 </div>

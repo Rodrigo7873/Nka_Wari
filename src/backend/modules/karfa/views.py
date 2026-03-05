@@ -3,25 +3,20 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import Karfa
-from modules.comptes.models.argent import CompteArgent
+
 from .models import MouvementKarfa
 
 def karfa_list(request):
     karfas = Karfa.objects.filter(archive=False)
 
-    # Calcul des soldes
+    # Calcul du montant total engagé
     total_engage = karfas.aggregate(total=Sum('montant_actuel'))['total'] or 0
-    compte_test = CompteArgent.objects.get(nom="Compte Principal")
-    solde_total = compte_test.solde
-    solde_disponible = solde_total - total_engage
 
     # 5 dernières opérations
     dernieres_ops = MouvementKarfa.objects.all().order_by('-date')[:5]
 
     return render(request, 'modules/karfa/list.html', {
         'karfas': karfas,
-        'solde_total': solde_total,
-        'solde_disponible': solde_disponible,
         'total_engage': total_engage,
         'dernieres_ops': dernieres_ops,
     })
@@ -37,9 +32,10 @@ def karfa_create(request):
     if request.method == 'POST':
         try:
             montant = request.POST['montant']
+            beneficiaire_nom = request.POST['beneficiaire'].strip()
 
             Karfa.objects.create(
-                beneficiaire=user,
+                beneficiaire=beneficiaire_nom,
                 cree_par=user,
                 montant_initial=montant,
                 montant_actuel=montant,

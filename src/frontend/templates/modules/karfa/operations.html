@@ -92,20 +92,25 @@
 
     .op-left {
         display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        flex: 1;
+        align-items: center;
+        gap: 12px;
+        flex: 2;
+        min-width: 0;
     }
 
     .op-beneficiary {
         font-weight: 600;
         color: #1f2937;
-        font-size: 1.125rem;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .op-time {
-        font-size: 0.875rem;
-        color: #6b7280;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        white-space: nowrap;
     }
 
     .op-right {
@@ -118,12 +123,12 @@
     }
 
     .op-type {
-        font-size: 0.75rem;
-        padding: 0.35rem 0.85rem;
-        border-radius: 999px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 6px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
     }
 
     .type-ajout {
@@ -138,7 +143,6 @@
 
     .op-amount {
         font-weight: 700;
-        font-size: 1.25rem;
         min-width: 130px;
         white-space: nowrap;
     }
@@ -186,16 +190,16 @@
                     <div class="op-left">
                         <span class="op-beneficiary">{{ op.karfa.beneficiaire|default:"Bénéficiaire" }}</span>
                         <!-- N'afficher que l'heure car le jour est dans l'en-tête de groupe -->
-                        <span class="op-time">Le {{ op.date|date:"d/m/Y à H:i" }}</span>
+                        <span class="op-time" style="color: #94a3b8; font-size: 0.85em;">• Le {{ op.date|date:"d/m/Y à H:i" }}</span>
                     </div>
 
-                    <div class="op-right">
+                    <div class="op-right" style="gap: 15px;">
                         {% if op.type == 'AJOUT' %}
-                        <span class="op-type type-ajout">{{ op.get_type_display|default:"AJOUT" }}</span>
-                        <span class="op-amount amount-positive">+ {{ op.montant|default:0|milliers }} GNF</span>
+                        <span class="op-type type-ajout" style="white-space: nowrap;">{{ op.get_type_display|default:"AJOUT" }}</span>
+                        <span class="op-amount amount-positive" style="white-space: nowrap;">+ {{ op.montant|default:0|milliers }} GNF</span>
                         {% else %}
-                        <span class="op-type type-retrait">{{ op.get_type_display|default:"RETRAIT" }}</span>
-                        <span class="op-amount amount-negative">- {{ op.montant|default:0|milliers }} GNF</span>
+                        <span class="op-type type-retrait" style="white-space: nowrap;">{{ op.get_type_display|default:"RETRAIT" }}</span>
+                        <span class="op-amount amount-negative" style="white-space: nowrap;">- {{ op.montant|default:0|milliers }} GNF</span>
                         {% endif %}
                     </div>
                 </div>

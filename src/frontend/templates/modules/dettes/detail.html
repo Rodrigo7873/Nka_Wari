@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+
+    <!-- En-tête avec retour -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="margin: 0; color: #1e2b3c;">{{ dette.personne }}</h1>
+        <a href="{% url 'dettes:toutes_dettes' %}"
+            style="background: #6c757d; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; transition: 0.2s;">
+            ← Retour à la liste
+        </a>
+    </div>
+
+    <!-- Carte récapitulative -->
+    <div
+        style="background: linear-gradient(135deg, #1e2b3c, #2c3e50); color: white; padding: 30px; border-radius: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; flex-wrap: wrap;">
+        <div>
+            <div style="font-size: 0.9em; opacity: 0.8;">Montant total</div>
+            <div style="font-size: 32px; font-weight: 700;">{{ dette.montant|milliers }} GNF</div>
+        </div>
+        <div>
+            <div style="font-size: 0.9em; opacity: 0.8;">Reste à payer</div>
+            <div
+                style="font-size: 32px; font-weight: 700; color: {% if dette.sens == 'JE_DOIS' %}#e74c3c{% else %}#27ae60{% endif %};">
+                {{ dette.montant_restant|milliers }} GNF
+            </div>
+        </div>
+        <div>
+            <div style="font-size: 0.9em; opacity: 0.8;">Statut</div>
+            <span
+                style="display: inline-block; margin-top: 5px; background: {% if dette.statut == 'PAYEE' %}#27ae60{% elif dette.statut == 'PARTIELLEMENT_PAYEE' %}#f39c12{% else %}#e74c3c{% endif %}; padding: 8px 20px; border-radius: 30px;">
+                {{ dette.get_statut_display }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Informations complémentaires -->
+    <div
+        style="background: white; border-radius: 20px; padding: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); margin-bottom: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div>
+                <div style="color: #6b7280; font-size: 0.9em;">Sens</div>
+                <div style="font-weight: 600;">{{ dette.get_sens_display }}</div>
+            </div>
+            <div>
+                <div style="color: #6b7280; font-size: 0.9em;">Motif</div>
+                <div style="font-weight: 600;">{{ dette.motif|default:"Non spécifié" }}</div>
+            </div>
+            {% if dette.echeance %}
+            <div>
+                <div style="color: #6b7280; font-size: 0.9em;">Échéance</div>
+                <div style="font-weight: 600;">{{ dette.echeance|date:"d/m/Y" }}</div>
+            </div>
+            {% endif %}
+            <div>
+                <div style="color: #6b7280; font-size: 0.9em;">Créé le</div>
+                <div style="font-weight: 600;">{{ dette.date_creation|date:"d/m/Y" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+
+        {% if not dette.archive %}
+        {% if dette.sens == 'JE_DOIS' %}
+        <!-- Je dois : je peux rembourser ou ajouter -->
+        <button onclick="showPaymentForm('rembourser')"
+            style="display: inline-flex; align-items: center; gap: 8px; background: #ef4444; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12-7-7-7 7"/><path d="M12 19V5"/></svg> Rembourser
+        </button>
+        <button onclick="showPaymentForm('ajout')"
+            style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter
+        </button>
+
+        {% elif dette.sens == 'ON_ME_DOIT' %}
+        <!-- On me doit : j'encaisse ou j'ajoute un prêt -->
+        <button onclick="showPaymentForm('encaisser')"
+            style="display: inline-flex; align-items: center; gap: 8px; background: #3b82f6; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7 7 7-7"/><path d="M12 5v14"/></svg> Encaisser
+        </button>
+        <button onclick="showPaymentForm('ajouter_creance')"
+            style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter (prêt)
+        </button>
+        {% endif %}
+
+        <form method="post" action="{% url 'dettes:archiver_dette' dette.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background: #f8fafc; color: #64748b; padding: 10px 24px; border: 1px solid #e2e8f0; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+                Archiver
+            </button>
+        </form>
+        {% else %}
+        <!-- Bouton Désarchiver -->
+        <form method="post" action="{% url 'dettes:archiver_dette' dette.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background: #27ae60; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -2px;"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="m16 14-4-4-4 4"/><path d="M12 10v7"/></svg> Désarchiver
+            </button>
+        </form>
+        <div
+            style="background: #f1f5f9; color: #64748b; padding: 10px 20px; border-radius: 30px; font-size: 0.9em; display: flex; align-items: center; gap: 8px;">
+            ℹ️ Cette dette est archivée (Lecture seule)
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Formulaire caché -->
+    <div id="paymentForm"
+        style="display: none; background: white; border-radius: 16px; padding: 25px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #edf2f7;">
+        <h3 id="formTitle" style="margin-top: 0; color: #1e2b3c;">Opération</h3>
+        <form method="post" action="{% url 'dettes:ajouter_paiement' dette.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="type_paiement" id="paymentType" value="remboursement">
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Montant (GNF)</label>
+                <input type="number" name="montant" id="amountInput" required min="1"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Motif (optionnel)</label>
+                <input type="text" name="motif" placeholder="Ex: Versement ou motif de l'ajout"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" id="submitBtn"
+                    style="background: #1e2b3c; color: white; padding: 12px 25px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    Valider
+                </button>
+                <button type="button" onclick="hidePaymentForm()"
+                    style="background: #6c757d; color: white; padding: 12px 25px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 15px;">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function showPaymentForm(type) {
+            const form = document.getElementById('paymentForm');
+            const title = document.getElementById('formTitle');
+            const paymentType = document.getElementById('paymentType');
+            const amountInput = document.getElementById('amountInput');
+            const submitBtn = document.getElementById('submitBtn');
+
+            form.style.display = 'block';
+
+            if (type === 'rembourser') {
+                title.innerText = 'Rembourser (Diminuer la dette)';
+                paymentType.value = 'remboursement';
+                amountInput.max = "{{ dette.montant_restant }}";
+                submitBtn.style.background = "#ef4444";
+                submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12-7-7-7 7"/><path d="M12 19V5"/></svg> Valider Remboursement';
+            } else if (type === 'encaisser') {
+                title.innerText = 'Encaisser (Diminuer la créance)';
+                paymentType.value = 'encaisser';
+                amountInput.max = "{{ dette.montant_restant }}";
+                submitBtn.style.background = "#3b82f6";
+                submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7 7 7-7"/><path d="M12 5v14"/></svg> Valider Encaissement';
+            } else if (type === 'ajout' || type === 'ajouter_creance') {
+                title.innerText = (type === 'ajout') ? 'Ajouter (Augmenter la dette)' : 'Ajouter (Augmenter le prêt)';
+                paymentType.value = type;
+                amountInput.removeAttribute('max');
+                submitBtn.style.background = "#10b981";
+                submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Valider l\'ajout';
+            }
+
+            amountInput.focus();
+        }
+
+        function hidePaymentForm() {
+            document.getElementById('paymentForm').style.display = 'none';
+        }
+    </script>
+
+    <!-- Historique des opérations -->
+    <h2 style="margin-top: 40px; color: #1e2b3c;">Historique des opérations</h2>
+    <div style="background: white; border-radius: 20px; padding: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);">
+        {% for op in operations %}
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #edf2f7;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div
+                    style="width: 40px; height: 40px; border-radius: 50%; background: {% if op.type == 'AJOUT' %}#ebf5ff{% elif op.type == 'ENCAISSEMENT' %}#e3f7e3{% else %}#fff5f5{% endif %}; display: flex; align-items: center; justify-content: center;">
+                    {% if op.type == 'AJOUT' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    {% elif op.type == 'ENCAISSEMENT' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {% else %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
+                        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                        <polyline points="1 13 1 6 8 6"></polyline>
+                    </svg>
+                    {% endif %}
+                </div>
+                <div>
+                    <span style="font-weight: 600; color: #1e2b3c;">
+                        {{ op.get_type_display }}
+                    </span>
+                    <div style="font-size: 0.85em; color: #6b7280; margin-top: 2px;">{{ op.date|date:"d/m/Y H:i" }}
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div
+                    style="font-weight: 700; color: {% if op.type == 'AJOUT' %}#27ae60{% elif op.type == 'ENCAISSEMENT' %}#3498db{% else %}#e74c3c{% endif %}; font-size: 1.1em;">
+                    {% if op.type == 'AJOUT' %}+{% else %}-{% endif %} {{ op.montant|milliers }} GNF
+                </div>
+                {% if op.note %}
+                <div style="font-size: 0.9em; color: #64748b; margin-top: 2px;">
+                    {{ op.note }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p style="color: #9ca3af; text-align: center; padding: 20px;">Aucun mouvement enregistré</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

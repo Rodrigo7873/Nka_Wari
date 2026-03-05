@@ -37,23 +37,21 @@ class Karfa(models.Model):
     )
     
     # Bénéficiaire (celui qui confie l'argent)
-    beneficiaire = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='karfas_recus',
+    beneficiaire = models.CharField(
+        max_length=100,
         verbose_name='Bénéficiaire'
     )
     
-        # Montants
+    # Montants
     montant_initial = models.DecimalField(
-        max_digits=15,
+        max_digits=12,
         decimal_places=0,
         validators=[MinValueValidator(0)],
         verbose_name='Montant initial (GNF)'
     )
     
     montant_actuel = models.DecimalField(
-        max_digits=15,
+        max_digits=12,
         decimal_places=0,
         validators=[MinValueValidator(0)],
         default=0,

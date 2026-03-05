@@ -31,8 +31,12 @@
         </div>
 
         <button type="submit"
-                style="background: #27ae60; color: white; padding: 12px 25px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
-            Créer Karfa
+                style="width: 100%; background: #10b981; color: white; padding: 14px 28px; border: none; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);"
+                onmouseover="this.style.background='#059669'; this.style.transform='translateY(-2px)';"
+                onmouseout="this.style.background='#10b981'; this.style.transform='translateY(0)';"
+        >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17 2 2a1 1 0 1 0 3-3"></path><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-7.3 7.3a1 1 0 0 0 0 1.42l.5.5a1 1 0 0 0 1.42 0l7.3-7.3a3 3 0 0 1 4.24 0l3.88 3.88a1 1 0 0 1 0 1.42l-.5.5a1 1 0 0 1-1.42 0l-2.5-2.5"></path><path d="m11.5 10.5-2-2"></path><path d="m15 14-2-2"></path><path d="m16.5 15.5-2-2"></path></svg>
+            Créer le Karfa
         </button>
     </form>
 {% endblock %}

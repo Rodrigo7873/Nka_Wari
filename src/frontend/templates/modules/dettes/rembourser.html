@@ -19,7 +19,12 @@
         <label style="display: block; font-weight: bold; margin-bottom: 5px;">Note (optionnelle)</label>
         <textarea name="note" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
     </div>
-    <button type="submit" style="background: #3498db; color: white; padding: 12px 25px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+    <button type="submit" 
+        style="width: 100%; background: #3b82f6; color: white; padding: 14px 28px; border: none; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);"
+        onmouseover="this.style.background='#2563eb'; this.style.transform='translateY(-2px)';"
+        onmouseout="this.style.background='#3b82f6'; this.style.transform='translateY(0)';"
+    >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
         Valider le remboursement
     </button>
 </form>

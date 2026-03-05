@@ -1,102 +1,271 @@
 {% extends "base.html" %}
-
 {% load custom_filters %}
 
 {% block content %}
+<style>
+    :root {
+        --color-argent: #10b981;
+        --color-or: #f59e0b;
+        --color-title: #1e2b3c;
+        --color-subtitle: #64748b;
+        --bg-page: #f9fafb;
+    }
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-    <h1 style="margin: 0;">Comptes</h1>
+    body {
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-<div style="background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+    .compte-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        /* Ombre très légère */
+        border: 1px solid #edf2f7;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 140px;
+    }
+
+    .compte-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        /* Hover léger */
+        border-color: #e2e8f0;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-argent {
+        background: #f0fdf4;
+        color: #166534;
+    }
+
+    .badge-or {
+        background: #fffbeb;
+        color: #92400e;
+    }
+
+    .grid-comptes {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+        .grid-comptes {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .grid-comptes {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-title);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .amount-argent {
+        color: var(--color-argent);
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .amount-or {
+        color: var(--color-or);
+        font-size: 20px;
+        font-weight: 700;
+    }
+</style>
+
+<div style="background: var(--bg-page); margin: -30px; padding: 40px; min-height: calc(100vh - 60px);">
+
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+        <div>
+            <h1 style="margin: 0; font-size: 24px; color: var(--color-title); font-weight: 700;">Liste des Comptes</h1>
+            <p style="margin: 5px 0 0; color: var(--color-subtitle); font-size: 14px;">Gérez vos avoirs en devises et en
+                or.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'comptes:creer_compte' %}"
+                style="background: #10b981; color: white; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                + Nouveau
+            </a>
+            <a href="{% url 'comptes:liste_archives' %}"
+                style="background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -2px;"><rect x="2" y="4" rx="2" ry="2" width="20" height="5"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg> Archives
+            </a>
+            <a href="{% url 'comptes:accueil' %}"
+                style="background: white; border: 1px solid #e2e8f0; color: #1e2b3c; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                ← Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Section Comptes Argent -->
     <div>
-        <strong>Prix de l'or :</strong> 
-        <span style="font-size: 1.2em; color: #f39c12;">{{ prix_or.prix_gramme|milliers|default:"75 000" }} GNF/g</span>
-        <small style="margin-left: 10px; color: #6b7280;">({{ prix_or.date_saisie|date:"d/m/Y"|default:"aujourd'hui" }})</small>
-    </div>
-    <a href="{% url 'update_prix_or_manual' %}" style="background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
-        🔄 Mettre à jour
-    </a>
-</div>
-
-<div style="margin-top: 20px; background: #f9fafb; padding: 20px; border-radius: 12px;">
-    <h3 style="margin-top: 0;">Saisie manuelle</h3>
-    <form method="post" action="{% url 'saisie_prix_or_manuel' %}" style="display: flex; gap: 10px;">
-        {% csrf_token %}
-        <input type="number" name="prix_manuel" placeholder="Prix en GNF/g" required min="1" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
-        <button type="submit" style="background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">
-            Enregistrer
-        </button>
-    </form>
-</div>
-
-    <div style="display: flex; gap: 10px;">
-        {% if prix_or %}
-        <span style="background: #f1f5f9; padding: 5px 15px; border-radius: 20px; font-size: 14px;">
-            Or: {{ prix_or.prix_gramme|milliers }} GNF/g
-        </span>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Patrimoine total -->
-<div style="background: linear-gradient(135deg, #1e2b3c, #2c3e50); color: white; padding: 25px; border-radius: 20px; margin-bottom: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-    <div style="font-size: 16px; opacity: 0.9; margin-bottom: 5px;">Patrimoine net</div>
-    <div style="font-size: 36px; font-weight: 700;">{{ patrimoine_total|milliers }} GNF</div>
-</div>
-
-<!-- Cartes Argent et Or côte à côte -->
-<div style="display: flex; gap: 20px; margin-bottom: 30px;">
-    <!-- Comptes Argent -->
-    <div style="flex: 1; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <h2 style="margin-top: 0; color: #1e2b3c;">💰 Comptes Argent</h2>
-        <div style="font-size: 28px; font-weight: 600; color: #27ae60; margin: 15px 0;">{{ total_liquidites|milliers }} GNF</div>
-        
-        {% for compte in comptes_argent %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #edf2f7;">
-            <span style="font-weight: 500;">{{ compte.nom }}</span>
-            <span style="font-weight: 600;">{{ compte.solde|milliers }} GNF</span>
+        <div class="section-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M12 12h.01"></path><path d="M17 12h.01"></path><path d="M7 12h.01"></path></svg> 
+            Comptes Argent
+            <span
+                style="font-size: 0.7em; background: #e2e8f0; padding: 2px 10px; border-radius: 10px; color: #4b5563; font-weight: 500;">
+                {{ total_argent|milliers }} GNF
+            </span>
         </div>
-        {% empty %}
-        <p style="color: #9ca3af;">Aucun compte argent</p>
-        {% endfor %}
-    </div>
 
-    <!-- Comptes Or -->
-    <div style="flex: 1; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <h2 style="margin-top: 0; color: #1e2b3c;">🏆 Comptes Or</h2>
-        <div style="font-size: 28px; font-weight: 600; color: #f39c12; margin: 15px 0;">{{ total_or }} GNF</div>
-        
-        {% for compte in comptes_or %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #edf2f7;">
-            <span style="font-weight: 500;">{{ compte.nom }}</span>
-            <span style="font-weight: 600;">{{ compte.poids_grammes }} g</span>
+        <div class="grid-comptes">
+            {% for compte in comptes_argent %}
+            <a href="{% url 'comptes:detail_compte' compte.id %}" class="compte-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="font-size: 16px; font-weight: 600; color: var(--color-title);">{{ compte.nom }}</div>
+                    <span class="badge badge-argent" style="display: flex; align-items: center; gap: 5px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M12 12h.01"></path></svg>
+                        {{ compte.get_type_compte_display }}
+                    </span>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <div class="amount-argent">{{ compte.solde|milliers }} GNF</div>
+                </div>
+            </a>
+            {% empty %}
+            <div
+                style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 16px; border: 1px dashed #e2e8f0; color: var(--color-subtitle);">
+                Aucun compte argent enregistré.
+            </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p style="color: #9ca3af;">Aucun compte or</p>
-        {% endfor %}
     </div>
+
+    <!-- Section Comptes Or -->
+    <div>
+        <div class="section-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f59e0b;"><circle cx="12" cy="12" r="8"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            Comptes Or (XAU)
+            <span
+                style="font-size: 0.7em; background: #fff9eb; padding: 2px 10px; border-radius: 10px; color: #92400e; font-weight: 500;">
+                {{ total_poids_or|floatformat:-2 }} g
+            </span>
+        </div>
+
+        <div class="grid-comptes">
+            {% for compte in comptes_or %}
+            <a href="{% url 'comptes:detail_compte' compte.id %}" class="compte-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="font-size: 16px; font-weight: 600; color: var(--color-title);">{{ compte.nom }}</div>
+                    {% if compte.carat %}
+                    <span class="badge badge-or" style="display: flex; align-items: center; gap: 5px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        {{ compte.carat }}K
+                    </span>
+                    {% endif %}
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-end;">
+                    {% if compte.valeur_gnf %}
+                    <div style="font-size: 12px; color: var(--color-subtitle);">Est. {{ compte.valeur_gnf|milliers }}
+                        GNF</div>
+                    {% else %}
+                    <div style="font-size: 12px; color: var(--color-subtitle);">Valorisation indisponible</div>
+                    {% endif %}
+                    <div class="amount-or">{{ compte.poids_grammes|floatformat:-2 }} g</div>
+                </div>
+            </a>
+            {% empty %}
+            <div
+                style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 16px; border: 1px dashed #e2e8f0; color: var(--color-subtitle);">
+                Aucun compte or enregistré.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Section Engagements Karfa par bénéficiaire -->
+    <div style="margin-top: 50px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="section-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 10px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Engagements Karfa par bénéficiaire
+            </div>
+            <button id="btn-toggle-karfa" onclick="toggleEngagements()"
+                style="background: white; border: 1px solid #e2e8f0; color: #1e2b3c; padding: 10px 24px; border-radius: 30px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                onmouseover="this.style.background='#f8fafc'; this.style.transform='translateY(-1px)';"
+                onmouseout="this.style.background='white'; this.style.transform='translateY(0)';"
+            >
+                <span id="btn-karfa-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </span>
+                <span id="btn-karfa-label">Voir l'analyse</span>
+            </button>
+        </div>
+
+        <div id="section-engagements" style="display: none;">
+            <div style="background: white; border-radius: 16px; padding: 25px; border: 1px solid #edf2f7; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);">
+                {% if karfa_par_personne %}
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                    {% for item in karfa_par_personne %}
+                    <div style="padding: 15px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600; color: var(--color-title);">{{ item.beneficiaire }}</div>
+                            <div style="font-size: 11px; color: var(--color-subtitle);">
+                                {% if item.dernier_mouvement %}
+                                Dernier mouvement : {{ item.dernier_mouvement|date:"d/m/Y" }}
+                                {% else %}
+                                Aucun mouvement enregistré
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 16px; font-weight: 700; color: #3b82f6;">{{ item.total|milliers }} GNF</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div style="text-align: center; color: var(--color-subtitle); font-size: 14px;">
+                    Aucun engagement Karfa actif.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Créances / Dettes / Karfa -->
-<div style="display: flex; gap: 20px;">
-    <!-- Créances -->
-    <div style="flex: 1; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <h3 style="margin-top: 0; color: #27ae60;">On me doit</h3>
-        <div style="font-size: 28px; font-weight: 600; color: #27ae60;">{{ total_creances|milliers }} GNF</div>
-    </div>
+<script>
+    function toggleEngagements() {
+        const section = document.getElementById('section-engagements');
+        const icon = document.getElementById('btn-karfa-icon');
+        const label = document.getElementById('btn-karfa-label');
+        const isHidden = section.style.display === 'none';
+        
+        const svgOpen = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        const svgClosed = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`;
 
-    <!-- Dettes -->
-    <div style="flex: 1; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <h3 style="margin-top: 0; color: #e74c3c;">Je dois</h3>
-        <div style="font-size: 28px; font-weight: 600; color: #e74c3c;">{{ total_dettes|milliers }} GNF</div>
-    </div>
-
-    <!-- Karfa -->
-    <div style="flex: 1; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <h3 style="margin-top: 0; color: #3498db;">Karfa actifs</h3>
-        <div style="font-size: 28px; font-weight: 600; color: #3498db;">{{ total_karfa|milliers }} GNF</div>
-    </div>
-</div>
-
+        section.style.display = isHidden ? 'block' : 'none';
+        icon.innerHTML = isHidden ? svgClosed : svgOpen;
+        label.textContent = isHidden ? 'Masquer l\'analyse' : 'Voir l\'analyse';
+    }
+</script>
 
 {% endblock %}

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto; padding: 20px;">
+    <!-- En-tête -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="margin: 0; color: #1e2b3c;">{% if modifier %}Modifier le compte{% else %}Nouveau compte{% endif %}
+        </h1>
+        <a href="{% url 'comptes:liste_comptes' %}"
+            style="background: white; border: 1px solid #e2e8f0; color: #64748b; padding: 8px 18px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.9em; transition: all 0.2s;">
+            ← Annuler
+        </a>
+    </div>
+
+    <div
+        style="background: white; border-radius: 20px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+
+        <!-- Sélecteur de type (Argent ou Or) - Caché en mode Edition -->
+        {% if not modifier %}
+        <div style="display: flex; gap: 15px; margin-bottom: 35px;">
+            <button type="button" id="btn-argent" onclick="toggleFields('argent')"
+                style="flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #3b82f6; background: #eff6ff; color: #1e40af; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg> Argent
+            </button>
+            <button type="button" id="btn-or" onclick="toggleFields('or')"
+                style="flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; color: #64748b; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Or
+            </button>
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="nature" id="nature-input" value="{{ nature|default:'argent' }}">
+
+            {% if messages %}
+            <div style="margin-bottom: 25px;">
+                {% for message in messages %}
+                <div
+                    style="padding: 12px 15px; border-radius: 10px; background: {% if message.tags == 'error' %}#fef2f2; color: #991b1b; border: 1px solid #fee2e2;{% else %}#f0fdf4; color: #166534; border: 1px solid #dcfce7;{% endif %} font-size: 0.9em; margin-bottom: 10px;">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Nom du compte -->
+            <div style="margin-bottom: 25px;">
+                <label for="nom" style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Nom du
+                    compte</label>
+                <input type="text" name="nom" id="nom" required value="{{ compte.nom|default:'' }}"
+                    placeholder="Ex: Coffre-fort, Compte Orange Money..."
+                    style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; transition: all 0.2s; box-sizing: border-box;">
+            </div>
+
+            <!-- Champs spécifiques ARGENT -->
+            <div id="fields-argent" {% if modifier and nature == 'or' %}style="display: none;" {% endif %}>
+                <div style="margin-bottom: 25px;">
+                    <label for="type_argent"
+                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Type de
+                        compte</label>
+                    <select name="type_compte" id="type_argent"
+                        style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; background: white; cursor: pointer; box-sizing: border-box;">
+                        <option value="BANQUE" {% if compte.type_compte == 'BANQUE' %}selected{% endif %}>Banque</option>
+                        <option value="MOBILE_MONEY" {% if compte.type_compte == 'MOBILE_MONEY' %}selected{% endif %}>
+                            Mobile Money</option>
+                        <option value="CASH" {% if compte.type_compte == 'CASH' %}selected{% endif %}>Espèces</option>
+                        <option value="AUTRE" {% if compte.type_compte == 'AUTRE' %}selected{% endif %}>Autre</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <label for="solde" style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">
+                        Solde {% if modifier %}actuel{% else %}initial{% endif %} (GNF)
+                    </label>
+                    <input type="number" name="solde" id="solde" value="{{ compte.solde|stringformat:'d'|default:'0' }}"
+                        min="0"
+                        style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <!-- Champs spécifiques OR -->
+            <div id="fields-or" {% if not modifier or nature == 'argent' %}style="display: none;" {% endif %}>
+                <div style="margin-bottom: 25px;">
+                    <label for="poids"
+                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Poids
+                        (Grammes)</label>
+                    <input type="number" step="0.01" name="poids_grammes" id="poids"
+                        value="{{ compte.poids_grammes|stringformat:'.2f'|default:'0' }}" min="0"
+                        style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; box-sizing: border-box;">
+                    <small style="color: #94a3b8; font-size: 0.85em; margin-top: 8px; display: block;">Le poids peut
+                        avoir jusqu'à 2 décimales (Ex: 10.25).</small>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <label for="carat"
+                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Pureté
+                        (Carat)</label>
+                    <input type="number" name="carat" id="carat" value="{{ compte.carat|default:'24' }}" min="1"
+                        max="24"
+                        style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <button type="submit"
+                    style="width: 100%; background: #10b981; color: white; padding: 18px; border: none; border-radius: 30px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);"
+                    onmouseover="this.style.background='#059669'; this.style.transform='translateY(-2px)';"
+                    onmouseout="this.style.background='#10b981'; this.style.transform='translateY(0)';"
+                >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    {% if modifier %}Sauvegarder les modifications{% else %}Créer le compte{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleFields(nature) {
+        const fArgent = document.getElementById('fields-argent');
+        const fOr = document.getElementById('fields-or');
+        const btnArgent = document.getElementById('btn-argent');
+        const btnOr = document.getElementById('btn-or');
+        const inputNature = document.getElementById('nature-input');
+
+        if (inputNature) inputNature.value = nature;
+
+        if (nature === 'argent') {
+            if (fArgent) fArgent.style.display = 'block';
+            if (fOr) fOr.style.display = 'none';
+            if (btnArgent) {
+                btnArgent.style.borderColor = '#3b82f6';
+                btnArgent.style.background = '#eff6ff';
+                btnArgent.style.color = '#1e40af';
+            }
+            if (btnOr) {
+                btnOr.style.borderColor = '#e2e8f0';
+                btnOr.style.background = '#f8fafc';
+                btnOr.style.color = '#64748b';
+            }
+        } else {
+            if (fArgent) fArgent.style.display = 'none';
+            if (fOr) fOr.style.display = 'block';
+            if (btnOr) {
+                btnOr.style.borderColor = '#f59e0b';
+                btnOr.style.background = '#fffbeb';
+                btnOr.style.color = '#b45309';
+            }
+            if (btnArgent) {
+                btnArgent.style.borderColor = '#e2e8f0';
+                btnArgent.style.background = '#f8fafc';
+                btnArgent.style.color = '#64748b';
+            }
+        }
+    }
+
+    // Initialisation si mode modification
+    {% if modifier and nature == 'or' %}
+    window.onload = function () {
+        toggleFields('or');
+    };
+    {% endif %}
+</script>
+
+<style>
+    input:focus,
+    select:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<style>
+    .comptes-accueil-container {
+        padding: 20px 10px;
+        max-width: 1200px;
+        margin: 0 auto;
+        font-family: 'Inter', -apple-system, sans-serif;
+    }
+
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    @media (min-width: 768px) {
+        .page-header {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .page-title {
+        margin: 0;
+        color: #1e2b3c;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-gray {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .btn-gray:hover {
+        background: #e2e8f0;
+    }
+
+    .summary-card-dark {
+        background: #1e2b3c;
+        color: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 25px -5px rgba(30, 43, 60, 0.15);
+    }
+
+    .summary-card-light {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border-bottom: 4px solid #3b82f6;
+    }
+
+    .card-label {
+        font-size: 14px;
+        font-weight: 500;
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .card-label-light {
+        color: #64748b;
+    }
+
+    .card-value {
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+    
+    .card-value-dark {
+        color: white;
+    }
+    
+    .card-value-light {
+        color: #1e2b3c;
+    }
+
+    .metrics-row {
+        display: flex;
+        gap: 40px;
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .metric-item-label {
+        font-size: 13px;
+        opacity: 0.7;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .metric-item-value {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    /* Section Or */
+    .gold-section {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .gold-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .gold-icon {
+        width: 48px;
+        height: 48px;
+        background: #fffbeb;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f59e0b;
+    }
+
+    .gold-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #f59e0b;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+    }
+
+    .gold-date {
+        font-size: 12px;
+        color: #94a3b8;
+        font-weight: 400;
+    }
+
+    /* Grille Modules */
+    .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .module-card {
+        background: white;
+        padding: 24px;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .module-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+
+    .module-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .module-title {
+        color: #64748b;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .module-value {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .text-green { color: #10b981; }
+    .text-red { color: #ef4444; }
+    .text-blue { color: #3b82f6; }
+
+    .module-subtitle {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+</style>
+
+<div class="comptes-accueil-container">
+
+    <!-- En-tête -->
+    <div class="page-header">
+        <h1 class="page-title">Gestion des Comptes</h1>
+        <div class="header-actions">
+            <a href="{% url 'comptes:creer_compte' %}" class="btn-action btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nouveau compte
+            </a>
+            <a href="{% url 'comptes:liste_comptes' %}" class="btn-action btn-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> Liste des comptes
+            </a>
+            <a href="{% url 'comptes:export_comptes_csv' %}" class="btn-action btn-gray">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exporter CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- 1. Bloc Patrimoine Net Total -->
+    <div class="summary-card-light">
+        <div class="card-label card-label-light">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Patrimoine Net Total
+        </div>
+        <div class="card-value card-value-light">{{ patrimoine_total|milliers }} GNF</div>
+    </div>
+
+    <!-- 2. Bloc Total Comptes (Détails) -->
+    <div class="summary-card-dark">
+        <div style="position: absolute; right: -20px; top: -10px; opacity: 0.05;">
+            <svg width="150" height="150" viewBox="0 0 24 24" fill="white">
+                <line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>
+            </svg>
+        </div>
+
+        <div class="card-label" style="color: #94a3b8;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg> Total des Comptes (Valeur Actuelle)
+        </div>
+        <div class="card-value card-value-dark">
+            {% with total_v=total_liquidites|add:total_or_gnf %}
+            {{ total_v|milliers }} GNF
+            {% endwith %}
+        </div>
+
+        <div class="metrics-row">
+            <div>
+                <div class="metric-item-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg> Liquidités
+                </div>
+                <div class="metric-item-value">{{ total_liquidites|milliers }} GNF</div>
+            </div>
+            <div>
+                <div class="metric-item-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Or ({{ total_poids_or }}g)
+                </div>
+                <div class="metric-item-value">{{ total_or_gnf|milliers }} GNF</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Or & API -->
+    <div class="gold-section">
+        <div class="gold-info">
+            <div class="gold-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <div>
+                <div style="color: #64748b; font-size: 13px; font-weight: 500;">Cours de l'Or (24K)</div>
+                <div class="gold-price">
+                    {{ prix_or.prix_gramme|milliers|default:"75 000" }} GNF/g
+                    <span class="gold-date">
+                        (Mise à jour : {{ prix_or.date_saisie|date:"d/m/Y H:i"|default:"Indisponible" }})
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <a href="https://goldpricedata.com" target="_blank" class="btn-action btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Via le web
+                </a>
+
+                <form method="post" action="{% url 'comptes:saisie_prix_or_manuel' %}" style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 4px 12px; border-radius: 30px; border: 1px solid #e2e8f0;">
+                    {% csrf_token %}
+                    <input type="number" name="prix_manuel" placeholder="Prix manuel (GNF/g)" required min="1"
+                        style="width: 130px; border: none; background: transparent; font-size: 13px; outline: none; padding: 4px 0;">
+                    <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;">
+                        Fixer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grille des autres modules (Dettes, Créances, Karfa) -->
+    <div class="modules-grid">
+
+        <!-- Créances -->
+        <div class="module-card">
+            <div class="module-card-header">
+                <span class="module-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7 7 7-7"/><path d="M12 5v14"/></svg> On me doit
+                </span>
+            </div>
+            <div class="module-value text-green">{{ total_creances|milliers }} GNF</div>
+            <p class="module-subtitle">Fonds à récupérer au total.</p>
+        </div>
+
+        <!-- Dettes -->
+        <div class="module-card">
+            <div class="module-card-header">
+                <span class="module-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12-7-7-7 7"/><path d="M12 19V5"/></svg> Je dois
+                </span>
+            </div>
+            <div class="module-value text-red">{{ total_dettes|milliers }} GNF</div>
+            <p class="module-subtitle">Fonds à rembourser au total.</p>
+        </div>
+
+        <!-- Karfa -->
+        <div class="module-card">
+            <div class="module-card-header">
+                <span class="module-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-7.3 7.3a1 1 0 0 0 0 1.42l.5.5a1 1 0 0 0 1.42 0l7.3-7.3a3 3 0 0 1 4.24 0l3.88 3.88a1 1 0 0 1 0 1.42l-.5.5a1 1 0 0 1-1.42 0l-2.5-2.5"/><path d="m11.5 10.5-2-2"/><path d="m15 14-2-2"/><path d="m16.5 15.5-2-2"/></svg> Karfa Actifs
+                </span>
+            </div>
+            <div class="module-value text-blue">{{ total_karfa|milliers }} GNF</div>
+            <p class="module-subtitle">Investissements et dépôts en cours.</p>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

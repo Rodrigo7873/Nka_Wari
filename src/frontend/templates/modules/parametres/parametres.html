@@ -1,17 +1,177 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Paramètres</h1>
+<style>
+    :root {
+        --color-primary: #3b82f6;
+        --color-secondary: #64748b;
+        --color-title: #1e2b3c;
+        --color-subtitle: #64748b;
+        --bg-page: #f9fafb;
+    }
 
-<div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-    <p><strong>Langue :</strong> {{ params.langue }}</p>
-    <p><strong>Format date :</strong> {{ params.format_date }}</p>
-    <p><strong>Format heure :</strong> {{ params.format_heure }}</p>
-    <p><strong>Notifications :</strong> {{ params.notifications|yesno:"Activées,Désactivées" }}</p>
-    <p><strong>Version :</strong> {{ params.version }}</p>
-</div>
+    body {
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-<div style="margin-top: 30px;">
-    <a href="/parametres/about/" style="background: #3498db; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">À propos</a>
+    .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--color-title);
+        margin: 0;
+    }
+
+    .section-subtitle {
+        margin: 5px 0 0;
+        color: var(--color-subtitle);
+        font-size: 14px;
+    }
+
+    .param-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #edf2f7;
+        margin-top: 30px;
+    }
+
+    .param-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 15px;
+    }
+
+    .param-row:last-child {
+        border-bottom: none;
+    }
+
+    .param-label {
+        font-weight: 600;
+        color: var(--color-title);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .param-value {
+        color: var(--color-subtitle);
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        background: var(--color-primary);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: var(--color-secondary);
+        padding: 10px 24px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #e2e8f0;
+        color: #475569;
+        transform: translateY(-1px);
+    }
+</style>
+
+<div style="background: var(--bg-page); margin: -30px; padding: 40px; min-height: calc(100vh - 60px);">
+
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+            <h1 class="section-title">Paramètres</h1>
+            <p class="section-subtitle">Configuration générale de l'application N'ka Wari.</p>
+        </div>
+    </div>
+
+    <!-- Carte des Paramètres -->
+    <!-- Carte des Paramètres -->
+    <div class="param-card">
+        <div class="param-row">
+            <span class="param-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                Langue
+            </span>
+            <span class="param-value">{{ params.langue }}</span>
+        </div>
+        <div class="param-row">
+            <span class="param-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Format de date
+            </span>
+            <span class="param-value">{{ params.format_date }}</span>
+        </div>
+        <div class="param-row">
+            <span class="param-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Format d'heure
+            </span>
+            <span class="param-value">{{ params.format_heure }}</span>
+        </div>
+        <div class="param-row">
+            <span class="param-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                Notifications
+            </span>
+            <span class="param-value">
+                {% if params.notifications %}
+                <span style="background: #ecfdf5; color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid #d1fae5;">Activées</span>
+                {% else %}
+                <span style="background: #fef2f2; color: #ef4444; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid #fee2e2;">Désactivées</span>
+                {% endif %}
+            </span>
+        </div>
+        <div class="param-row">
+            <span class="param-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg>
+                Version
+            </span>
+            <span class="param-value" style="background: #f8fafc; padding: 4px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: #475569;">{{ params.version }}</span>
+        </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div style="margin-top: 40px; display: flex; gap: 15px;">
+        <a href="#" class="btn-primary" style="padding: 12px 28px; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Modifier
+        </a>
+        <a href="{% url 'about' %}" class="btn-secondary" style="background: white; padding: 12px 28px; border-radius: 30px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            À propos
+        </a>
+    </div>
+
 </div>
 {% endblock %}

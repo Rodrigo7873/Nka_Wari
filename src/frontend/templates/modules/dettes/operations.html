@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% load custom_filters %}
+
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <a href="{% url 'dettes:liste_dettes' %}"
+            style="text-decoration: none; color: #64748b; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </a>
+        <h1 style="margin: 0;">Toutes les Opérations (Dettes & Créances)</h1>
+    </div>
+</div>
+
+<div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    {% if operations %}
+    {% regroup operations by date|date:"Y-m-d" as ops_par_jour %}
+
+    {% for group in ops_par_jour %}
+    <div style="margin-bottom: 30px;">
+        <h3
+            style="font-size: 16px; color: #64748b; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+            {% if group.grouper == today_date %}Aujourd'hui
+            {% elif group.grouper == yesterday_date %}Hier
+            {% else %}{{ group.list.0.date|date:"l d F Y" }}{% endif %}
+        </h3>
+
+        {% for op in group.list %}
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div
+                    style="width: 45px; height: 45px; border-radius: 50%; background: {% if op.type == 'AJOUT' %}#ebf5ff{% elif op.type == 'ENCAISSEMENT' %}#e3f7e3{% else %}#fff5f5{% endif %}; display: flex; align-items: center; justify-content: center;">
+                    {% if op.type == 'AJOUT' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    {% elif op.type == 'ENCAISSEMENT' %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {% else %}
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
+                        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                        <polyline points="1 13 1 6 8 6"></polyline>
+                    </svg>
+                    {% endif %}
+                </div>
+                <div>
+                    <div style="font-weight: 600; font-size: 16px; color: #1e2b3c;">
+                        {{ op.dette.personne }}
+                    </div>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 4px;">
+                        {{ op.get_type_display }}
+                        {% if op.note %}
+                        <span style="color: #cbd5e1; margin: 0 5px;">•</span> {{ op.note }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                <div style="font-weight: 700; font-size: 17px; color: {% if op.type == 'AJOUT' %}#27ae60{% elif op.type == 'REMBOURSEMENT' %}#e74c3c{% else %}#3498db{% endif %};">
+                    {% if op.type == 'AJOUT' %}+{% else %}-{% endif %} {{ op.montant|milliers }} GNF
+                </div>
+                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+                    {{ op.date|date:"H:i" }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="text-align: center; padding: 40px; color: #64748b;">
+        <p>Aucune opération n'a été enregistrée pour le moment.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
