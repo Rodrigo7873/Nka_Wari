@@ -16,6 +16,15 @@ class PrixOrParam(models.Model):
         auto_now_add=True,
         verbose_name="Date de saisie"
     )
+
+    cree_par = models.ForeignKey(
+        'auth.User',
+        on_delete=models.CASCADE,
+        related_name='prix_or_params',
+        null=True,
+        blank=True,
+        verbose_name="Créé par"
+    )
     
     class Meta:
         verbose_name = "Paramètre - Prix de l'or"

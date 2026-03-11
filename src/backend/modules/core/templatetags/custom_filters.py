@@ -10,6 +10,14 @@ def milliers(value):
     except:
         return value
 
+@register.filter
+def intspace(value):
+    try:
+        value = int(value)
+        return f"{value:,}".replace(",", " ")
+    except:
+        return value
+
 from django.utils import timezone
 
 @register.filter

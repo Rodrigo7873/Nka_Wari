@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load custom_filters %}
 
 {% block content %}
@@ -21,11 +22,22 @@
         <div style="display: flex; gap: 15px; margin-bottom: 35px;">
             <button type="button" id="btn-argent" onclick="toggleFields('argent')"
                 style="flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #3b82f6; background: #eff6ff; color: #1e40af; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg> Argent
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="6" width="20" height="12" rx="2" />
+                    <path d="M12 12h.01" />
+                    <path d="M17 12h.01" />
+                    <path d="M7 12h.01" />
+                </svg> Argent
             </button>
             <button type="button" id="btn-or" onclick="toggleFields('or')"
                 style="flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; color: #64748b; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Or
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="8" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                </svg> Or
             </button>
         </div>
         {% endif %}
@@ -55,20 +67,42 @@
             </div>
 
             <!-- Champs spécifiques ARGENT -->
-            <div id="fields-argent" {% if modifier and nature == 'or' %}style="display: none;" {% endif %}>
+            <div id="fields-argent" {% if modifier and nature=='or' %}style="display: none;" {% endif %}>
                 <div style="margin-bottom: 25px;">
                     <label for="type_argent"
                         style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Type de
                         compte</label>
-                    <select name="type_compte" id="type_argent"
+                    <select name="type_compte" id="type_argent" onchange="checkTypeDette(this.value)"
                         style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; background: white; cursor: pointer; box-sizing: border-box;">
-                        <option value="BANQUE" {% if compte.type_compte == 'BANQUE' %}selected{% endif %}>Banque</option>
-                        <option value="MOBILE_MONEY" {% if compte.type_compte == 'MOBILE_MONEY' %}selected{% endif %}>
+                        <option value="BANQUE" {% if compte.type_compte=='BANQUE' %}selected{% endif %}>Banque</option>
+                        <option value="MOBILE_MONEY" {% if compte.type_compte=='MOBILE_MONEY' %}selected{% endif %}>
                             Mobile Money</option>
-                        <option value="CASH" {% if compte.type_compte == 'CASH' %}selected{% endif %}>Espèces</option>
-                        <option value="AUTRE" {% if compte.type_compte == 'AUTRE' %}selected{% endif %}>Autre</option>
+                        <option value="CASH" {% if compte.type_compte=='CASH' %}selected{% endif %}>Espèces</option>
+                        <option value="DETTE" {% if compte.type_compte=='DETTE' %}selected{% endif %}>Dettes (Passifs)
+                        </option>
+                        <option value="AUTRE" {% if compte.type_compte=='AUTRE' %}selected{% endif %}>Autre</option>
                     </select>
                 </div>
+
+                <!-- Champ Lien vers Dette (Apparaît si Type = DETTE) -->
+                <div id="field-dette-liee"
+                    style="margin-bottom: 25px; {% if compte.type_compte != 'DETTE' %}display: none;{% endif %} animation: slideDown 0.3s ease-out;">
+                    <label for="dette_liee"
+                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">
+                        Lier à une dette existante (Optionnel)
+                    </label>
+                    <select name="dette_liee" id="dette_liee"
+                        style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; background: white; cursor: pointer; box-sizing: border-box;">
+                        <option value="">-- Sélectionner une dette --</option>
+                        {% for choice in form.dette_liee.field.queryset %}
+                        <option value="{{ choice.id }}" {% if compte.dette_liee and choice.id==compte.dette_liee.id
+                            %}selected{% endif %}>
+                            {{ choice.personne }} ({{ choice.montant_restant|milliers }} GNF)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
                 <div style="margin-bottom: 25px;">
                     <label for="solde" style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">
                         Solde {% if modifier %}actuel{% else %}initial{% endif %} (GNF)
@@ -80,7 +114,7 @@
             </div>
 
             <!-- Champs spécifiques OR -->
-            <div id="fields-or" {% if not modifier or nature == 'argent' %}style="display: none;" {% endif %}>
+            <div id="fields-or" {% if not modifier or nature=='argent' %}style="display: none;" {% endif %}>
                 <div style="margin-bottom: 25px;">
                     <label for="poids"
                         style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Poids
@@ -105,9 +139,13 @@
                 <button type="submit"
                     style="width: 100%; background: #10b981; color: white; padding: 18px; border: none; border-radius: 30px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);"
                     onmouseover="this.style.background='#059669'; this.style.transform='translateY(-2px)';"
-                    onmouseout="this.style.background='#10b981'; this.style.transform='translateY(0)';"
-                >
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    onmouseout="this.style.background='#10b981'; this.style.transform='translateY(0)';">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
                     {% if modifier %}Sauvegarder les modifications{% else %}Créer le compte{% endif %}
                 </button>
             </div>
@@ -154,19 +192,23 @@
         }
     }
 
+    function checkTypeDette(value) {
+        const fieldDette = document.getElementById('field-dette-liee');
+        if (fieldDette) {
+            fieldDette.style.display = (value === 'DETTE') ? 'block' : 'none';
+        }
+    }
+
     // Initialisation si mode modification
-    {% if modifier and nature == 'or' %}
+    {% if modifier %}
     window.onload = function () {
+        {% if nature == 'or' %}
         toggleFields('or');
+        {% endif %}
+        checkTypeDette(document.getElementById('type_argent').value);
     };
     {% endif %}
 </script>
 
-<style>
-    input:focus,
-    select:focus {
-        border-color: #3b82f6 !important;
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/comptes.css' %}">
 {% endblock %}

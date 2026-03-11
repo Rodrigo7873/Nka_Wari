@@ -1,324 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load custom_filters %}
 
 {% block content %}
-<style>
-    /* Variables et Typographie */
-    .karfa-detail-container {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background-color: #f9fafb;
-        color: #1f2937;
-        min-height: 100vh;
-        padding: 2rem 1rem;
-        box-sizing: border-box;
-    }
-
-    .wrapper {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    /* En-tête */
-    .detail-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        background-color: white;
-        color: #374151;
-        border: 1px solid #e5e7eb;
-        text-decoration: none;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        transition: all 0.2s ease;
-    }
-
-    .btn-back:hover {
-        background-color: #f3f4f6;
-        color: #111827;
-    }
-
-    .header-title {
-        font-size: 1.875rem;
-        font-weight: 700;
-        color: #111827;
-        margin: 0;
-    }
-
-    /* Carte d'infos principales */
-    .info-card {
-        background: linear-gradient(135deg, #1e2b3c 0%, #2c3e50 100%);
-        border-radius: 1.5rem;
-        padding: 2.5rem;
-        color: white;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 25px -5px rgba(30, 43, 60, 0.4);
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
-
-    .info-card-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .amount-label {
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        opacity: 0.8;
-        margin-bottom: 0.5rem;
-    }
-
-    .amount-value {
-        font-size: 3rem;
-        font-weight: 800;
-        line-height: 1;
-    }
-
-    .status-badge {
-        padding: 0.35rem 1rem;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        background-color: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(4px);
-    }
-
-    .info-card-bottom {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 1.25rem;
-        border-radius: 1rem;
-        backdrop-filter: blur(4px);
-    }
-
-    .meta-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .meta-label {
-        font-size: 0.75rem;
-        opacity: 0.7;
-        text-transform: uppercase;
-    }
-
-    .meta-value {
-        font-size: 1rem;
-        font-weight: 500;
-    }
-
-    /* Boutons d'action */
-    .action-buttons {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-    }
-
-    .btn {
-        flex: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.875rem 1.5rem;
-        border-radius: 999px;
-        font-weight: 600;
-        font-size: 0.875rem;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-align: center;
-    }
-
-    .btn-green {
-        background-color: #10b981;
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-green:hover {
-        background-color: #059669;
-        transform: translateY(-1px);
-    }
-
-    .btn-red {
-        background-color: #ef4444;
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
-    }
-
-    .btn-red:hover {
-        background-color: #dc2626;
-        transform: translateY(-1px);
-    }
-
-    .btn-gray {
-        background-color: #e5e7eb;
-        color: #374151;
-    }
-
-    .btn-gray:hover {
-        background-color: #d1d5db;
-    }
-
-    /* Formulaire d'opération (Caché par défaut) */
-    .operation-form {
-        display: none;
-        background-color: white;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e5e7eb;
-        margin-bottom: 2rem;
-        animation: slideDown 0.3s ease-out forwards;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .form-title {
-        font-size: 1.125rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: #111827;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-group label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #374151;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        font-family: inherit;
-        box-sizing: border-box;
-        transition: border-color 0.2s;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .form-actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
-
-    /* Historique des mouvements */
-    .history-section {
-        background-color: white;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e5e7eb;
-    }
-
-    .history-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-top: 0;
-        margin-bottom: 1.5rem;
-        color: #111827;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #f3f4f6;
-    }
-
-    .history-list {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .history-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 0;
-        border-bottom: 1px solid #f3f4f6;
-    }
-
-    .history-item:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-
-    .history-date {
-        font-size: 0.875rem;
-        color: #6b7280;
-        font-weight: 500;
-    }
-
-    .history-details {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        text-align: right;
-    }
-
-    .history-type {
-        font-size: 0.875rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 999px;
-        background-color: #f3f4f6;
-        color: #4b5563;
-        font-weight: 500;
-    }
-
-    .history-amount {
-        font-weight: 700;
-        font-size: 1.125rem;
-        min-width: 100px;
-    }
-
-    .text-green {
-        color: #10b981;
-    }
-
-    .text-red {
-        color: #ef4444;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/karfa.css' %}">
 
 <div class="karfa-detail-container">
     <div class="wrapper">
@@ -333,13 +18,21 @@
 
         <!-- Carte d'infos -->
         <div class="info-card">
-            <div class="info-card-top">
-                <div>
-                    <div class="amount-label">Montant Actuel</div>
-                    <div class="amount-value">{{ karfa.montant_actuel|milliers }} GNF</div>
-                </div>
-                <div class="status-badge">
-                    {{ karfa.statut|default:"Actif" }}
+            <div style="width: 100%;">
+                <div class="amount-label"
+                    style="color: #cbd5e1 !important; font-weight: 600; letter-spacing: 0.1em; opacity: 1; margin-bottom: 8px;">
+                    Montant
+                    Actuel</div>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div class="amount-value"
+                        style="color: #ffffff !important; font-size: 2.5rem; font-weight: 800; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); white-space: nowrap;">
+                        {{ karfa.montant_actuel|milliers }} <span style="font-size: 0.7em; opacity: 0.8;">GNF</span>
+                    </div>
+                    <div class="status-badge"
+                        style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: #ffffff !important; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em;">
+                        {{ karfa.get_statut_display|default:"Actif" }}
+                    </div>
                 </div>
             </div>
 
@@ -359,16 +52,30 @@
         <div class="action-buttons">
             {% if not karfa.archive %}
             <button type="button" class="btn btn-green" onclick="toggleForm('ajout')">
-                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Ajouter
+                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg></span> Ajouter
             </button>
             <button type="button" class="btn btn-red" onclick="toggleForm('retrait')">
-                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Retirer
+                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg></span> Retirer
             </button>
-            <a href="{% url 'karfa:archiver_karfa' karfa.id %}" class="btn btn-gray">
-                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" rx="2" ry="2" width="20" height="5"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg></span> Archiver
+            <a href="{% url 'karfa:archiver_karfa' karfa.id %}" class="btn btn-gray"
+                data-confirm="Voulez-vous vraiment archiver ce Karfa ?">
+                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="4" rx="2" ry="2" width="20" height="5" />
+                        <path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9" />
+                        <path d="M10 13h4" />
+                    </svg></span> Archiver
             </a>
             {% else %}
-            <a href="{% url 'karfa:desarchiver_karfa' karfa.id %}" class="btn btn-gray" style="flex: auto;">
+            <a href="{% url 'karfa:desarchiver_karfa' karfa.id %}" class="btn btn-gray" style="flex: auto;"
+                data-confirm="Ce Karfa sera remis dans la liste active. Continuer ?" data-confirm-type="success">
                 <span>↩️</span> Désarchiver
             </a>
             {% endif %}

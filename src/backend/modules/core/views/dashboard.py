@@ -1,69 +1,59 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('karfa_list')
-        else:
-            messages.error(request, "Nom d'utilisateur ou mot de passe incorrect")
-            return render(request, 'auth/login.html', {'error': "Identifiants invalides"})
-    return render(request, 'auth/login.html')
-
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
+from django.db.models import Sum, Max, F, Q
+from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+import json
+import random
+import string
+from modules.core.models import Profil
+
+from modules.comptes.models import CompteArgent, CompteOr
+from modules.core.services.prix_or_service import get_latest_prix_or
+from modules.karfa.models import Karfa
+from modules.dettes.models import Dette, Remboursement
+from modules.karfa.models import MouvementKarfa
 
 @login_required
 def accueil(request):
-    # Imports locaux pour éviter potentiellement des circularités avec d'autres modules
     from modules.comptes.models import CompteArgent, CompteOr, MouvementCompte
     from modules.core.services.prix_or_service import get_latest_prix_or
     from modules.dettes.models import Dette, Remboursement
     from modules.karfa.models import Karfa, MouvementKarfa
 
-    # 1. Patrimoine Net Total et Total des Comptes
-    total_liquidites = CompteArgent.objects.filter(archive=False).aggregate(total=Sum('solde'))['total'] or 0
-    prix_or = get_latest_prix_or()
-    total_or_gnf = 0
-    total_poids_or = CompteOr.objects.filter(archive=False).aggregate(total=Sum('poids_grammes'))['total'] or 0
+    user = request.user
+
+    # 1. Calculs des Soldes (Filtrés par utilisateur)
+    total_liquidites = CompteArgent.objects.filter(cree_par=user, archive=False).aggregate(total=Sum('solde'))['total'] or 0
+    prix_or = get_latest_prix_or(user)
+    total_poids_or = CompteOr.objects.filter(cree_par=user, archive=False).aggregate(total=Sum('poids_grammes'))['total'] or 0
     
+    total_or_gnf = 0
+    prix_or_val = 0
     if prix_or:
         total_or_gnf = total_poids_or * prix_or.prix_gramme
         prix_or_val = prix_or.prix_gramme
-    else:
-        prix_or_val = 0
 
     total_comptes = total_liquidites + total_or_gnf
 
-    # Karfa actifs
-    total_karfa = Karfa.objects.filter(
-        archive=False,
-        statut__in=['ACTIF', 'PARTIELLEMENT_RENDU']
-    ).aggregate(total=Sum('montant_actuel'))['total'] or 0
+    # Karfa actifs (Filtrés)
+    total_karfa = Karfa.objects.filter(cree_par=user, archive=False).aggregate(total=Sum('montant_actuel'))['total'] or 0
 
-    # Créances (On me doit)
-    total_creances = Dette.objects.filter(
-        sens='ON_ME_DOIT',
-        archive=False
-    ).aggregate(total=Sum('montant_restant'))['total'] or 0
-
-    # Dettes (Je dois)
-    total_dettes = Dette.objects.filter(
-        sens='JE_DOIS',
-        archive=False
-    ).aggregate(total=Sum('montant_restant'))['total'] or 0
+    # Créances & Dettes (Filtrées)
+    total_creances = Dette.objects.filter(cree_par=user, sens='ON_ME_DOIT', archive=False).aggregate(total=Sum('montant_restant'))['total'] or 0
+    total_dettes = Dette.objects.filter(cree_par=user, sens='JE_DOIS', archive=False).aggregate(total=Sum('montant_restant'))['total'] or 0
 
     patrimoine_total = total_comptes + total_karfa + total_creances - total_dettes
 
-    # 3 dernières opérations
+    # 2. Dernières opérations (Filtrées par utilisateur)
     ops = []
     
-    for mk in MouvementKarfa.objects.all().order_by('-date')[:3]:
+    # Karfa
+    for mk in MouvementKarfa.objects.filter(cree_par=user).order_by('-date')[:3]:
         ops.append({
             'type_name': f"Karfa {mk.get_type_display()}",
             'personne': mk.karfa.beneficiaire,
@@ -72,10 +62,11 @@ def accueil(request):
             'color': '#f59e0b',
             'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>'
         })
-        
-    for d in Dette.objects.all().order_by('-date_creation')[:3]:
+    
+    # Dettes
+    for d in Dette.objects.filter(cree_par=user).order_by('-date_creation')[:3]:
         ops.append({
-            'type_name': "Créance" if d.sens == 'ON_ME_DOIT' else "Nouvelle dette",
+            'type_name': "Créance" if d.sens == 'ON_ME_DOIT' else "Dette",
             'personne': d.personne,
             'montant': d.montant,
             'date': d.date_creation,
@@ -83,7 +74,8 @@ def accueil(request):
             'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><path d="M10 9H8"/></svg>'
         })
         
-    for r in Remboursement.objects.all().order_by('-date')[:3]:
+    # Remboursements
+    for r in Remboursement.objects.filter(dette__cree_par=user).order_by('-date')[:3]:
         ops.append({
             'type_name': r.get_type_display(),
             'personne': r.dette.personne,
@@ -93,7 +85,8 @@ def accueil(request):
             'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>'
         })
         
-    for mc in MouvementCompte.objects.select_related('compte_argent', 'compte_or').order_by('-date')[:3]:
+    # Mouvements Comptes
+    for mc in MouvementCompte.objects.filter(Q(compte_argent__cree_par=user) | Q(compte_or__cree_par=user)).order_by('-date')[:3]:
         compte = mc.compte_argent or mc.compte_or
         ops.append({
             'type_name': f"Compte {mc.get_type_display()}",
@@ -119,11 +112,11 @@ def toutes_operations(request):
     from modules.comptes.models import MouvementCompte
     from modules.dettes.models import Dette, Remboursement
     from modules.karfa.models import MouvementKarfa
-
-    # Fetching up to 100 recent operations from each module to construct a comprehensive list
+    user = request.user
     ops = []
     
-    for mk in MouvementKarfa.objects.all().order_by('-date')[:100]:
+    # Karfa
+    for mk in MouvementKarfa.objects.filter(cree_par=user).order_by('-date')[:100]:
         ops.append({
             'type_name': f"Karfa {mk.get_type_display()}",
             'personne': mk.karfa.beneficiaire,
@@ -132,18 +125,20 @@ def toutes_operations(request):
             'color': '#f59e0b',
             'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>'
         })
-        
-    for d in Dette.objects.all().order_by('-date_creation')[:100]:
+    
+    # Dettes/Créances
+    for d in Dette.objects.filter(cree_par=user).order_by('-date_creation')[:100]:
         ops.append({
-            'type_name': "Créance" if d.sens == 'ON_ME_DOIT' else "Nouvelle dette",
+            'type_name': "Créance" if d.sens == 'ON_ME_DOIT' else "Dette",
             'personne': d.personne,
             'montant': d.montant,
             'date': d.date_creation,
             'color': '#3b82f6' if d.sens == 'ON_ME_DOIT' else '#ef4444',
-            'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>'
+            'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><path d="M10 9H8"/></svg>'
         })
-        
-    for r in Remboursement.objects.all().order_by('-date')[:100]:
+    
+    # Remboursements/Encaissements
+    for r in Remboursement.objects.filter(dette__cree_par=user).order_by('-date')[:100]:
         ops.append({
             'type_name': r.get_type_display(),
             'personne': r.dette.personne,
@@ -152,8 +147,9 @@ def toutes_operations(request):
             'color': '#10b981',
             'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>'
         })
-        
-    for mc in MouvementCompte.objects.select_related('compte_argent', 'compte_or').order_by('-date')[:100]:
+    
+    # Mouvements Comptes
+    for mc in MouvementCompte.objects.filter(Q(compte_argent__cree_par=user) | Q(compte_or__cree_par=user)).order_by('-date')[:100]:
         compte = mc.compte_argent or mc.compte_or
         ops.append({
             'type_name': f"Compte {mc.get_type_display()}",
@@ -163,10 +159,9 @@ def toutes_operations(request):
             'color': '#8b5cf6',
             'icon': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>'
         })
-
+        
     ops.sort(key=lambda x: x['date'], reverse=True)
-    toutes_ops = ops[:200]
+    return render(request, 'core/toutes_operations.html', {'operations': ops})
 
-    return render(request, 'core/toutes_operations.html', {
-        'operations': toutes_ops
-    })
+
+# --- PROFIL ---

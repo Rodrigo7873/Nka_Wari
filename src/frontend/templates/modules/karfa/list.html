@@ -1,355 +1,99 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load custom_filters %}
 
 {% block content %}
-<style>
-    /* Variables et Typographie */
-    .karfa-dashboard {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background-color: #f9fafb;
-        color: #1f2937;
-        min-height: 100vh;
-        padding: 2rem 1rem;
-        box-sizing: border-box;
-    }
-
-    .dashboard-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    /* En-tête et Boutons */
-    .dashboard-header {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
-
-    @media (min-width: 768px) {
-        .dashboard-header {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-    }
-
-    .dashboard-title {
-        font-size: 1.875rem;
-        font-weight: 700;
-        color: #111827;
-        margin: 0;
-    }
-
-    .header-actions {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        border-radius: 999px;
-        /* Boutons arrondis exigés */
-        font-weight: 600;
-        font-size: 0.875rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        border: none;
-        cursor: pointer;
-    }
-
-    /* + Nouveau Karfa (vert) */
-    .btn-green {
-        background-color: #10b981;
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-green:hover {
-        background-color: #059669;
-        transform: translateY(-1px);
-    }
-
-    /* Liste Karfa (bleu) */
-    .btn-blue {
-        background-color: #3b82f6;
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
-    }
-
-    .btn-blue:hover {
-        background-color: #2563eb;
-        transform: translateY(-1px);
-    }
-
-    /* Exporter (gris) */
-    .btn-gray {
-        background-color: white;
-        color: #1e2b3c;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-
-    .btn-gray:hover {
-        background-color: #f8fafc;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Carte de solde (Dégradé) */
-    .balance-card {
-        background: linear-gradient(135deg, #1e2b3c 0%, #2c3e50 100%);
-        border-radius: 1.5rem;
-        padding: 2.5rem;
-        color: white;
-        margin-bottom: 3rem;
-        box-shadow: 0 10px 25px -5px rgba(30, 43, 60, 0.4);
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
-
-    @media (min-width: 768px) {
-        .balance-card {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-    }
-
-    .balance-main {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .balance-label {
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        opacity: 0.8;
-    }
-
-    .balance-amount {
-        font-size: 2.5rem;
-        font-weight: 800;
-        line-height: 1;
-        white-space: nowrap;
-    }
-
-    .balance-stats-wrapper {
-        display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .balance-stats {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 1.25rem 2rem;
-        border-radius: 1rem;
-        backdrop-filter: blur(4px);
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        min-width: 140px;
-    }
-
-    .stat-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        opacity: 0.8;
-    }
-
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    /* Dernières opérations */
-    .operations-section {
-        background-color: white;
-        border-radius: 1.5rem;
-        padding: 2rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border: 1px solid #f3f4f6;
-    }
-
-    .operations-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #111827;
-        margin-top: 0;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #f3f4f6;
-    }
-
-    .op-list {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .op-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.25rem 0;
-        border-bottom: 1px solid #f3f4f6;
-    }
-
-    .op-item:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-
-    .op-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex: 2;
-        min-width: 0;
-    }
-
-    .op-beneficiary {
-        font-weight: 600;
-        color: #1f2937;
-        font-size: 0.95rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .op-date {
-        font-size: 0.85rem;
-        color: #94a3b8;
-        white-space: nowrap;
-    }
-
-    .op-right {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 1rem;
-        text-align: right;
-        flex: 1;
-    }
-
-    .op-type {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.6rem;
-        border-radius: 6px;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        white-space: nowrap;
-        border: 1px solid transparent;
-    }
-
-    .type-ajout {
-        background-color: #d1fae5;
-        color: #065f46;
-    }
-
-    .type-retrait {
-        background-color: #fee2e2;
-        color: #991b1b;
-    }
-
-    .op-amount {
-        font-weight: 700;
-        font-size: 1.125rem;
-        min-width: 120px;
-        white-space: nowrap;
-    }
-
-    .amount-positive {
-        color: #10b981;
-    }
-
-    .amount-negative {
-        color: #ef4444;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/karfa.css' %}">
 
 <div class="karfa-dashboard">
     <div class="dashboard-container">
 
-        <!-- EN-TÊTE AVEC BOUTONS FONCTIONNELS -->
         <header class="dashboard-header">
             <h1 class="dashboard-title">Mon Dashboard Karfa</h1>
-
-            <div class="header-actions">
-                <!-- Liens corrigés -->
-                <a href="{% url 'karfa:karfa_create' %}" class="btn btn-green">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    Nouveau Karfa
-                </a>
-                <a href="{% url 'karfa:liste_tous_karfa' %}" class="btn btn-blue">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"></line><line x1="6" x2="6" y1="18" y2="11"></line><line x1="10" x2="10" y1="18" y2="11"></line><line x1="14" x2="14" y1="18" y2="11"></line><line x1="18" x2="18" y1="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg>
-                    Liste Karfa
-                </a>
-                <a href="{% url 'karfa:export_karfa_csv' %}" class="btn btn-gray">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Exporter
-                </a>
+            <div class="header-actions" style="display: flex; align-items: center; gap: 1rem; flex-wrap: nowrap;">
+                <a href="{% url 'karfa:karfa_create' %}" class="btn btn-green" style="white-space: nowrap;">Nouveau
+                    Karfa</a>
+                <a href="{% url 'karfa:liste_tous_karfa' %}" class="btn btn-blue" style="white-space: nowrap;">Liste
+                    Karfa</a>
+                <div class="export-dropdown" style="position: relative; display: inline-block;">
+                    <button class="btn btn-gray" id="exportToggle" style="white-space: nowrap;">Exporter</button>
+                    <div id="exportMenu"
+                        style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #edf2f7; z-index: 1000; min-width: 160px; overflow: hidden;">
+                        <a href="{% url 'karfa:export_karfa_pdf' %}" class="export-item"
+                            style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #1e293b; text-decoration: none; font-size: 14px;">📄
+                            PDF</a>
+                        <a href="{% url 'karfa:export_karfa_csv' %}" class="export-item"
+                            style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #1e293b; text-decoration: none; font-size: 14px; border-top: 1px solid #f1f5f9;">📊
+                            CSV</a>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <!-- CARTE DE SOLDE (Uniquement Engagé) -->
         <div class="balance-card" style="justify-content: center; text-align: center;">
             <div class="balance-main" style="align-items: center;">
-                <span class="balance-label" style="font-size: 1rem; opacity: 0.9; margin-bottom: 5px;">Total Engagé
-                    (Karfa Actifs)</span>
+                <span class="balance-label" style="font-size: 1rem; opacity: 0.9;">Total Engage (Karfa Actifs)</span>
                 <span class="balance-amount" style="font-size: 3.5rem;">{{ total_engage|default:0|milliers }} GNF</span>
             </div>
         </div>
 
-        <!-- DERNIÈRES OPÉRATIONS -->
         <section class="operations-section">
-            <h2 class="operations-title">Dernières opérations</h2>
-
+            <h2 class="operations-title">Dernieres operations</h2>
             <div class="op-list">
-                <!-- Limite aux 5 premières opérations avec le filter slice -->
-                {% for op in dernieres_ops|slice:":5" %}
+                {% for op in dernieres_ops %}
                 <div class="op-item">
-                    <!-- Infos Opération (Bénéficiaire, Date) -->
                     <div class="op-left">
-                        <span class="op-beneficiary">{{ op.karfa.beneficiaire|default:"Bénéficiaire" }}</span>
-                        <span class="op-date" style="color: #94a3b8; font-size: 0.8em;">• {{ op.date|date:"d/m/Y H:i" }}</span>
+                        <span class="op-beneficiary">{{ op.karfa.beneficiaire }}</span>
+                        <span class="op-date" style="color: #94a3b8; font-size: 0.8em;">
+                            {{ op.date|date:"d/m/Y H:i" }}
+                        </span>
                     </div>
-
-                    <!-- Actions (Type, Montant) -->
                     <div class="op-right" style="gap: 15px;">
                         {% if op.type == 'AJOUT' %}
-                        <span class="op-type type-ajout" style="white-space: nowrap;">{{ op.get_type_display|default:"AJOUT" }}</span>
-                        <span class="op-amount amount-positive" style="white-space: nowrap;">+ {{ op.montant|default:0|milliers }} GNF</span>
+                        <span class="op-type type-ajout" style="white-space: nowrap;">{{ op.get_type_display }}</span>
+                        <span class="op-amount amount-positive" style="white-space: nowrap;">
+                            + {{ op.montant|milliers }} GNF
+                        </span>
                         {% else %}
-                        <span class="op-type type-retrait" style="white-space: nowrap;">{{ op.get_type_display|default:"RETRAIT" }}</span>
-                        <span class="op-amount amount-negative" style="white-space: nowrap;">- {{ op.montant|default:0|milliers }} GNF</span>
+                        <span class="op-type type-retrait" style="white-space: nowrap;">{{ op.get_type_display }}</span>
+                        <span class="op-amount amount-negative" style="white-space: nowrap;">
+                            - {{ op.montant|milliers }} GNF
+                        </span>
                         {% endif %}
                     </div>
                 </div>
                 {% empty %}
                 <div style="text-align: center; color: #6b7280; padding: 2rem 0;">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
-                    <div>Aucune opération récente à afficher.</div>
+                    <div style="font-size: 2rem;">📝</div>
+                    <div>Aucune operation recente.</div>
                 </div>
                 {% endfor %}
             </div>
             <div style="text-align: right; margin-top: 1.5rem;">
                 <a href="{% url 'karfa:toutes_operations' %}"
-                    style="color: #3b82f6; text-decoration: none; font-weight: 500;">
-                    Voir plus &rarr;
-                </a>
+                    style="color: #3b82f6; text-decoration: none; font-weight: 500;">Voir plus</a>
             </div>
         </section>
 
     </div>
 </div>
+
+<style>
+    .export-item:hover {
+        background-color: #f8fafc;
+    }
+</style>
+
+<script>
+    (function () {
+        var toggle = document.getElementById('exportToggle');
+        var menu = document.getElementById('exportMenu');
+        if (toggle && menu) {
+            toggle.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
+            document.addEventListener('click', function () { menu.style.display = 'none'; });
+            menu.addEventListener('click', function (e) { e.stopPropagation(); });
+        }
+    })();
+</script>
 
 {% endblock %}

@@ -77,14 +77,14 @@ class MouvementKarfa(models.Model):
         verbose_name='Note/Commentaire'
     )
     
-    # Utilisateur ayant effectué l'opération (traçabilité)
-    effectue_par = models.ForeignKey(
+    # Utilisateur ayant effectué l'opération
+    cree_par = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='mouvements_karfa',
-        verbose_name='Effectué par'
+        verbose_name='Créé par'
     )
     
     # Justificatif optionnel pour ce mouvement spécifique

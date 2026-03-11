@@ -21,7 +21,7 @@ class MouvementCompte(models.Model):
     
     date = models.DateTimeField(auto_now_add=True)
     motif = models.CharField(max_length=255, blank=True)
-    effectue_par = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    cree_par = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         compte = self.compte_argent or self.compte_or

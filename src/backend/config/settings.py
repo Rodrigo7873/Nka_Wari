@@ -125,4 +125,5 @@ MEDIA_ROOT = BASE_DIR.parent / 'frontend/media'
 # DIVERS
 # =============================================================================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = '/login/'  # À remplacer par ta propre page de connexion plus tard
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'

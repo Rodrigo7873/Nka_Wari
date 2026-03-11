@@ -19,6 +19,8 @@ class Dette(models.Model):
     ]
 
     sens = models.CharField(max_length=20, choices=SENS_CHOICES)
+    cree_par = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dettes', null=True)
+    compte_debit = models.ForeignKey('comptes.CompteArgent', on_delete=models.SET_NULL, null=True, blank=True, related_name='dettes_liees')
     montant = models.DecimalField(max_digits=12, decimal_places=0)
     montant_restant = models.DecimalField(max_digits=12, decimal_places=0, default=0)
     personne = models.CharField(max_length=100)
@@ -41,6 +43,11 @@ class Dette(models.Model):
         if not self.pk:
             self.montant_restant = self.montant
         super().save(*args, **kwargs)
+
+    @property
+    def compte_dette(self):
+        """Récupère le compte de type DETTE associé à cette dette."""
+        return self.comptes_argent_lies.filter(type_compte='DETTE').first()
 
     # ✅ méthode ajoutée à l'intérieur de la classe
     def archiver_si_payee_depuis_30j(self):

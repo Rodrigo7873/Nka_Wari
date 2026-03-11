@@ -69,30 +69,51 @@
         <!-- Je dois : je peux rembourser ou ajouter -->
         <button onclick="showPaymentForm('rembourser')"
             style="display: inline-flex; align-items: center; gap: 8px; background: #ef4444; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12-7-7-7 7"/><path d="M12 19V5"/></svg> Rembourser
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m19 12-7-7-7 7" />
+                <path d="M12 19V5" />
+            </svg> Rembourser
         </button>
         <button onclick="showPaymentForm('ajout')"
             style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg> Ajouter
         </button>
 
         {% elif dette.sens == 'ON_ME_DOIT' %}
         <!-- On me doit : j'encaisse ou j'ajoute un prêt -->
-        <button onclick="showPaymentForm('encaisser')"
-            style="display: inline-flex; align-items: center; gap: 8px; background: #3b82f6; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7 7 7-7"/><path d="M12 5v14"/></svg> Encaisser
-        </button>
-        <button onclick="showPaymentForm('ajouter_creance')"
-            style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter (prêt)
-        </button>
+        <a href="{% url 'dettes:encaisser_dette' dette.id %}"
+            style="display: inline-flex; align-items: center; gap: 8px; background: #3b82f6; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2); text-decoration: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m5 12 7 7 7-7" />
+                <path d="M12 5v14" />
+            </svg> Encaisser
+        </a>
+        <a href="{% url 'dettes:ajouter_dette' dette.id %}"
+            style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2); text-decoration: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg> Ajouter
+        </a>
         {% endif %}
 
         <form method="post" action="{% url 'dettes:archiver_dette' dette.id %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit"
+            <button type="button" data-confirm="Confirmez-vous l'archivage de cette dette ?"
                 style="background: #f8fafc; color: #64748b; padding: 10px 24px; border: 1px solid #e2e8f0; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 8v13H3V8" />
+                    <path d="M1 3h22v5H1z" />
+                    <path d="M10 12h4" />
+                </svg>
                 Archiver
             </button>
         </form>
@@ -100,9 +121,16 @@
         <!-- Bouton Désarchiver -->
         <form method="post" action="{% url 'dettes:archiver_dette' dette.id %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit"
-                style="background: #27ae60; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -2px;"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="m16 14-4-4-4 4"/><path d="M12 10v7"/></svg> Désarchiver
+            <button type="button" data-confirm="Cette dette réapparaîtra dans la liste active. Confirmer ?"
+                data-confirm-type="success"
+                style="background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 8v13H3V8" />
+                    <path d="M1 3h22v5H1z" />
+                    <path d="m16 14-4-4-4 4" />
+                    <path d="M12 10v7" />
+                </svg> Désarchiver
             </button>
         </form>
         <div

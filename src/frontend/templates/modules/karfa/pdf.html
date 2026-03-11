@@ -1,0 +1,213 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport Karfa</title>
+    <style>
+        @page {
+            margin: 1.5cm;
+            size: A4;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #1e293b;
+            line-height: 1.2;
+            font-size: 10px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        .header {
+            border-bottom: 2px solid #10b981;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #065f46;
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .header .meta {
+            color: #64748b;
+            font-size: 9px;
+            margin-top: 3px;
+        }
+
+        .summary-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbfcda;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 10px;
+            color: #166534;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        .summary-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #15803d;
+        }
+
+        .section-title {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            border-left: 4px solid #10b981;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed;
+            /* Force le respect des largeurs Colonnes */
+        }
+
+        th {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 8px 5px;
+            text-align: left;
+            font-size: 8px;
+            text-transform: uppercase;
+            color: #475569;
+        }
+
+        td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            word-wrap: break-word;
+            /* Permet de casser le texte si trop long */
+        }
+
+        .badge-ajout {
+            color: #166534;
+            background-color: #dcfce7;
+            padding: 2px 6px;
+            border-radius: 30px;
+            font-size: 8px;
+        }
+
+        .badge-retrait {
+            color: #991b1b;
+            background-color: #fee2e2;
+            padding: 2px 6px;
+            border-radius: 30px;
+            font-size: 8px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 8px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header text-center">
+        <h1>Rapport de Situation Karfa</h1>
+        <div class="meta">
+            Situé au {{ date|date:"d/m/Y à H:i" }} | Document pour {{ user_name }}
+        </div>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-label">TOTAL ACTUELLEMENT ENGAGÉ</div>
+        <div class="summary-amount">{{ total_engage|intspace }} GNF</div>
+    </div>
+
+    <div class="section-title">Liste des Karfa de {{ user_name }}</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">Bénéficiaire</th>
+                <th style="width: 25%;">Motif / Objet</th>
+                <!-- Colonne Début supprimée ici -->
+                <th style="width: 25%;" class="text-right">Montant Initial</th>
+                <th style="width: 25%;" class="text-right">Reste à payer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for karfa in karfas %}
+            <tr>
+                <td class="font-bold">{{ karfa.beneficiaire }}</td>
+                <td>{{ karfa.motif|default:"-" }}</td>
+                <td class="text-right nowrap">{{ karfa.montant_initial|intspace }} GNF</td>
+                <td class="text-right font-bold nowrap" style="color: #10b981;">{{ karfa.montant_actuel|intspace }} GNF
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if dernieres_ops %}
+    <div class="section-title" style="border-left-color: #64748b; margin-top: 30px;">Historique des dernières opérations
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 20%;">Date</th>
+                <th style="width: 25%;">Lié à</th>
+                <th style="width: 25%;">Type d'acte</th>
+                <th style="width: 30%;" class="text-right">Montant</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for op in dernieres_ops %}
+            <tr>
+                <td style="color: #64748b;">{{ op.date|date:"d/m/Y H:i" }}</td>
+                <td class="font-bold">{{ op.karfa.beneficiaire }}</td>
+                <td>
+                    <span class="{% if op.type == 'AJOUT' %}badge-ajout{% else %}badge-retrait{% endif %}">
+                        {{ op.get_type_display }}
+                    </span>
+                </td>
+                <td class="text-right font-bold nowrap"
+                    style="color: {% if op.type == 'AJOUT' %}#166534{% else %}#ef4444{% endif %};">
+                    {% if op.type == 'AJOUT' %}+{% else %}-{% endif %} {{ op.montant|intspace }} GNF
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="footer text-center">
+        N'ka Wari - Rapport financier automatisé | Document généré le {{ date|date:"d/m/Y" }}
+    </div>
+</body>
+
+</html>

@@ -6,7 +6,17 @@ from .models.or_ import CompteOr
 class CompteArgentForm(forms.ModelForm):
     class Meta:
         model = CompteArgent
-        fields = ['nom', 'type_compte', 'solde']
+        fields = ['nom', 'type_compte', 'solde', 'dette_liee']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            # On ne propose que les dettes de l'utilisateur qui ne sont pas encore liées à un compte
+            from modules.dettes.models import Dette
+            self.fields['dette_liee'].queryset = Dette.objects.filter(cree_par=user, archive=False)
+            self.fields['dette_liee'].label = "Lier à une dette existante (Optionnel)"
+            self.fields['dette_liee'].required = False
 
 class CompteOrForm(forms.ModelForm):
     class Meta:

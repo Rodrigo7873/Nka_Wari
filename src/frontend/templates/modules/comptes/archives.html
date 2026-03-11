@@ -7,9 +7,11 @@
     <a href="{% url 'comptes:liste_comptes' %}"
         style="background: white; border: 1px solid #e2e8f0; color: #1e2b3c; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
         onmouseover="this.style.background='#f8fafc'; this.style.transform='translateY(-1px)';"
-        onmouseout="this.style.background='white'; this.style.transform='translateY(0)';"
-    >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> Retour
+        onmouseout="this.style.background='white'; this.style.transform='translateY(0)';">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6" />
+        </svg> Retour
     </a>
 </div>
 
@@ -50,20 +52,16 @@
         <div style="display: flex; gap: 10px;">
             <a href="{% url 'comptes:detail_compte' compte.id %}"
                 style="background: #eff6ff; color: #3b82f6; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-size: 0.85em; font-weight: 600; transition: all 0.2s;"
-                onmouseover="this.style.background='#dbeafe';"
-                onmouseout="this.style.background='#eff6ff';"
-            >
+                onmouseover="this.style.background='#dbeafe';" onmouseout="this.style.background='#eff6ff';">
                 Consulter
             </a>
 
             {% if compte.solde == 0 or compte.poids_grammes == 0 %}
             <form method="post" action="{% url 'comptes:supprimer_compte' compte.id %}" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" onclick="return confirm('Supprimer définitivement ce compte ?')"
+                <button type="button" data-confirm="Supprimer définitivement ce compte ? Action irréversible."
                     style="background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.2s;"
-                    onmouseover="this.style.background='#fee2e2';"
-                    onmouseout="this.style.background='#fef2f2';"
-                >
+                    onmouseover="this.style.background='#fee2e2';" onmouseout="this.style.background='#fef2f2';">
                     Supprimer
                 </button>
             </form>

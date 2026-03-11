@@ -51,43 +51,60 @@
         {% if not compte.archive %}
         <button onclick="showOperationForm('ajout')"
             style="display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg> Ajouter
         </button>
         <button onclick="showOperationForm('retrait')"
             style="display: inline-flex; align-items: center; gap: 8px; background: #ef4444; color: white; padding: 10px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg> Retirer
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg> Retirer
         </button>
         <form method="post" action="{% url 'comptes:archiver_compte' compte.id %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit" onclick="return confirm('Voulez-vous vraiment archiver ce compte ?')"
+            <button type="button" data-confirm="Archiver ce compte ? Il pourra être désarchivé plus tard."
                 style="background: #f1f5f9; color: #475569; padding: 10px 24px; border: 1px solid #e2e8f0; border-radius: 30px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
-                onmouseover="this.style.background='#e2e8f0';"
-                onmouseout="this.style.background='#f1f5f9';"
-            >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"></path><path d="M1 3h22v5H1z"></path><path d="M10 12h4"></path></svg> 
+                onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 8v13H3V8"></path>
+                    <path d="M1 3h22v5H1z"></path>
+                    <path d="M10 12h4"></path>
+                </svg>
                 Archiver
             </button>
         </form>
         {% else %}
         <form method="post" action="{% url 'comptes:desarchiver_compte' compte.id %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit"
+            <button type="button" data-confirm="Ce compte sera à nouveau actif. Continuer ?" data-confirm-type="success"
                 style="background: #eff6ff; color: #3b82f6; border: 1px solid #dbeafe; padding: 10px 24px; border-radius: 30px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
-                onmouseover="this.style.background='#dbeafe';"
-                onmouseout="this.style.background='#eff6ff';"
-            >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h10a5 5 0 0 1 5 5v2"></path><path d="M3 10l5-5"></path><path d="M3 10l5 5"></path></svg> 
+                onmouseover="this.style.background='#dbeafe';" onmouseout="this.style.background='#eff6ff';">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 10h10a5 5 0 0 1 5 5v2"></path>
+                    <path d="M3 10l5-5"></path>
+                    <path d="M3 10l5 5"></path>
+                </svg>
                 Désarchiver
             </button>
         </form>
         {% if is_or and compte.poids_grammes == 0 or not is_or and compte.solde == 0 %}
         <a href="{% url 'comptes:supprimer_compte' compte.id %}"
-            onclick="return confirm('Supprimer définitivement ce compte ? Action irréversible.')"
+            data-confirm="Supprimer définitivement ce compte ? Action irréversible."
             style="background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
-            onmouseover="this.style.background='#fee2e2';"
-            onmouseout="this.style.background='#fef2f2';"
-        >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            onmouseover="this.style.background='#fee2e2';" onmouseout="this.style.background='#fef2f2';">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
             Supprimer
         </a>
         {% endif %}
@@ -124,7 +141,11 @@
             <div style="display: flex; gap: 10px;">
                 <button type="submit" id="submitBtn"
                     style="background: #10b981; color: white; padding: 12px 25px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Valider
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg> Valider
                 </button>
                 <button type="button" onclick="document.getElementById('operationForm').style.display='none'"
                     style="background: #6c757d; color: white; padding: 12px 25px; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 15px;">
