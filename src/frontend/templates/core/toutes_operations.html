@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="op-right">
-                <span class="op-amount">{{ op.montant|milliers }}</span>
+                <span class="op-amount" style="white-space: nowrap;">{{ op.montant|milliers }} {{ op.unite }}</span>
                 <span class="op-time">{{ op.date|date:"d/m/Y H:i" }}</span>
             </div>
         </div>

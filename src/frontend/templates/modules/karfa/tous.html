@@ -3,73 +3,66 @@
 {% load custom_filters %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/karfa.css' %}">
+<link rel="stylesheet" href="{% static 'css/tableaux.css' %}">
 
-<div class="tous-karfa-container">
-    <div class="wrapper">
-
-        <!-- En-tête avec boutons -->
-        <header class="page-header">
-            <h1 class="page-title">Tous les Karfa</h1>
-
-            <div class="header-actions">
-                <a href="{% url 'karfa:karfa_list' %}"
-                    style="background: #6c757d; color: white; padding: 8px 16px; border-radius: 30px; text-decoration: none;">
-                    &larr; Accueil
-                </a>
-                <!-- Bouton "Archives" fonctionnel -->
-                <a href="{% url 'karfa:liste_archives' %}" class="btn btn-light">
-                    <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" rx="2" ry="2" width="20" height="5"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg></span> Archives
-                </a>
-            </div>
-        </header>
-
-        <!-- Grille des éléments -->
-        <div class="karfa-grid">
-            {% for k in karfas %}
-            <!-- Carte cliquable menant au détail du Karfa -->
-            <a href="{% url 'karfa:detail_karfa' k.id %}" class="karfa-card">
-                <div class="card-top">
-                    <!-- Titre (bénéficiaire) et motif du Karfa -->
-                    <div class="card-title-group">
-                        <h3 class="card-title">{{ k.beneficiaire|default:"Bénéficiaire" }}</h3>
-                        <div class="card-motif">{{ k.motif|default:"Sans motif" }}</div>
-                    </div>
-
-                    <!-- Badge en haut à droite en fonction du statut -->
-                    {% if k.statut == 'RENDU_TOTAL' %}
-                    <span class="status-badge badge-rendu">{{ k.get_statut_display|default:"Rendu" }}</span>
-                    {% elif k.statut == 'PARTIELLEMENT_RENDU' %}
-                    <span class="status-badge badge-partiel">{{ k.get_statut_display|default:"Partiel" }}</span>
-                    {% else %}
-                    <span class="status-badge badge-actif">{{ k.get_statut_display|default:"Actif" }}</span>
-                    {% endif %}
-                </div>
-
-                <div class="card-bottom">
-                    <!-- Date en bas à gauche en gris -->
-                    <div class="card-date">
-                        {{ k.date_creation|date:"d/m/Y"|default:"Récent" }}
-                    </div>
-
-                    <!-- Montant formaté avec |milliers et GNF en bas à droite -->
-                    <div
-                        class="card-amount {% if k.statut == 'RENDU_TOTAL' %}amount-rendu{% else %}amount-actif{% endif %}">
-                        {{ k.montant_actuel|default:0|milliers }} GNF
-                    </div>
-                </div>
-            </a>
-            {% empty %}
-            <!-- État vide -->
-            <div
-                style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; background: white; border-radius: 1rem; border: 1px dashed #d1d5db;">
-                <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #9ca3af;">🗂️</div>
-                <h3 style="color: #374151; margin-bottom: 0.5rem; font-weight: 600;">Aucun Karfa disponible</h3>
-                <p style="color: #6b7280; font-size: 0.875rem;">Vous n'avez pas encore de Karfa dans votre liste.</p>
-            </div>
-            {% endfor %}
+<div class="tous-karfa-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    
+    <!-- En-tête -->
+    <header class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h1 class="page-title" style="margin: 0; color: #1e2b3c; font-size: 24px; font-weight: 700;">Tous les Karfa (Dépôts)</h1>
+            <p style="margin: 5px 0 0; color: #64748b; font-size: 14px;">Liste complète de l'argent qui vous est confié.</p>
         </div>
 
+        <div class="header-actions" style="display: flex; gap: 10px; align-items: center;">
+            <a href="{% url 'karfa:karfa_list' %}" style="background: white; border: 1px solid #e2e8f0; color: #64748b; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+                ← Accueil
+            </a>
+            <a href="{% url 'karfa:liste_archives' %}" style="background: white; border: 1px solid #e2e8f0; color: #64748b; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" rx="2" ry="2" width="20" height="5"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/>
+                </svg> Archives
+            </a>
+        </div>
+    </header>
+
+    <!-- Liste des éléments (Style Tableau) -->
+    <div class="table-container">
+        {% for k in karfas %}
+        <a href="{% url 'karfa:detail_karfa' k.id %}" class="table-row">
+            <div class="row-left">
+                <div class="row-icon" style="background: #eef2ff; color: #6366f1;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="row-info">
+                    <span class="row-title">{{ k.beneficiaire|default:"Bénéficiaire" }}</span>
+                    <span class="row-subtitle">
+                        {{ k.motif|default:"Sans motif" }} • {{ k.date_creation|date:"d/m/Y" }}
+                    </span>
+                </div>
+            </div>
+            <div class="row-right">
+                <div class="row-amount" style="color: {% if k.statut == 'RENDU_TOTAL' %}#94a3b8{% else %}#6366f1{% endif %};">
+                    {{ k.montant_actuel|default:0|milliers }} GNF
+                </div>
+                {% if k.statut == 'RENDU_TOTAL' %}
+                <span class="badge-row" style="background: #f1f5f9; color: #94a3b8;">RENDU</span>
+                {% elif k.statut == 'PARTIELLEMENT_RENDU' %}
+                <span class="badge-row" style="background: #fff9eb; color: #f59e0b;">PARTIEL</span>
+                {% else %}
+                <span class="badge-row" style="background: #eef2ff; color: #6366f1;">ACTIF</span>
+                {% endif %}
+            </div>
+        </a>
+        {% empty %}
+        <div style="text-align: center; padding: 40px; color: #94a3b8; background: white; border-radius: 12px; border: 1px dashed #e2e8f0;">
+            Aucun Karfa enregistré.
+        </div>
+        {% endfor %}
     </div>
+
 </div>
 {% endblock %}

@@ -34,8 +34,7 @@
                     style="background: #eff6ff; border: 1px solid #dbeafe; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: #1e40af; font-size: 14px; font-weight: 500;">Reste à récupérer :</span>
-                        <span style="color: #1d4ed8; font-size: 18px; font-weight: 700;">{{
-                            dette.montant_restant|milliers }} GNF</span>
+                        <span style="color: #1d4ed8; font-size: 18px; font-weight: 700;">{{ dette.montant_restant|milliers }} GNF</span>
                     </div>
                 </div>
 
@@ -46,9 +45,10 @@
                     </label>
                     <div class="amount-wrapper">
                         <span class="amount-prefix">GNF</span>
-                        <input class="field-input" type="number" id="montant" name="montant"
-                            value="{{ dette.montant_restant }}" required min="1" max="{{ dette.montant_restant }}">
+                        <input class="field-input" type="text" id="montant" name="montant"
+                            value="{{ dette.montant_restant }}" required inputmode="numeric" oninput="formatMontant(this)">
                     </div>
+                    <small style="color: #94a3b8; font-size: 11px; margin-top: 5px; display: block;">Max 12 chiffres</small>
                 </div>
 
                 <!-- Compte à créditer -->
@@ -60,8 +60,7 @@
                         <select name="compte_id" id="compte_id" class="field-input" required>
                             <option value="">-- Choisir un compte --</option>
                             {% for compte in comptes %}
-                            <option value="{{ compte.id }}" {% if compte.id==dette.compte_debit.id %}selected{% endif
-                                %}>
+                            <option value="{{ compte.id }}" {% if compte.id == dette.compte_debit.id %}selected{% endif %}>
                                 {{ compte.nom }} ({{ compte.solde|milliers }} GNF)
                             </option>
                             {% endfor %}

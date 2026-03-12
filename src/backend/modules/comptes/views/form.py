@@ -51,15 +51,26 @@ def creer_compte(request):
 @login_required
 def modifier_compte(request, id):
     """Modifier les infos de base d'un compte."""
-    # On cherche d'abord dans Argent, puis dans Or (Filtré par USER)
-    try:
-        compte = CompteArgent.objects.get(id=id, cree_par=request.user)
-        type_compte = 'argent'
-        form_class = CompteArgentForm
-    except CompteArgent.DoesNotExist:
+    type_param = request.GET.get('type')
+    
+    if type_param == 'or':
         compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
         type_compte = 'or'
         form_class = CompteOrForm
+    elif type_param == 'argent':
+        compte = get_object_or_404(CompteArgent, id=id, cree_par=request.user)
+        type_compte = 'argent'
+        form_class = CompteArgentForm
+    else:
+        # Fallback
+        try:
+            compte = CompteArgent.objects.get(id=id, cree_par=request.user)
+            type_compte = 'argent'
+            form_class = CompteArgentForm
+        except CompteArgent.DoesNotExist:
+            compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
+            type_compte = 'or'
+            form_class = CompteOrForm
         
     if request.method == 'POST':
         if type_compte == 'argent':
@@ -70,7 +81,7 @@ def modifier_compte(request, id):
         if form.is_valid():
             form.save()
             messages.success(request, f"Compte '{compte.nom}' mis à jour.")
-            return redirect('comptes:detail_compte', id=id)
+            return redirect(f"{redirect('comptes:detail_compte', id=id).url}?type={type_compte}")
     else:
         if type_compte == 'argent':
             form = form_class(instance=compte, user=request.user)

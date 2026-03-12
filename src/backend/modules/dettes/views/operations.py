@@ -9,51 +9,84 @@ from django.utils import timezone
 
 @login_required
 def rembourser_dette(request, id):
+    from modules.comptes.models import CompteArgent, MouvementCompte
+    from django.db import transaction
+    
     dette = get_object_or_404(Dette, id=id, cree_par=request.user)
+    comptes = CompteArgent.objects.filter(cree_par=request.user, archive=False).exclude(type_compte='DETTE')
 
     if request.method == 'POST':
         try:
-            montant = int(request.POST['montant'])
+            montant_str = request.POST.get('montant', '0').replace(',', '.')
+            montant = int(float(montant_str)) if montant_str else 0
+            mode_paiement = request.POST.get('mode_paiement')
+            compte_id = request.POST.get('compte_id')
+            
             if montant <= 0 or montant > dette.montant_restant:
                 messages.error(request, "Montant invalide.")
             else:
-                Remboursement.objects.create(
-                    dette=dette,
-                    type='REMBOURSEMENT',
-                    montant=montant,
-                    note=request.POST.get('note', '')
-                )
-                dette.montant_restant -= montant
-                if dette.montant_restant == 0:
-                    dette.statut = 'PAYEE'
-                    dette.date_dernier_paiement = timezone.now()
-                else:
-                    dette.statut = 'PARTIELLEMENT_PAYEE'
-                dette.save()
+                with transaction.atomic():
+                    # Si paiement par compte, on vérifie et on débite
+                    if mode_paiement == 'compte' and compte_id:
+                        compte = get_object_or_404(CompteArgent, id=compte_id, cree_par=request.user)
+                        if compte.solde < montant:
+                            messages.error(request, f"Solde insuffisant sur le compte {compte.nom}.")
+                            return render(request, 'modules/dettes/rembourser.html', {'dette': dette, 'comptes': comptes})
+                        
+                        # Débiter le compte
+                        compte.solde -= montant
+                        compte.save()
+                        
+                        # Créer le mouvement de compte
+                        MouvementCompte.objects.create(
+                            compte_argent=compte,
+                            type=MouvementCompte.TYPE_RETRAIT,
+                            montant=montant,
+                            motif=f"Remboursement dette {dette.personne}",
+                            cree_par=request.user
+                        )
 
-                # 2️⃣ MISE À JOUR DU COMPTE LIE (Si c'est une dette "Je dois")
-                if dette.sens == 'JE_DOIS':
-                    compte_lie = dette.compte_dette
-                    if compte_lie:
-                        compte_lie.solde = dette.montant_restant
-                        if dette.montant_restant == 0:
-                            compte_lie.archive = True
-                            compte_lie.date_archivage = timezone.now()
-                        compte_lie.save()
+                    # Enregistrer le remboursement de dette
+                    Remboursement.objects.create(
+                        dette=dette,
+                        type='REMBOURSEMENT',
+                        montant=montant,
+                        note=request.POST.get('note', '')
+                    )
+                    
+                    # Mettre à jour la dette
+                    dette.montant_restant -= montant
+                    if dette.montant_restant == 0:
+                        dette.statut = 'PAYEE'
+                        dette.date_dernier_paiement = timezone.now()
+                    else:
+                        dette.statut = 'PARTIELLEMENT_PAYEE'
+                    dette.save()
 
-                messages.success(request, "Remboursement enregistré.")
-                return redirect('dettes:liste_dettes')
+                    # 2️⃣ MISE À JOUR DU COMPTE LIE (Si c'est une dette "Je dois")
+                    if dette.sens == 'JE_DOIS':
+                        compte_lie = dette.compte_dette
+                        if compte_lie:
+                            compte_lie.solde = dette.montant_restant
+                            if dette.montant_restant == 0:
+                                compte_lie.archive = True
+                                compte_lie.date_archivage = timezone.now()
+                            compte_lie.save()
+
+                    messages.success(request, "Remboursement enregistré.")
+                    return redirect('dettes:liste_dettes')
         except ValueError:
             messages.error(request, "Montant invalide.")
 
-    return render(request, 'modules/dettes/rembourser.html', {'dette': dette})
+    return render(request, 'modules/dettes/rembourser.html', {'dette': dette, 'comptes': comptes})
 
 @login_required
 def ajouter_paiement(request, id):
     dette = get_object_or_404(Dette, id=id, cree_par=request.user)
     if request.method == 'POST':
         try:
-            montant = int(request.POST.get('montant', 0))
+            montant_str = request.POST.get('montant', '0').replace(',', '.')
+            montant = int(float(montant_str)) if montant_str else 0
             motif = request.POST.get('motif', '').strip()
             type_form = request.POST.get('type_paiement')
             
@@ -126,7 +159,62 @@ def toutes_operations_dettes(request):
 
 @login_required
 def ajouter_dette(request, id):
-    """Augmenter le montant d'une créance existante."""
+    """Augmenter le montant d'une dette que JE DOIS (Nouvel emprunt)."""
+    from modules.comptes.models import CompteArgent, MouvementCompte
+    from django.db import transaction
+
+    dette = get_object_or_404(Dette, id=id, cree_par=request.user)
+    
+    # Sécurité : Uniquement pour les dettes "Je dois"
+    if dette.sens != 'JE_DOIS':
+        messages.error(request, "Cette action est réservée aux dettes (Je dois).")
+        return redirect('dettes:detail_dette', id=id)
+
+    comptes = CompteArgent.objects.filter(cree_par=request.user, archive=False).exclude(type_compte='DETTE')
+
+    if request.method == 'POST':
+        compte_id = request.POST.get('compte_id')
+        try:
+            montant_str = request.POST.get('montant', '0').replace(',', '.')
+            montant_ajout = int(float(montant_str)) if montant_str else 0
+            motif = request.POST.get('motif', '').strip()
+            
+            if montant_ajout <= 0:
+                messages.error(request, "Le montant doit être supérieur à 0.")
+            else:
+                with transaction.atomic():
+                    # Augmenter le capital de la dette
+                    dette.montant += montant_ajout
+                    dette.montant_restant += montant_ajout
+                    if dette.statut == 'PAYEE':
+                        dette.statut = 'PARTIELLEMENT_PAYEE'
+                    dette.save()
+                    
+                    # Mettre à jour le compte passif miroir
+                    if dette.compte_dette:
+                        dette.compte_dette.solde = dette.montant_restant
+                        dette.compte_dette.archive = False
+                        dette.compte_dette.save()
+                    
+                    # Opération historique
+                    Remboursement.objects.create(
+                        dette=dette,
+                        type='AJOUT',
+                        montant=montant_ajout,
+                        note=motif or "Nouvel emprunt"
+                    )
+                    
+                    messages.success(request, "Dette augmentée avec succès.")
+                    return redirect('dettes:detail_dette', id=id)
+        except (ValueError, TypeError):
+            messages.error(request, "Données invalides.")
+
+    return render(request, 'modules/dettes/emprunter.html', {'dette': dette, 'comptes': comptes})
+
+
+@login_required
+def augmenter_creance(request, id):
+    """Augmenter le montant d'une créance ON ME DOIT (Nouveau prêt)."""
     from modules.comptes.models import CompteArgent, MouvementCompte
     from django.db import transaction
 
@@ -134,69 +222,56 @@ def ajouter_dette(request, id):
     
     # Sécurité : Uniquement pour les créances "On me doit"
     if dette.sens != 'ON_ME_DOIT':
-        messages.error(request, "Seules les créances (On me doit) peuvent être augmentées.")
+        messages.error(request, "Cette action est réservée aux créances (On me doit).")
         return redirect('dettes:detail_dette', id=id)
 
-    # Récupérer les comptes argent du user avec solde > 0 (Exclure les comptes DETTE)
     comptes = CompteArgent.objects.filter(cree_par=request.user, archive=False, solde__gt=0).exclude(type_compte='DETTE')
 
     if request.method == 'POST':
         compte_id = request.POST.get('compte_id')
         try:
-            montant_ajout = int(request.POST.get('montant', 0))
+            montant_str = request.POST.get('montant', '0').replace(',', '.')
+            montant_ajout = int(float(montant_str)) if montant_str else 0
             motif = request.POST.get('motif', '').strip()
             
             if montant_ajout <= 0:
                 messages.error(request, "Le montant doit être supérieur à 0.")
             else:
                 compte = get_object_or_404(CompteArgent, id=compte_id, cree_par=request.user)
-                
                 if compte.solde < montant_ajout:
-                    messages.error(request, f"Solde insuffisant sur le compte {compte.nom} ({compte.solde:,.0f} GNF).")
+                    messages.error(request, f"Solde insuffisant sur {compte.nom}.")
                 else:
                     with transaction.atomic():
-                        # 1. Débiter le compte
                         compte.solde -= montant_ajout
                         compte.save()
                         
-                        # 2. Augmenter la dette
-                        dette.montant += montant_ajout
-                        dette.montant_restant += montant_ajout
-                        
-                        # Mettre à jour le statut
-                        if dette.montant_restant > 0:
-                            if dette.montant_restant == dette.montant:
-                                dette.statut = 'NON_PAYEE'
-                            else:
-                                dette.statut = 'PARTIELLEMENT_PAYEE'
-                        dette.save()
-                        
-                        # 3. Créer le mouvement de compte
                         MouvementCompte.objects.create(
                             compte_argent=compte,
                             type=MouvementCompte.TYPE_RETRAIT,
                             montant=montant_ajout,
-                            motif=f"Augmentation créance {dette.personne} - {motif}",
+                            motif=f"Nouveau prêt : {dette.personne} - {motif}",
                             cree_par=request.user
                         )
                         
-                        # 4. Créer l'opération de dette (AJOUT)
+                        dette.montant += montant_ajout
+                        dette.montant_restant += montant_ajout
+                        if dette.statut == 'PAYEE':
+                            dette.statut = 'PARTIELLEMENT_PAYEE'
+                        dette.save()
+                        
                         Remboursement.objects.create(
                             dette=dette,
                             type='AJOUT',
                             montant=montant_ajout,
-                            note=motif or "Augmentation de la créance"
+                            note=motif or "Nouveau prêt"
                         )
                         
-                        messages.success(request, f"La créance a été augmentée de {montant_ajout:,.0f} GNF.")
+                        messages.success(request, "Créance augmentée avec succès.")
                         return redirect('dettes:detail_dette', id=id)
         except (ValueError, TypeError):
             messages.error(request, "Données invalides.")
 
-    return render(request, 'modules/dettes/ajouter.html', {
-        'dette': dette,
-        'comptes': comptes
-    })
+    return render(request, 'modules/dettes/ajouter.html', {'dette': dette, 'comptes': comptes})
 
 
 @login_required
@@ -220,7 +295,8 @@ def encaisser_dette(request, id):
     if request.method == 'POST':
         compte_id = request.POST.get('compte_id')
         try:
-            montant_encaisse = int(request.POST.get('montant', 0))
+            montant_str = request.POST.get('montant', '0').replace(',', '.')
+            montant_encaisse = int(float(montant_str)) if montant_str else 0
             note = request.POST.get('note', '').strip()
             
             if montant_encaisse <= 0:

@@ -41,10 +41,16 @@ def liste_archives_comptes(request):
 @login_required
 def archiver_compte(request, id):
     """Archive un compte."""
-    try:
-        compte = CompteArgent.objects.get(id=id, cree_par=request.user)
-    except CompteArgent.DoesNotExist:
+    type_param = request.GET.get('type')
+    if type_param == 'or':
         compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
+    elif type_param == 'argent':
+        compte = get_object_or_404(CompteArgent, id=id, cree_par=request.user)
+    else:
+        try:
+            compte = CompteArgent.objects.get(id=id, cree_par=request.user)
+        except CompteArgent.DoesNotExist:
+            compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
     
     compte.archive = True
     compte.date_archivage = timezone.now()
@@ -55,34 +61,56 @@ def archiver_compte(request, id):
 @login_required
 def desarchiver_compte(request, id):
     """Désarchive un compte."""
-    try:
-        compte = CompteArgent.objects.get(id=id, cree_par=request.user)
-    except CompteArgent.DoesNotExist:
+    type_param = request.GET.get('type')
+    est_argent = False
+    
+    if type_param == 'or':
         compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
+    elif type_param == 'argent':
+        compte = get_object_or_404(CompteArgent, id=id, cree_par=request.user)
+        est_argent = True
+    else:
+        try:
+            compte = CompteArgent.objects.get(id=id, cree_par=request.user)
+            est_argent = True
+        except CompteArgent.DoesNotExist:
+            compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
     
     compte.archive = False
     compte.date_archivage = None
     compte.save()
     messages.success(request, f"Le compte '{compte.nom}' a été désarchivé.")
-    return redirect('comptes:detail_compte', id=id)
+    return redirect(f"{redirect('comptes:detail_compte', id=id).url}?type={'argent' if est_argent else 'or'}")
 
 @login_required
 def supprimer_compte(request, id):
     """Supprime un compte définitivement."""
-    try:
-        compte = CompteArgent.objects.get(id=id, cree_par=request.user)
-        solde_zero = (compte.solde == 0)
-    except CompteArgent.DoesNotExist:
+    type_param = request.GET.get('type')
+    est_argent = False
+    
+    if type_param == 'or':
         compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
         solde_zero = (compte.poids_grammes == 0)
+    elif type_param == 'argent':
+        compte = get_object_or_404(CompteArgent, id=id, cree_par=request.user)
+        est_argent = True
+        solde_zero = (compte.solde == 0)
+    else:
+        try:
+            compte = CompteArgent.objects.get(id=id, cree_par=request.user)
+            est_argent = True
+            solde_zero = (compte.solde == 0)
+        except CompteArgent.DoesNotExist:
+            compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
+            solde_zero = (compte.poids_grammes == 0)
     
     if not compte.archive:
         messages.error(request, "Impossible de supprimer un compte actif. Archivez-le d'abord.")
-        return redirect('comptes:detail_compte', id=id)
+        return redirect(f"{redirect('comptes:detail_compte', id=id).url}?type={'argent' if est_argent else 'or'}")
     
     if not solde_zero:
         messages.error(request, "Le solde ou poids doit être à zéro pour supprimer le compte.")
-        return redirect('comptes:detail_compte', id=id)
+        return redirect(f"{redirect('comptes:detail_compte', id=id).url}?type={'argent' if est_argent else 'or'}")
     
     nom = compte.nom
     compte.delete()

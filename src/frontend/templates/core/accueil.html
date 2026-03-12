@@ -6,31 +6,178 @@
 <link rel="stylesheet" href="{% static 'css/core.css' %}">
 
 <!-- ================= DASHBOARD ================= -->
-<div class="dashboard-card">
-    <div class="dashboard-header">
-        <h2 class="dashboard-title">Aperçu financier</h2>
-        <button class="toggle-visibility" onclick="toggleAmounts()">
-            <span id="eye-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                </svg>
-            </span>
-        </button>
-    </div>
+<style>
+/* Modern Animated Financial Showcase */
+.finance-showcase {
+    position: relative;
+    max-width: 100%;
+    height: 170px;
+    perspective: 1200px; /* Enhanced 3D effect */
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+.finance-card-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.finance-showcase.flipped .finance-card-wrapper {
+    transform: rotateY(180deg);
+}
+.finance-card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 25px 30px;
+    box-sizing: border-box; /* Correction du dépassement de taille */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+}
+.finance-face-front {
+    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+    color: white;
+}
+.finance-face-back {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    transform: rotateY(180deg);
+}
+.fc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.fc-title {
+    font-size: 1.15em;
+    font-weight: 500;
+    opacity: 0.95;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.fc-toggle-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+}
+.fc-toggle-btn:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.fc-body {
+    display: flex;
+    flex-direction: column;
+}
+.fc-amount-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 2px;
+}
+.fc-amount {
+    font-size: 2.6em;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    transition: filter 0.3s ease;
+}
+.fc-currency {
+    font-size: 1.1em;
+    font-weight: 600;
+    opacity: 0.8;
+}
+.fc-formula {
+    font-size: 0.9em;
+    opacity: 0.7;
+    font-weight: 400;
+}
 
-    <div class="amounts-row" style="gap: 20px; flex-wrap: wrap;">
-        <div class="amount-block"
-            style="padding: 20px; background: #f8fafc; border-radius: var(--radius-md); flex: 1 1 200px; min-width: 200px;">
-            <div class="amount-value value-to-hide">{{ patrimoine_total|milliers }}</div>
-            <div class="amount-label">Patrimoine Net Total (GNF)</div>
+/* Obfuscation logic */
+.secret-blurred .fc-amount {
+    filter: blur(8px);
+    user-select: none;
+}
+.secret-blurred .fc-currency {
+    filter: blur(4px);
+    user-select: none;
+}
+
+@media (max-width: 480px) {
+    .fc-amount { font-size: 2.1em; }
+    .finance-showcase { height: 150px; }
+    .fc-title { font-size: 1em; }
+    .finance-card-face { padding: 20px; }
+}
+</style>
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2 class="section-title" style="margin: 0;">Aperçu financier</h2>
+    <button class="toggle-visibility" onclick="toggleAmountsGlobal()" style="border: none; background: white; padding: 10px 14px; border-radius: 12px; cursor: pointer; color: #475569; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.08); transition: 0.2s; display: flex; align-items: center; justify-content: center;">
+        <span id="eye-icon" style="display: flex;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
+        </span>
+    </button>
+</div>
+
+<div class="finance-showcase" id="finance-showcase">
+    <div class="finance-card-wrapper">
+        <!-- FRONT: PATRIMOINE NET -->
+        <div class="finance-card-face finance-face-front">
+            <div class="fc-header">
+                <div class="fc-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> 
+                    Patrimoine Net
+                </div>
+                <button class="fc-toggle-btn" onclick="flipFinanceCard()">
+                    Liquidités <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+            <div class="fc-body">
+                <div class="fc-amount-row secret-val">
+                    <span class="fc-amount">{{ patrimoine_net|intspace }}</span>
+                    <span class="fc-currency">GNF</span>
+                </div>
+                <div class="fc-formula">Comptes + Créances - Dettes</div>
+            </div>
         </div>
 
-        <div class="amount-block"
-            style="padding: 20px; background: #f8fafc; border-radius: var(--radius-md); flex: 1 1 200px; min-width: 200px;">
-            <div class="amount-value value-to-hide">{{ total_comptes|milliers }}</div>
-            <div class="amount-label">Total des comptes (GNF)</div>
+        <!-- BACK: LIQUIDITÉS -->
+        <div class="finance-card-face finance-face-back">
+            <div class="fc-header">
+                <div class="fc-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> 
+                    Liquidités
+                </div>
+                <button class="fc-toggle-btn" onclick="flipFinanceCard()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Patrimoine Net 
+                </button>
+            </div>
+            <div class="fc-body">
+                <div class="fc-amount-row secret-val">
+                    <span class="fc-amount">{{ total_cash|intspace }}</span>
+                    <span class="fc-currency">GNF</span>
+                </div>
+                <div class="fc-formula">Comptes Argent + Karfa</div>
+            </div>
         </div>
     </div>
 </div>
@@ -89,7 +236,7 @@
                 <path d="m9 12 2 2 4-4" />
             </svg>
         </div>
-        <span class="action-title">Encaisser dette</span>
+        <span class="action-title">Gérer dettes</span>
     </a>
 </div>
 
@@ -109,7 +256,7 @@
             </div>
         </div>
         <div class="op-right">
-            <span class="op-amount">{{ op.montant|milliers }}</span>
+            <span class="op-amount" style="white-space: nowrap;">{{ op.montant|milliers }} {{ op.unite }}</span>
             <span class="op-time">{{ op.date|temps_relatif }}</span>
         </div>
     </div>
@@ -128,25 +275,31 @@
 
 {% block extra_scripts %}
 <script>
-    // Feature: Masquer / Afficher les montants du Dashboard
-    function toggleAmounts() {
-        const elements = document.querySelectorAll('.value-to-hide');
+    // Masquer / Afficher les montants formatés (3D Card)
+    function toggleAmountsGlobal() {
+        const secretVals = document.querySelectorAll('.secret-val');
         const icon = document.getElementById('eye-icon');
 
         const svgOpen = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
         const svgClosed = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`;
 
-        let isHidden = elements[0].classList.contains('hidden-amount');
+        let isHidden = secretVals[0].classList.contains('secret-blurred');
 
-        elements.forEach(el => {
+        secretVals.forEach(el => {
             if (isHidden) {
-                el.classList.remove('hidden-amount');
+                el.classList.remove('secret-blurred');
             } else {
-                el.classList.add('hidden-amount');
+                el.classList.add('secret-blurred');
             }
         });
 
         icon.innerHTML = isHidden ? svgOpen : svgClosed;
+    }
+
+    // Effet 3D Flip
+    function flipFinanceCard() {
+        const showcase = document.getElementById('finance-showcase');
+        showcase.classList.toggle('flipped');
     }
 </script>
 {% endblock %}

@@ -3,7 +3,7 @@ from .views.liste import liste_dettes, toutes_dettes
 from .views.form import creer_dette
 from .views.operations import (
     rembourser_dette, toutes_operations_dettes, ajouter_paiement, 
-    ajouter_dette, encaisser_dette
+    ajouter_dette, encaisser_dette, augmenter_creance
 )
 from .views.archives import liste_archives_dettes, archiver_dette
 from .views.export import export_dettes_csv
@@ -16,7 +16,8 @@ urlpatterns = [
     path('', liste_dettes, name='liste_dettes'),
     path('creer/', creer_dette, name='creer_dette'),
     path('rembourser/<int:id>/', rembourser_dette, name='rembourser_dette'),
-    path('ajouter/<int:id>/', ajouter_dette, name='ajouter_dette'),
+    path('<int:id>/ajouter/', ajouter_dette, name='ajouter_dette'),
+    path('<int:id>/augmenter/', augmenter_creance, name='augmenter_creance'),
     path('encaisser/<int:id>/', encaisser_dette, name='encaisser_dette'),
     path('toutes/', toutes_dettes, name='toutes_dettes'),
     path('archives/', liste_archives_dettes, name='liste_archives'),

@@ -5,8 +5,11 @@ register = template.Library()
 @register.filter
 def milliers(value):
     try:
-        value = int(value)
-        return f"{value:,}".replace(",", " ")
+        num = float(value)
+        if num == int(num):
+            return f"{int(num):,}".replace(",", " ")
+        # Si c'est un décimal (comme pour l'or), on garde 3 décimales max
+        return f"{num:,.3f}".rstrip('0').rstrip('.').replace(",", " ").replace(".", ",")
     except:
         return value
 

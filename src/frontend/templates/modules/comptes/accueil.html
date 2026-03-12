@@ -57,172 +57,338 @@
     </div>
 </div>
 
-<!-- 1. Bloc Patrimoine Net Total -->
-<div class="summary-card-light">
-    <div class="card-label card-label-light">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="5" width="20" height="14" rx="2" />
-            <line x1="2" y1="10" x2="22" y2="10" />
-        </svg> Patrimoine Net Total
-    </div>
-    <div class="card-value card-value-light">{{ patrimoine_total|milliers }} GNF</div>
+<style>
+/* Modern Animated Financial Showcase */
+.finance-showcase {
+    position: relative;
+    max-width: 100%;
+    height: 170px;
+    perspective: 1200px;
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+.finance-card-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.finance-showcase.flipped .finance-card-wrapper {
+    transform: rotateY(180deg);
+}
+.finance-card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 25px 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+}
+.finance-face-front {
+    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+    color: white;
+}
+.finance-face-back {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    transform: rotateY(180deg);
+}
+.fc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.fc-title {
+    font-size: 1.15em;
+    font-weight: 500;
+    opacity: 0.95;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.fc-toggle-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+}
+.fc-toggle-btn:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.fc-body {
+    display: flex;
+    flex-direction: column;
+}
+.fc-amount-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 2px;
+}
+.fc-amount {
+    font-size: 2.6em;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    transition: filter 0.3s ease;
+}
+.fc-currency {
+    font-size: 1.1em;
+    font-weight: 600;
+    opacity: 0.8;
+}
+.fc-formula {
+    font-size: 0.9em;
+    opacity: 0.7;
+    font-weight: 400;
+}
+
+/* Obfuscation logic */
+.secret-blurred .fc-amount {
+    filter: blur(8px);
+    user-select: none;
+}
+.secret-blurred .fc-currency {
+    filter: blur(4px);
+    user-select: none;
+}
+
+@media (max-width: 480px) {
+    .fc-amount { font-size: 2.1em; }
+    .finance-showcase { height: 150px; }
+    .fc-title { font-size: 1em; }
+    .finance-card-face { padding: 20px; }
+}
+
+/* 2nd Dashboard Card */
+.comptes-dashboard {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.cd-main {
+    flex: 1 1 200px;
+}
+.cd-main-top {
+    color: #64748b; font-size: 15px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.cd-main-val {
+    color: #3b82f6; font-size: 2.2em; font-weight: 800; line-height: 1; transition: filter 0.3s ease;
+}
+.cd-blocks {
+    display: flex; gap: 40px; flex-wrap: wrap; flex: 2 1 400px;
+}
+.cd-block-item {
+    flex: 1; min-width: 150px; border-left: 3px solid #f1f5f9; padding-left: 20px;
+}
+.cd-item-title {
+    color: #94a3b8; font-size: 13px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+}
+.cd-item-val {
+    color: #1e293b; font-size: 1.6em; font-weight: 700; transition: filter 0.3s ease;
+}
+
+/* Gold Section Redesign */
+.gold-input-group {
+    display: flex; align-items: center; gap: 8px; background: white; padding: 6px 16px; 
+    border-radius: 30px; border: 1px solid #cbd5e1; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
+}
+.gold-input-group:focus-within {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+.gold-input-group input {
+    width: 130px; border: none; background: transparent; font-size: 14px; font-weight: 600; outline: none; padding: 0; color: #1e293b;
+}
+
+.btn-fixer {
+    background: #10b981; color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 700; margin-left: 10px; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+}
+.btn-fixer:hover {
+    background: #059669; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+}
+
+.btn-web {
+    display: flex; align-items: center; gap: 6px; padding: 10px 18px; 
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+    color: white !important; border-radius: 30px; text-decoration: none; 
+    font-size: 13px; font-weight: 600; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); border: none;
+}
+.btn-web:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); 
+}
+.btn-web svg {
+    transition: transform 0.3s ease;
+}
+.btn-web:hover svg {
+    transform: rotate(15deg) scale(1.1);
+}
+</style>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <h2 class="section-title" style="margin: 0;">Aperçu des mouvements</h2>
+    <button class="toggle-visibility" onclick="toggleAmountsGlobal()" style="border: none; background: white; padding: 10px 14px; border-radius: 12px; cursor: pointer; color: #475569; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.08); transition: 0.2s; display: flex; align-items: center; justify-content: center;">
+        <span id="eye-icon" style="display: flex;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
+        </span>
+    </button>
 </div>
 
-<!-- 2. Bloc Total Comptes (Détails) -->
-<div class="summary-card-dark">
-    <div style="position: absolute; right: -20px; top: -10px; opacity: 0.05;">
-        <svg width="150" height="150" viewBox="0 0 24 24" fill="white">
-            <line x1="3" x2="21" y1="22" y2="22" />
-            <line x1="6" x2="6" y1="18" y2="11" />
-            <line x1="10" x2="10" y1="18" y2="11" />
-            <line x1="14" x2="14" y1="18" y2="11" />
-            <line x1="18" x2="18" y1="18" y2="11" />
-            <polygon points="12 2 20 7 4 7" />
-        </svg>
-    </div>
-
-    <div class="card-label" style="color: #94a3b8;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-            <path d="M22 12A10 10 0 0 0 12 2v10z" />
-        </svg> Total des Comptes (Valeur Actuelle)
-    </div>
-    <div class="card-value card-value-dark">
-        {% with total_v=total_liquidites|add:total_or_gnf %}
-        {{ total_v|milliers }} GNF
-        {% endwith %}
-    </div>
-
-    <div class="metrics-row">
-        <div>
-            <div class="metric-item-label">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="6" width="20" height="12" rx="2" />
-                    <path d="M12 12h.01" />
-                    <path d="M17 12h.01" />
-                    <path d="M7 12h.01" />
-                </svg> Liquidités
+<!-- ================= 3D ANIMATED FINANCES ================= -->
+<div class="finance-showcase" id="finance-showcase">
+    <div class="finance-card-wrapper">
+        <!-- FRONT: PATRIMOINE NET -->
+        <div class="finance-card-face finance-face-front">
+            <div class="fc-header">
+                <div class="fc-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> 
+                    Patrimoine Net
+                </div>
+                <button class="fc-toggle-btn" onclick="flipFinanceCard()">
+                    Total Cash <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
             </div>
-            <div class="metric-item-value">{{ total_liquidites|milliers }} GNF</div>
+            <div class="fc-body">
+                <div class="fc-amount-row secret-val">
+                    <span class="fc-amount">{{ patrimoine_net|intspace }}</span>
+                    <span class="fc-currency">GNF</span>
+                </div>
+                <div class="fc-formula">Comptes + Créances - Dettes (Exclut Karfa)</div>
+            </div>
         </div>
-        <div>
-            <div class="metric-item-label">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="8" />
-                    <line x1="12" y1="8" x2="12" y2="16" />
-                    <line x1="8" y1="12" x2="16" y2="12" />
-                </svg> Or ({{ total_poids_or }}g)
+
+        <!-- BACK: TOTAL CASH -->
+        <div class="finance-card-face finance-face-back">
+            <div class="fc-header">
+                <div class="fc-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> 
+                    Total Cash
+                </div>
+                <button class="fc-toggle-btn" onclick="flipFinanceCard()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Patrimoine Net 
+                </button>
             </div>
-            <div class="metric-item-value">{{ total_or_gnf|milliers }} GNF</div>
+            <div class="fc-body">
+                <div class="fc-amount-row secret-val">
+                    <span class="fc-amount">{{ total_cash|intspace }}</span>
+                    <span class="fc-currency">GNF</span>
+                </div>
+                <div class="fc-formula">Comptes + Karfa + Créances - Dettes (Inclut Karfa)</div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Section Or & API -->
-<div class="gold-section">
-    <div class="gold-info">
-        <div class="gold-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
+<!-- ================= TOTAL COMPTES DASHBOARD ================= -->
+<div class="comptes-dashboard">
+    <div class="cd-main">
+        <div class="cd-main-top">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></svg>
+            Total Comptes
+        </div>
+        <div class="cd-main-val secret-val-simple">{{ total_comptes|intspace }} <span style="font-size: 16px;">GNF</span></div>
+    </div>
+    
+    <div class="cd-blocks">
+        <div class="cd-block-item" style="border-left-color: #f59e0b;">
+            <div class="cd-item-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Liquidités
+            </div>
+            <div class="cd-item-val secret-val-simple" style="color: #f59e0b;">{{ liquidites|intspace }} <span style="font-size: 14px;">GNF</span></div>
+        </div>
+        <div class="cd-block-item" style="border-left-color: #f39c12;">
+            <div class="cd-item-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f39c12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Or
+            </div>
+            <div class="cd-item-val secret-val-simple" style="color: #f39c12; font-size: 1.3em;">
+                {{ total_poids_or|floatformat:-2|default:"0" }} <span style="font-size: 0.8em;">g</span>
+            </div>
+            <div class="secret-val-simple" style="color: #6b7280; font-size: 0.9em; margin-top: 4px; font-weight: 500;">
+                {% if prix_or %}
+                    (valorisation : {{ total_or_gnf|intspace }} GNF)
+                {% else %}
+                    (valorisation : 0 GNF)
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= COURS DE L'OR COMPACT ================= -->
+<div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 15px;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <div style="background: #fffbeb; color: #f59e0b; padding: 10px; border-radius: 12px; display: flex;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="8" />
                 <line x1="12" y1="8" x2="12" y2="16" />
                 <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
         </div>
         <div>
-            <div style="color: #64748b; font-size: 13px; font-weight: 500;">Cours de l'Or (24K)</div>
-            <div class="gold-price">
-                {{ prix_or.prix_gramme|milliers|default:"0" }} GNF/g
-                <span class="gold-date">
-                    (Mise à jour : {{ prix_or.date_saisie|date:"d/m/Y H:i"|default:"Indisponible" }})
-                </span>
+            <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 2px;">Cours de l'Or (24K)</div>
+            <div style="font-size: 18px; font-weight: 800; color: #1e293b; line-height: 1;">
+                {{ prix_or.prix_gramme|intspace|default:"0" }} <span style="font-size: 13px; font-weight: 600; color: #94a3b8;">GNF/g</span>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 5px; font-weight: 500;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 2px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Maj : {{ prix_or.date_saisie|date:"d/m/Y H:i"|default:"Indisponible" }}
             </div>
         </div>
     </div>
-
-    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <a href="https://www.goldrate24.com" target="_blank" rel="noopener noreferrer"
-                class="btn-action btn-secondary" style="padding: 8px 16px; font-size: 13px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                </svg> Via le web
-            </a>
-
-            <form method="post" action="{% url 'comptes:saisie_prix_or_manuel' %}"
-                style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 4px 12px; border-radius: 30px; border: 1px solid #e2e8f0;">
-                {% csrf_token %}
-                <input type="number" name="prix_manuel" placeholder="Prix manuel (GNF/g)" required min="1"
-                    style="width: 130px; border: none; background: transparent; font-size: 13px; outline: none; padding: 4px 0;">
-                <button type="submit"
-                    style="background: #10b981; color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;">
-                    Fixer
-                </button>
-            </form>
-        </div>
+    
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <form method="post" action="{% url 'comptes:saisie_prix_or_manuel' %}" class="gold-input-group">
+            {% csrf_token %}
+            <input type="text" name="prix_manuel" placeholder="Nouveau prix..." required inputmode="numeric" oninput="formatMontant(this)">
+            <span style="font-size: 14px; font-weight: 600; color: #94a3b8;">GNF</span>
+            <button type="submit" class="btn-fixer">Fixer</button>
+        </form>
+        <small style="color: #94a3b8; font-size: 10px; margin-top: 2px; width: 100%; text-align: right; display: block;">Max 12 chiffres</small>
+    </div>
+        
+        <a href="https://www.goldrate24.com" target="_blank" rel="noopener noreferrer" class="btn-web">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg> Via le web
+        </a>
     </div>
 </div>
 
-<!-- Grille des autres modules (Dettes, Créances, Karfa) -->
-<div class="modules-grid">
-
-    <!-- Créances -->
-    <div class="module-card">
-        <div class="module-card-header">
-            <span class="module-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m5 12 7 7 7-7" />
-                    <path d="M12 5v14" />
-                </svg> On me doit
-            </span>
-        </div>
-        <div class="module-value text-green">{{ total_creances|milliers }} GNF</div>
-        <p class="module-subtitle">Fonds à récupérer au total.</p>
-    </div>
-
-    <!-- Dettes -->
-    <div class="module-card">
-        <div class="module-card-header">
-            <span class="module-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m19 12-7-7-7 7" />
-                    <path d="M12 19V5" />
-                </svg> Je dois
-            </span>
-        </div>
-        <div class="module-value text-red">{{ total_dettes|milliers }} GNF</div>
-        <p class="module-subtitle">Fonds à rembourser au total.</p>
-    </div>
-
-    <!-- Karfa -->
-    <div class="module-card">
-        <div class="module-card-header">
-            <span class="module-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m11 17 2 2a1 1 0 1 0 3-3" />
-                    <path
-                        d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-7.3 7.3a1 1 0 0 0 0 1.42l.5.5a1 1 0 0 0 1.42 0l7.3-7.3a3 3 0 0 1 4.24 0l3.88 3.88a1 1 0 0 1 0 1.42l-.5.5a1 1 0 0 1-1.42 0l-2.5-2.5" />
-                    <path d="m11.5 10.5-2-2" />
-                    <path d="m15 14-2-2" />
-                    <path d="m16.5 15.5-2-2" />
-                </svg> Karfa Actifs
-            </span>
-        </div>
-        <div class="module-value text-blue">{{ total_karfa|milliers }} GNF</div>
-        <p class="module-subtitle">Investissements et dépôts en cours.</p>
-    </div>
-
-</div>
 
 </div>
 
@@ -245,6 +411,44 @@
 </style>
 
 <script>
+    // Masquer / Afficher les montants formatés (3D Card & autres dash)
+    function toggleAmountsGlobal() {
+        const secretVals = document.querySelectorAll('.secret-val');
+        const secretValsS = document.querySelectorAll('.secret-val-simple');
+        const icon = document.getElementById('eye-icon');
+
+        const svgOpen = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        const svgClosed = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`;
+
+        let isHidden = secretVals[0] && secretVals[0].classList.contains('secret-blurred');
+
+        secretVals.forEach(el => {
+            if (isHidden) {
+                el.classList.remove('secret-blurred');
+            } else {
+                el.classList.add('secret-blurred');
+            }
+        });
+        
+        secretValsS.forEach(el => {
+            if (isHidden) {
+                el.style.filter = 'none';
+                el.style.userSelect = 'auto';
+            } else {
+                el.style.filter = 'blur(8px)';
+                el.style.userSelect = 'none';
+            }
+        });
+
+        if (icon) icon.innerHTML = isHidden ? svgOpen : svgClosed;
+    }
+
+    // Effet 3D Flip
+    function flipFinanceCard() {
+        const showcase = document.getElementById('finance-showcase');
+        if (showcase) showcase.classList.toggle('flipped');
+    }
+
     (function () {
         const toggle = document.getElementById('exportToggle');
         const menu = document.getElementById('exportMenu');

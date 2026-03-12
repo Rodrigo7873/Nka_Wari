@@ -47,10 +47,10 @@
                     </label>
                     <div class="amount-wrapper">
                         <span class="amount-prefix">GNF</span>
-                        <input class="field-input" type="number" id="montant" name="montant" placeholder="0" required
-                            min="1">
-                        <span class="amount-suffix">F</span>
+                        <input class="field-input" type="text" id="montant" name="montant" placeholder="0" required
+                            inputmode="numeric" oninput="formatMontant(this)">
                     </div>
+                    <small style="color: #94a3b8; font-size: 11px; margin-top: 5px; display: block;">Maximum 12 chiffres (999 milliards)</small>
                 </div>
 
                 <hr class="form-divider">

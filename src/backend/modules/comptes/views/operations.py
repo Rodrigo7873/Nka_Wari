@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.db.models import Sum, Max, F
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from modules.comptes.models import CompteArgent, CompteOr, MouvementCompte
 from modules.core.services.prix_or_service import get_latest_prix_or, set_prix_or
@@ -92,13 +92,22 @@ def ajouter_retirer_mouvement(request, type_compte, id):
 @login_required
 def operation_compte(request, id):
     """Gère l'ajout ou le retrait de fonds/poids via le formulaire de détail."""
-    # On cherche le compte du USER
-    try:
-        compte = CompteArgent.objects.get(id=id, cree_par=request.user)
-        est_argent = True
-    except CompteArgent.DoesNotExist:
+    type_param = request.GET.get('type')
+    
+    if type_param == 'or':
         compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
         est_argent = False
+    elif type_param == 'argent':
+        compte = get_object_or_404(CompteArgent, id=id, cree_par=request.user)
+        est_argent = True
+    else:
+        # Fallback pour compatibilité
+        try:
+            compte = CompteArgent.objects.get(id=id, cree_par=request.user)
+            est_argent = True
+        except CompteArgent.DoesNotExist:
+            compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
+            est_argent = False
     
     if request.method == 'POST':
         type_op = request.POST.get('type_operation')
@@ -109,7 +118,7 @@ def operation_compte(request, id):
             
             if montant <= 0:
                 messages.error(request, "Le montant doit être supérieur à zéro.")
-                return redirect('comptes:detail_compte', id=id)
+                return redirect(f"{redirect('comptes:detail_compte', id=id).url}?type={'argent' if est_argent else 'or'}")
 
             if est_argent:
                 if type_op == 'ajout':
@@ -118,7 +127,7 @@ def operation_compte(request, id):
                 else:
                     if montant > compte.solde:
                         messages.error(request, "Solde insuffisant.")
-                        return redirect('comptes:detail_compte', id=id)
+                        return redirect(f"{redirect('comptes:detail_compte', id=id).url}?type={'argent' if est_argent else 'or'}")
                     compte.solde -= montant
                     type_mvt = 'RETRAIT'
             else:
@@ -129,7 +138,7 @@ def operation_compte(request, id):
                 else:
                     if montant > compte.poids_grammes:
                         messages.error(request, "Poids insuffisant.")
-                        return redirect('comptes:detail_compte', id=id)
+                        return redirect(f"{redirect('comptes:detail_compte', id=id).url}?type={'argent' if est_argent else 'or'}")
                     compte.poids_grammes -= montant
                     type_mvt = 'RETRAIT'
             
@@ -146,9 +155,10 @@ def operation_compte(request, id):
             )
             
             messages.success(request, "Opération effectuée avec succès.")
-        except (ValueError, Decimal.InvalidOperation):
+        except (ValueError, InvalidOperation):
             messages.error(request, "Montant saisi invalide.")
         except Exception as e:
             messages.error(request, f"Une erreur est survenue : {e}")
             
-    return redirect('comptes:detail_compte', id=id)
+    redirect_url = f"{redirect('comptes:detail_compte', id=id).url}?type={'argent' if est_argent else 'or'}"
+    return redirect(redirect_url)

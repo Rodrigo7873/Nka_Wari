@@ -16,7 +16,7 @@ class DetteForm(forms.ModelForm):
         widgets = {
             'sens': forms.HiddenInput(),  # On va gérer le sens via les boutons comme avant
             'personne': forms.TextInput(attrs={'class': 'field-input', 'placeholder': 'Nom de la personne'}),
-            'montant': forms.NumberInput(attrs={'class': 'field-input', 'placeholder': '0'}),
+            'montant': forms.TextInput(attrs={'class': 'field-input', 'placeholder': '0', 'oninput': 'formatMontant(this)', 'inputmode': 'numeric'}),
             'motif': forms.Textarea(attrs={'class': 'field-input', 'placeholder': 'Raison de cette dette...', 'rows': 3}),
             'echeance': forms.DateInput(attrs={'class': 'field-input', 'type': 'date'}),
             'garantie': forms.TextInput(attrs={'class': 'field-input', 'placeholder': 'Ex: Téléphone, terrain...'}),

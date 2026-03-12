@@ -7,6 +7,9 @@ class CompteArgentForm(forms.ModelForm):
     class Meta:
         model = CompteArgent
         fields = ['nom', 'type_compte', 'solde', 'dette_liee']
+        widgets = {
+            'solde': forms.TextInput(attrs={'oninput': 'formatMontant(this)', 'inputmode': 'numeric'}),
+        }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

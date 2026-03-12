@@ -16,16 +16,26 @@ from modules.comptes.forms import CompteArgentForm, CompteOrForm
 @login_required
 @login_required
 def detail_compte(request, id):
-    """Affichage du détail d'un compte (Argent ou Or)."""
-    try:
-        compte = CompteArgent.objects.get(id=id, cree_par=request.user)
-        type_compte = 'argent'
-        is_or = False
-    except CompteArgent.DoesNotExist:
+    type_param = request.GET.get('type')
+    
+    if type_param == 'or':
         compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
         type_compte = 'or'
         is_or = True
-        
+    elif type_param == 'argent':
+        compte = get_object_or_404(CompteArgent, id=id, cree_par=request.user)
+        type_compte = 'argent'
+        is_or = False
+    else:
+        # Fallback si le paramètre type n'est pas fourni
+        try:
+            compte = CompteArgent.objects.get(id=id, cree_par=request.user)
+            type_compte = 'argent'
+            is_or = False
+        except CompteArgent.DoesNotExist:
+            compte = get_object_or_404(CompteOr, id=id, cree_par=request.user)
+            type_compte = 'or'
+            is_or = True
     mouvements = compte.mouvements.all().order_by('-date')
         
     return render(request, 'modules/comptes/detail.html', {

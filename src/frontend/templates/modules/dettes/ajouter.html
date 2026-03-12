@@ -28,14 +28,11 @@
             <form method="post">
                 {% csrf_token %}
 
-                <!-- Info Dette Actuelle -->
                 <div
                     style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: #166534; font-size: 14px; font-weight: 500;">Solde actuel à récupérer
-                            :</span>
-                        <span style="color: #15803d; font-size: 18px; font-weight: 700;">{{
-                            dette.montant_restant|milliers }} GNF</span>
+                        <span style="color: #166534; font-size: 14px; font-weight: 500;">Solde actuel à récupérer :</span>
+                        <span style="color: #15803d; font-size: 18px; font-weight: 700;">{{ dette.montant_restant|milliers }} GNF</span>
                     </div>
                 </div>
 
@@ -46,9 +43,10 @@
                     </label>
                     <div class="amount-wrapper">
                         <span class="amount-prefix">GNF</span>
-                        <input class="field-input" type="number" id="montant" name="montant" placeholder="0" required
-                            min="1">
+                        <input class="field-input" type="text" id="montant" name="montant" placeholder="0" required
+                            inputmode="numeric" oninput="formatMontant(this)">
                     </div>
+                    <small style="color: #94a3b8; font-size: 11px; margin-top: 5px; display: block;">Max 12 chiffres</small>
                 </div>
 
                 <!-- Compte à débiter -->
