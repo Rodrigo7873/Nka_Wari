@@ -31,7 +31,7 @@
                     <div class="op-left">
                         <span class="op-beneficiary">{{ op.karfa.beneficiaire|default:"Bénéficiaire" }}</span>
                         <!-- N'afficher que l'heure car le jour est dans l'en-tête de groupe -->
-                        <span class="op-time" style="color: #94a3b8; font-size: 0.85em;">• Le {{ op.date|date:"d/m/Y à H:i" }}</span>
+                        <span class="text-muted op-time" style="font-size: 0.85em;">• Le {{ op.date|date:"d/m/Y à H:i" }}</span>
                     </div>
 
                     <div class="op-right" style="gap: 15px;">
@@ -52,7 +52,7 @@
         <div class="empty-state">
             <div style="font-size: 3rem; margin-bottom: 1rem; color: #9ca3af;">📝</div>
             <h3 style="color: #374151; margin-bottom: 0.5rem; font-weight: 600;">Aucune opération</h3>
-            <p style="color: #6b7280; font-size: 0.875rem;">Les mouvements liés à vos Karfa apparaîtront ici.</p>
+            <p class="text-muted" style="font-size: 0.875rem;">Les mouvements liés à vos Karfa apparaîtront ici.</p>
         </div>
         {% endfor %}
 

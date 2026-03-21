@@ -31,10 +31,10 @@
 
                 <!-- Info Dette Actuelle -->
                 <div
-                    style="background: #eff6ff; border: 1px solid #dbeafe; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: #1e40af; font-size: 14px; font-weight: 500;">Reste à récupérer :</span>
-                        <span style="color: #1d4ed8; font-size: 18px; font-weight: 700;">{{ dette.montant_restant|milliers }} GNF</span>
+                    style="background: #eff6ff; border: 1px solid #dbeafe; border-radius: 12px; padding: 12px 15px; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: nowrap;">
+                        <span style="color: #1e40af; font-size: 13px; font-weight: 600; white-space: nowrap;">Reste à récupérer :</span>
+                        <span style="color: #1d4ed8; font-size: clamp(14px, 4vw, 18px); font-weight: 700; white-space: nowrap;">{{ dette.montant_restant|milliers }} GNF</span>
                     </div>
                 </div>
 
@@ -48,7 +48,7 @@
                         <input class="field-input" type="text" id="montant" name="montant"
                             value="{{ dette.montant_restant }}" required inputmode="numeric" oninput="formatMontant(this)">
                     </div>
-                    <small style="color: #94a3b8; font-size: 11px; margin-top: 5px; display: block;">Max 12 chiffres</small>
+
                 </div>
 
                 <!-- Compte à créditer -->
@@ -65,7 +65,7 @@
                             </option>
                             {% endfor %}
                         </select>
-                        <div style="margin-top: 6px; font-size: 12px; color: #64748b;">
+                        <div class="text-muted" style="margin-top: 6px; font-size: 12px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2"
                                 style="display: inline-block; vertical-align: middle; margin-right: 4px;">

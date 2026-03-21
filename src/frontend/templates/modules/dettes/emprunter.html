@@ -28,10 +28,10 @@
             <form method="post">
                 {% csrf_token %}
 
-                <div style="background: #fff5f5; border: 1px solid #fee2e2; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: #991b1b; font-size: 14px; font-weight: 500;">Dette actuelle auprès de lui :</span>
-                        <span style="color: #dc2626; font-size: 18px; font-weight: 700;">{{ dette.montant_restant|milliers }} GNF</span>
+                <div style="background: #fff5f5; border: 1px solid #fee2e2; border-radius: 12px; padding: 12px 15px; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: nowrap;">
+                        <span style="color: #991b1b; font-size: 13px; font-weight: 600; white-space: nowrap;">Dette actuelle :</span>
+                        <span style="color: #dc2626; font-size: clamp(14px, 4vw, 18px); font-weight: 700; white-space: nowrap;">{{ dette.montant_restant|milliers }} GNF</span>
                     </div>
                 </div>
 
@@ -45,7 +45,7 @@
                         <input class="field-input" type="text" id="montant" name="montant" placeholder="0" required 
                             inputmode="numeric" oninput="formatMontant(this)">
                     </div>
-                    <small style="color: #94a3b8; font-size: 11px; margin-top: 5px; display: block;">Max 12 chiffres</small>
+
                 </div>
 
 

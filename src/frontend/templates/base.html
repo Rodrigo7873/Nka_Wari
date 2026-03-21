@@ -8,13 +8,58 @@
     <title>N'Ka Wari</title>
     <!-- Modern Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=1.1">
+    {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=1.4">
+    <link rel="stylesheet" href="{% static 'css/notifications.css' %}?v=1.1">
+    <link rel="stylesheet" href="{% static 'css/don.css' %}?v=1.1">
+    <link rel="manifest" href="{% static 'manifest.json' %}?v=1.1">
+    <meta name="theme-color" content="#1e2b3c">
+    <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
+    
+    <style>
+        /* Anti-FOUC (Flash of Unstyled Content) */
+        #sideMenu, #donPanel { 
+            position: fixed !important;
+            left: -100% !important; 
+            top: 0;
+            display: flex !important;
+        }
+        #notification-panel { 
+            position: fixed !important;
+            right: -100% !important; 
+            top: 0;
+            display: flex !important;
+        }
+        .menu-overlay, .don-overlay, .notif-overlay {
+            display: none !important;
+            position: fixed !important;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+        /* Override when open */
+        #sideMenu.open, #donPanel.open { left: 0 !important; }
+        #notification-panel.active { right: 0 !important; }
+        .menu-overlay.open, .don-overlay.open, .notif-overlay.active { display: block !important; }
+
+        /* Immediate Blur for sensitive info */
+        .secret-blurred .fc-amount, 
+        .secret-blurred .gold-price, 
+        .secret-blurred .op-amount {
+            filter: blur(12px) !important;
+        }
+        .secret-blurred .fc-currency {
+            filter: blur(6px) !important;
+        }
+    </style>
 </head>
 
-<body>
+<body class="theme-clair clair">
 
     <!-- Menu Hamburger -->
-    {% include "core/menu_lateral.html" %}
+    {% include "modules/core/menu_lateral.html" %}
+    
+    <!-- Panneau de Don -->
+    {% include "modules/core/don_panel.html" %}
 
     <!-- Topbar (Hamburger + Utilisateur) -->
     <div class="topbar">
@@ -27,22 +72,45 @@
             </svg>
         </button>
         <div class="topbar-right">
-            <span class="user-greeting">
-                {% if request.path == '/' %}
-                {% if request.user.is_authenticated %}
-                Bonjour {{ request.user.first_name|default:request.user.username }} 👋
-                {% else %}
-                Bonjour 👋
-                {% endif %}
-                {% endif %}
-            </span>
-            <span class="notification-icon" title="Notifications">
+            <div id="offline-indicator" style="display: none; align-items: center; gap: 5px; background: #fee2e2; color: #b91c1c; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/></svg>
+                Hors ligne
+            </div>
+            <span class="notification-icon" title="Notifications" onclick="toggleNotifications()">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                 </svg>
+                {% if nombre_notifications_non_lues > 0 %}
+                <span class="notif-badge">{{ nombre_notifications_non_lues }}</span>
+                {% endif %}
             </span>
+        </div>
+    </div>
+
+    <!-- Panneau de Notifications -->
+    <div id="notif-overlay" class="notif-overlay"></div>
+    <div id="notification-panel" class="notification-panel">
+        <div class="notif-header">
+            <h3>Notifications</h3>
+            <button class="notif-close" onclick="closeNotifications()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="notif-content">
+            <div class="notif-list">
+                {% if notifications %}
+                    {% for notif in notifications %}
+                    <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
+                        <span class="notif-message">{{ notif.message }}</span>
+                        <span class="notif-date">{{ notif.created_at|timesince }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="notif-empty">Aucune notification</div>
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -114,9 +182,22 @@
         </a>
     </nav>
 
-    {% include "core/includes/confirmation_modal.html" %}
+    {% include "modules/core/includes/confirmation_modal.html" %}
 
     <script src="{% static 'js/format_amount.js' %}"></script>
+    <script src="{% static 'js/db.js' %}"></script>
+    <script src="{% static 'js/sync.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/don.js' %}"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW: Enregistré', reg))
+                    .catch(err => console.log('SW: Erreur', err));
+            });
+        }
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 

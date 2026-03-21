@@ -1,0 +1,208 @@
+/* frontend/static/css/about.css */
+
+.about-wrapper {
+    --p-accent: #6366f1;
+    --p-accent-dark: #4f46e5;
+    --p-bg: #f8fafc;
+    --p-card: #ffffff;
+    --p-text: #1e2b3c;
+    --p-text-muted: #64748b;
+    --p-border: #e2e8f0;
+    --p-shadow: 0 10px 30px rgba(0,0,0,0.05);
+
+    padding: 24px;
+    background: var(--p-bg);
+    min-height: calc(100vh - 60px);
+    overflow-x: hidden;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.hero-section {
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+    border-radius: 32px;
+    color: #ffffff !important;
+    box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: "";
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.app-icon-large {
+    width: 90px;
+    height: 90px;
+    background: white;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    color: var(--p-accent);
+}
+
+.app-name {
+    font-size: 32px;
+    font-weight: 850;
+    margin: 0;
+    letter-spacing: -1px;
+}
+
+.app-version {
+    font-size: 14px;
+    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 12px;
+    border-radius: 99px;
+    display: inline-block;
+    margin-top: 8px;
+    font-weight: 600;
+}
+
+.info-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: -20px;
+    padding: 0 10px;
+}
+
+.premium-card {
+    background: var(--p-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--p-border);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: var(--p-shadow);
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+.card-title {
+    font-size: 13px; /* Plus fin */
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--p-accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 0.5px;
+}
+
+.details-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center; /* Centrage vertical avec l'icône */
+    gap: 16px;
+    padding: 8px 0;
+}
+
+.detail-icon {
+    width: 44px;
+    height: 44px;
+    background: #f1f5f9;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p-accent);
+    flex-shrink: 0;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Espacement réduit entre label et valeur */
+}
+
+.detail-content .label {
+    display: block;
+    font-size: 13px; /* Taille légèrement augmentée */
+    color: #64748b;
+    font-weight: 600;
+}
+
+.detail-content .value {
+    font-size: 13px; /* Réduit pour tenir sur une ligne */
+    color: #1e293b;
+    font-weight: 700;
+    white-space: nowrap; /* Force l'affichage sur une seule ligne */
+}
+
+.detail-content .value a {
+    color: #4f46e5;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.detail-content .value a:hover {
+    opacity: 0.8;
+}
+
+.thanks-section {
+    margin-top: 8px;
+    padding: 20px;
+    border-radius: 24px;
+    background: rgba(239, 68, 68, 0.04);
+    border: 1px dashed rgba(239, 68, 68, 0.2);
+    text-align: center;
+}
+
+.thanks-heart {
+    color: #ef4444;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.back-btn-float {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    width: 44px;
+    height: 44px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p-text);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    z-index: 100;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.back-btn-float:hover {
+    transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body.sombre .back-btn-float {
+    background: #1e293b;
+    color: white;
+}

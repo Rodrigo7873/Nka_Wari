@@ -9,14 +9,14 @@
 .page-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
 }
 
 .btn-retour {
-    background: white;
-    border: 1px solid #e2e8f0;
-    color: #1e2b3c;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
     padding: 10px 24px;
     border-radius: 30px;
     text-decoration: none;
@@ -29,7 +29,7 @@
 }
 
 .btn-retour:hover {
-    background: #f8fafc;
+    background: var(--bg-page);
     transform: translateY(-1px);
 }
 
@@ -37,10 +37,10 @@
     margin: 24px 0 12px 0;
     font-size: 14px;
     font-weight: 600;
-    color: #64748b;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     padding-bottom: 8px;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .wizard-card {
-    background: white;
+    background: var(--bg-card);
     width: 100%;
     max-width: 480px;
     padding: 50px 40px;
@@ -91,13 +91,13 @@
 .step-title {
     font-size: 30px;
     font-weight: 800;
-    color: #1e2b3c;
+    color: var(--text-primary);
     margin-bottom: 12px;
     letter-spacing: -0.5px;
 }
 
 .step-subtitle {
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: 16px;
     margin-bottom: 40px;
 }
@@ -139,7 +139,7 @@
 .id-label {
     font-size: 11px;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--text-secondary);
     text-transform: uppercase;
     margin-bottom: 15px;
     letter-spacing: 2px;
@@ -299,7 +299,7 @@ body:has(.login-wrapper, .wizard-wrapper) .topbar {
 }
 
 .login-card {
-    background: #ffffff;
+    background: var(--bg-card);
     width: 100%;
     max-width: 440px;
     padding: 2.5rem 2rem;
@@ -365,7 +365,7 @@ body:has(.login-wrapper, .wizard-wrapper) .topbar {
 .input-container input {
     width: 100%;
     padding: 1rem 1rem 1rem 3.2rem;
-    background-color: #f1f5f9;
+    background-color: var(--bg-page);
     border: 2px solid transparent;
     border-radius: 16px;
     font-size: 1rem;
@@ -374,7 +374,7 @@ body:has(.login-wrapper, .wizard-wrapper) .topbar {
 }
 
 .input-container input:focus {
-    background-color: white;
+    background-color: var(--bg-card);
     border-color: var(--color-primary-green);
     box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);
 }
@@ -451,7 +451,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .profil-page {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh;
-    background: #f8fafc;
+    background: var(--bg-page);
     padding: 30px 16px;
     box-sizing: border-box;
 }
@@ -485,7 +485,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .profil-name {
     font-size: 22px;
     font-weight: 700;
-    color: #1e2b3c;
+    color: var(--text-primary);
     margin: 0 0 4px;
 }
 
@@ -493,19 +493,19 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-page);
+    border: 1px solid var(--border);
     padding: 4px 14px;
     border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #64748b;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-primary);
     letter-spacing: 0.5px;
     font-family: 'Courier New', monospace;
 }
 
 .profil-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 20px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     border: 1px solid #f1f5f9;
@@ -515,7 +515,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .card-section-title {
     font-size: 11px;
     font-weight: 700;
-    color: #94a3b8;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     padding: 18px 24px 10px;
@@ -576,7 +576,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 
 .info-label {
     font-size: 11.5px;
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-weight: 600;
     margin-bottom: 2px;
     text-transform: uppercase;
@@ -586,7 +586,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .info-value {
     font-size: 15px;
     font-weight: 600;
-    color: #1e2b3c;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -601,8 +601,8 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 
 .badge-readonly {
     font-size: 10px;
-    background: #f1f5f9;
-    color: #94a3b8;
+    background: var(--bg-page);
+    color: var(--text-secondary);
     padding: 2px 8px;
     border-radius: 6px;
     font-weight: 500;
@@ -622,7 +622,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
     display: block;
     font-size: 12px;
     font-weight: 600;
-    color: #64748b;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 7px;
@@ -631,11 +631,11 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .edit-input {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--border);
     border-radius: 12px;
     font-size: 15px;
-    color: #1e2b3c;
-    background: #f8fafc;
+    color: var(--text-primary);
+    background: var(--bg-page);
     font-family: inherit;
     outline: none;
     transition: all 0.2s;
@@ -644,7 +644,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 
 .edit-input:focus {
     border-color: #3b82f6;
-    background: white;
+    background: var(--bg-card);
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
 }
 
@@ -694,9 +694,9 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
     flex: 1;
     padding: 13px;
     border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
-    background: white;
-    color: #64748b;
+    border: 1.5px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -705,8 +705,8 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 }
 
 .btn-cancel:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+    background: var(--bg-page);
+    border-color:  var(--border);
 }
 
 .btn-save {
@@ -771,12 +771,12 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: #f8fafc;
+    background: var(--bg-page);
     font-family: 'Inter', sans-serif;
 }
 
 .wizard-card {
-    background: white;
+    background: var(--bg-card);
     width: 100%;
     max-width: 500px;
     padding: 40px;
@@ -824,15 +824,15 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .step-dot {
     width: 35px;
     height: 35px;
-    background: white;
-    border: 4px solid #e2e8f0;
+    background: var(--bg-card);
+    border: 4px solid var(--border);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
     font-size: 14px;
-    color: #94a3b8;
+    color: var(--text-secondary);
     transition: all 0.3s;
 }
 
@@ -855,6 +855,14 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 
 .wizard-step.active {
     display: block;
+    text-align: left;
+}
+
+.step-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
 }
 
 @keyframes fadeIn {
@@ -871,17 +879,18 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 
 .step-header {
     margin-bottom: 30px;
+    text-align: center;
 }
 
 .step-title {
     font-size: 24px;
     font-weight: 800;
-    color: #1e2b3c;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
 .step-subtitle {
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: 15px;
 }
 
@@ -902,7 +911,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .wizard-wrapper label {
     font-size: 14px;
     font-weight: 700;
-    color: #1e2b3c;
+    color: var(--text-primary);
 }
 
 .req {
@@ -912,7 +921,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 .wizard-wrapper input,
 .wizard-wrapper select {
     padding: 12px 15px;
-    background: #f1f5f9;
+    background: var(--bg-page);
     border: 2px solid transparent;
     border-radius: 12px;
     font-size: 15px;
@@ -921,7 +930,7 @@ body:has(.login-wrapper, .wizard-wrapper) .app-container {
 }
 
 input:focus {
-    background: white;
+    background: var(--bg-card);
     border-color: #27ae60;
     box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);
 }
@@ -933,7 +942,7 @@ input.invalid {
 
 .field-hint {
     font-size: 11px;
-    color: #94a3b8;
+    color: var(--text-secondary);
     margin-top: -4px;
 }
 
@@ -941,7 +950,7 @@ input.invalid {
 .tel-container {
     display: flex;
     gap: 0;
-    background: #f1f5f9;
+    background: var(--bg-page);
     border-radius: 12px;
     border: 2px solid transparent;
     transition: all 0.2s;
@@ -954,10 +963,10 @@ input.invalid {
     align-items: center;
     gap: 8px;
     background: #e2e8f0;
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: 700;
     font-size: 14px;
-    border-right: 1px solid #cbd5e1;
+    border-right: 1px solid var(--border);
 }
 
 .flag-svg {
@@ -978,7 +987,7 @@ input.invalid {
 
 .tel-container:focus-within {
     border-color: var(--color-primary-green);
-    background: white;
+    background: var(--bg-card);
 }
 
 .tel-container.invalid {
@@ -998,7 +1007,7 @@ input.invalid {
     background: none;
     border: none;
     cursor: pointer;
-    color: #64748b;
+    color: var(--text-secondary);
     padding: 5px;
     display: flex;
     align-items: center;
@@ -1029,8 +1038,8 @@ input.invalid {
 }
 
 .btn-back {
-    background: #f1f5f9;
-    color: #64748b;
+    background: var(--bg-page);
+    color: var(--text-secondary);
 }
 
 .btn-home {
@@ -1057,8 +1066,8 @@ input.invalid {
 }
 
 .id-card {
-    background: #f8fafc;
-    border: 2px dashed #e2e8f0;
+    background: var(--bg-page);
+    border: 2px dashed var(--border);
     padding: 20px;
     border-radius: 20px;
     text-align: center;
@@ -1068,7 +1077,7 @@ input.invalid {
 .id-value {
     font-size: 32px;
     font-weight: 900;
-    color: #1e2b3c;
+    color: var(--text-primary);
     letter-spacing: 2px;
 }
 
@@ -1115,7 +1124,7 @@ input.invalid {
 .menu-header h2 {
     margin: 0;
     font-size: 20px;
-    color: #1e2b3c;
+    color: var(--text-primary);
 }
 
 .close-btn {
@@ -1125,7 +1134,7 @@ input.invalid {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #64748b;
+    color: var(--text-secondary);
     transition: all 0.2s;
     width: 40px;
     height: 40px;
@@ -1151,13 +1160,13 @@ input.invalid {
     padding: 12px 15px;
     border-radius: 12px;
     text-decoration: none;
-    color: #1e2b3c;
+    color: var(--text-primary);
     font-weight: 500;
     transition: all 0.2s;
 }
 
 .menu-item:hover {
-    background: #f1f5f9;
+    background: var(--bg-page);
     transform: translateX(5px);
 }
 
@@ -1165,7 +1174,7 @@ input.invalid {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #64748b;
+    color: var(--text-secondary);
 }
 
 .menu-logout .menu-icon {
@@ -1216,7 +1225,7 @@ input.invalid {
 }
 
 .login-card {
-    background: white;
+    background: var(--bg-card);
     width: 100%;
     max-width: 420px;
     padding: 45px 35px;
@@ -1233,13 +1242,13 @@ input.invalid {
 .brand-name {
     font-size: 32px;
     font-weight: 800;
-    color: #1e2b3c;
+    color: var(--text-primary);
     margin-bottom: 8px;
     letter-spacing: -1px;
 }
 
 .brand-subtitle {
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: 14px;
     font-weight: 500;
 }
@@ -1270,7 +1279,7 @@ input.invalid {
     display: block;
     font-size: 13px;
     font-weight: 700;
-    color: #1e2b3c;
+    color: var(--text-primary);
     margin-bottom: 8px;
     transition: all 0.3s;
 }
@@ -1279,14 +1288,14 @@ input.invalid {
     position: relative;
     display: flex;
     align-items: center;
-    background: #f8fafc;
+    background: var(--bg-page);
     border: 2px solid transparent;
     border-radius: 16px;
     transition: all 0.2s;
 }
 
 .input-wrapper:focus-within {
-    background: white;
+    background: var(--bg-card);
     border-color: #22c55e;
     box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
 }
@@ -1296,10 +1305,10 @@ input.invalid {
     align-items: center;
     gap: 8px;
     padding-left: 16px;
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: 700;
     font-size: 14px;
-    border-right: 1px solid #e2e8f0;
+    border-right: 1px solid var(--border);
     padding-right: 10px;
     height: 100%;
 }
@@ -1313,7 +1322,7 @@ input.invalid {
 
 .input-icon {
     padding-left: 16px;
-    color: #94a3b8;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
 }
@@ -1325,7 +1334,7 @@ input.invalid {
     border: none;
     font-size: 15px;
     font-weight: 500;
-    color: #1e2b3c;
+    color: var(--text-primary);
     outline: none;
 }
 
@@ -1337,9 +1346,9 @@ input.invalid {
 .toggle-mode-btn,
 .eye-btn {
     margin-right: 8px;
-    background: white;
-    border: 1px solid #e2e8f0;
-    color: #64748b;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
     width: 34px;
     height: 34px;
     border-radius: 10px;
@@ -1354,9 +1363,9 @@ input.invalid {
 
 .toggle-mode-btn:hover,
 .eye-btn:hover {
-    background: #f1f5f9;
-    color: #1e2b3c;
-    border-color: #cbd5e1;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    border-color:  var(--border);
 }
 
 .forgot-pass {
@@ -1399,7 +1408,7 @@ input.invalid {
 
 .login-footer p {
     font-size: 14px;
-    color: #64748b;
+    color: var(--text-secondary);
     margin-bottom: 20px;
 }
 
@@ -1463,7 +1472,7 @@ body:has(.login-wrapper, .wizard-wrapper) .topbar {
 }
 
 .toggle-visibility {
-    background: #f1f5f9;
+    background: var(--bg-page);
     border: none;
     padding: 8px 12px;
     border-radius: 12px;
@@ -1596,13 +1605,13 @@ body:has(.login-wrapper, .wizard-wrapper) .topbar {
 .action-icon {
     width: 50px;
     height: 50px;
-    background: #f8fafc;
+    background: var(--bg-page);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
 }
 
 .action-title {
@@ -1696,11 +1705,44 @@ body:has(.login-wrapper, .wizard-wrapper) .topbar {
     padding: 10px;
     background: #f0fdf4;
     /* Very subtle background or #f8fafc */
-    background: #f8fafc;
+    background: var(--bg-page);
     border-radius: 8px;
     transition: background 0.2s;
 }
 
 .btn-see-more:hover {
-    background: #f1f5f9;
+    background: var(--bg-page);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- MEDIA QUERIES MOBILE WIZARD --- */
+@media (max-width: 480px) {
+    .wizard-card {
+        padding: 35px 20px;
+        border-radius: 24px;
+        margin: 10px;
+    }
+    .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0; /* Gap géré par la marge du form-group */
+    }
+    .step-title {
+        font-size: 22px !important;
+    }
+    .progress-container {
+        margin-bottom: 30px;
+    }
+    .wizard-wrapper {
+        padding: 10px;
+    }
 }

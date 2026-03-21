@@ -1,0 +1,542 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/core.css' %}">
+<style>
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+</style>
+
+<div class="profil-page">
+    <div class="profil-container">
+
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div class="alert-box alert-success">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6 9 17l-5-5" />
+            </svg>
+            {{ message }}
+        </div>
+        {% else %}
+        <div class="alert-box alert-error">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <!-- ===== MODE VISUALISATION ===== -->
+        <div id="view-mode">
+            <div class="profil-hero">
+                <div class="avatar-ring">
+                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                </div>
+                <div class="profil-name">{{ user.first_name }} {{ user.last_name }}</div>
+                <span class="profil-id-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                    </svg>
+                    {{ profil.identifiant }}
+                </span>
+            </div>
+
+            <div class="profil-card">
+                <div class="card-section-title">Informations personnelles</div>
+
+                <!-- Prénom -->
+                <div class="info-row">
+                    <div class="info-icon icon-blue">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Prénom</div>
+                        {% if user.first_name %}
+                        <div class="info-value">{{ user.first_name }}</div>
+                        {% else %}
+                        <div class="info-value-empty">Non renseigné</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Nom -->
+                <div class="info-row">
+                    <div class="info-icon icon-purple">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Nom</div>
+                        {% if user.last_name %}
+                        <div class="info-value">{{ user.last_name }}</div>
+                        {% else %}
+                        <div class="info-value-empty">Non renseigné</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Téléphone -->
+                <div class="info-row">
+                    <div class="info-icon icon-green">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.58 3.4 2 2 0 0 1 3.56 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.88-.88a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Téléphone</div>
+                        {% if profil.telephone %}
+                        <div class="info-value">+224 {{ profil.telephone }}</div>
+                        {% else %}
+                        <div class="info-value-empty">Non renseigné</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="info-row">
+                    <div class="info-icon icon-orange">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" />
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Email</div>
+                        {% if user.email %}
+                        <div class="info-value">{{ user.email }}</div>
+                        {% else %}
+                        <div class="info-value-empty">Non renseigné</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="info-row">
+                    <div class="info-icon icon-red">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Mot de passe</div>
+                        <div class="info-value">••••••••</div>
+                    </div>
+                </div>
+
+                <!-- Code PIN -->
+                <div class="info-row" style="border-bottom:none;">
+                    <div class="text-warning icon-orange info-icon" style="background: rgba(245, 158, 11, 0.1);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3m-3-3l2.5-2.5"></path>
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Code PIN</div>
+                        <div class="info-value">••••</div>
+                    </div>
+                </div>
+
+                <div class="profil-actions">
+                    <button class="btn-edit" onclick="switchToEdit()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        Modifier les informations
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MODE EDITION ===== -->
+        <div id="edit-mode" style="display:none;">
+            <div class="profil-hero">
+                <div class="avatar-ring" id="edit-avatar">
+                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                </div>
+                <div class="text-muted profil-name" style="font-size:16px;font-weight:500;">Mode édition</div>
+            </div>
+
+            <div class="profil-card">
+                <div class="card-section-title">Modifier les informations</div>
+
+                <form method="post" action="{% url 'core:modifier_profil' %}">
+                    {% csrf_token %}
+
+                    <div class="edit-section">
+                        <div class="edit-field">
+                            <label class="edit-label" for="edit-prenom">Prénom</label>
+                            <input class="edit-input" type="text" id="edit-prenom" name="prenom"
+                                value="{{ user.first_name }}" required placeholder="Votre prénom"
+                                oninput="updateAvatar()">
+                        </div>
+                        <div class="edit-field" style="margin-bottom:0;">
+                            <label class="edit-label" for="edit-nom">Nom</label>
+                            <input class="edit-input" type="text" id="edit-nom" name="nom" value="{{ user.last_name }}"
+                                required placeholder="Votre nom de famille" oninput="updateAvatar()">
+                        </div>
+                    </div>
+
+                    <div style="border-top:1px solid #f1f5f9;">
+                        <div class="card-section-title" style="color:#c0c9d8;">Champs non modifiables</div>
+
+                        <div class="readonly-field">
+                            <div class="info-icon icon-green">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.58 3.4 2 2 0 0 1 3.56 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.88-.88a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                                </svg>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Téléphone</div>
+                                <div class="info-value" style="opacity:0.6; display: flex; align-items: center; gap: 6px;">
+                                    {% if profil.telephone %}
+                                    +224 {{ profil.telephone }}
+                                    {% else %}
+                                    Non renseigné
+                                    {% endif %}
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-muted" >
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="readonly-field">
+                            <div class="info-icon icon-orange">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                </svg>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Email</div>
+                                <div class="info-value" style="opacity:0.6; display: flex; align-items: center; gap: 6px;">
+                                    {{ user.email|default:"Non renseigné" }}
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-muted" >
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modification Mot de passe & PIN (en mode édition uniquement) -->
+                        <div class="readonly-field">
+                            <div class="info-icon icon-red">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Mot de passe</div>
+                                <div class="info-value">
+                                    <a href="javascript:void(0)" onclick="togglePasswordForm()" id="btn-toggle-pwd" style="color: #3b82f6; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                                        Modifier le mot de passe
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="readonly-field" style="border-bottom:none;">
+                            <div class="text-warning icon-orange info-icon" style="background: rgba(245, 158, 11, 0.1);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3m-3-3l2.5-2.5"></path>
+                                </svg>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Code PIN</div>
+                                <div class="info-value">
+                                    <button type="button" onclick="showPinForm()" class="btn-toggle-link text-warning" id="btn-show-pin" style="background: none; border: none; padding: 0; cursor: pointer; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                                        Modifier le PIN
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="profil-actions">
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="switchToView()">Annuler</button>
+                            <button type="submit" class="btn-save">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
+                                Enregistrer
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Formulaire changement mot de passe (Dynamique) - PLACÉ HORS DU FORMULAIRE PRINCIPAL -->
+                <div id="password-form-section" style="display:none; padding: 20px; background: #f8fafc; border-radius: 16px; margin: 20px; border: 1px dashed #cbd5e1; animation: fadeIn 0.3s ease;">
+                    <h4 style="font-size: 14px; color: #1e293b; margin-top: 0; margin-bottom: 15px;">Changement de mot de passe</h4>
+                    <form action="{% url 'core:changer_mot_de_passe' %}" method="POST" id="form-pwd-ajax">
+                        {% csrf_token %}
+                        <div class="edit-field">
+                            <label class="edit-label">Ancien mot de passe</label>
+                            <div style="position: relative;">
+                                <input type="password" name="old_password" id="old_password" required class="edit-input bg-card" style="padding-right: 48px;">
+                                <button type="button" class="eye-btn" onclick="togglePasswordVisibility('old_password', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                            <span class="field-error text-danger" id="error-old_password" style="font-size: 11px; font-weight: 500; display: none; margin-top: 4px;"></span>
+                        </div>
+                        <div class="edit-field">
+                            <label class="edit-label">Nouveau mot de passe</label>
+                            <div style="position: relative;">
+                                <input type="password" name="new_password" id="new_password" required class="edit-input bg-card" style="padding-right: 48px;">
+                                <button type="button" class="eye-btn" onclick="togglePasswordVisibility('new_password', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                            <span class="field-error text-danger" id="error-new_password" style="font-size: 11px; font-weight: 500; display: none; margin-top: 4px;"></span>
+                        </div>
+                        <div class="edit-field">
+                            <label class="edit-label">Confirmer le nouveau</label>
+                            <div style="position: relative;">
+                                <input type="password" name="confirm_password" id="confirm_password" required class="edit-input bg-card" style="padding-right: 48px;">
+                                <button type="button" class="eye-btn" onclick="togglePasswordVisibility('confirm_password', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                            <span class="field-error text-danger" id="error-confirm_password" style="font-size: 11px; font-weight: 500; display: none; margin-top: 4px;"></span>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button type="submit" id="submit-pwd" class="btn-save" style="padding: 8px 16px; font-size: 13px;">Valider</button>
+                            <button type="button" class="btn-cancel" onclick="togglePasswordForm()" style="padding: 8px 16px; font-size: 13px;">Annuler</button>
+                        </div>
+                    </form>
+                </div> <!-- FIN password-form-section -->
+
+                <!-- Formulaire changement PIN (Dynamique) -->
+                <div id="pinForm" style="display:none; padding: 20px; background: #fffcf0; border-radius: 16px; margin: 20px; border: 1px dashed #fcd34d; animation: fadeIn 0.3s ease;">
+                    <h4 style="font-size: 14px; color: #92400e; margin-top: 0; margin-bottom: 15px;">Changement de code PIN</h4>
+                    <div id="pin-form-body">
+                        <div class="edit-field">
+                            <label class="edit-label">Ancien code PIN</label>
+                            <div style="position: relative;">
+                                <input type="password" id="ancien_pin" maxlength="6" inputmode="numeric" placeholder="Ancien PIN" class="edit-input bg-card" style="padding-right: 48px;">
+                                <button type="button" class="eye-btn" onclick="togglePasswordVisibility('ancien_pin', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="edit-field">
+                            <label class="edit-label">Nouveau code PIN</label>
+                            <div style="position: relative;">
+                                <input type="password" id="nouveau_pin" maxlength="6" inputmode="numeric" placeholder="Nouveau PIN (4-6 chiffres)" class="edit-input bg-card" style="padding-right: 48px;">
+                                <button type="button" class="eye-btn" onclick="togglePasswordVisibility('nouveau_pin', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="edit-field">
+                            <label class="edit-label">Confirmer le nouveau</label>
+                            <div style="position: relative;">
+                                <input type="password" id="confirmation_pin" maxlength="6" inputmode="numeric" placeholder="Confirmer le PIN" class="edit-input bg-card" style="padding-right: 48px;">
+                                <button type="button" class="eye-btn" onclick="togglePasswordVisibility('confirmation_pin', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="pin-global-error" class="text-danger" style="font-size: 12px; font-weight: 600; text-align: center; display: none; margin-bottom: 10px; background: #fee2e2; padding: 10px; border-radius: 8px; border: 1px solid #fecaca;"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
+                            <button type="button" onclick="validerPin()" id="submit-pin" class="btn-save" style="padding: 10px 25px; font-size: 14px; background: #f59e0b; border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">Valider</button>
+                            <button type="button" class="bg-card btn-cancel" onclick="cacherPinForm()" style="padding: 10px 25px; font-size: 14px; border-radius: 12px; cursor: pointer; border: 1px solid #e2e8f0;">Annuler</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Fonction pour basculer vers le mode édition
+    function switchToEdit() {
+        document.getElementById('view-mode').style.display = 'none';
+        document.getElementById('edit-mode').style.display = 'block';
+        document.getElementById('edit-prenom').focus();
+    }
+
+    // Fonction pour revenir au mode vue
+    function switchToView() {
+        document.getElementById('edit-mode').style.display = 'none';
+        document.getElementById('view-mode').style.display = 'block';
+    }
+
+    // Gestion de l'affichage du formulaire PIN
+    function showPinForm() {
+        const pinForm = document.getElementById('pinForm');
+        const pwdForm = document.getElementById('password-form-section');
+        if (pinForm) {
+            pinForm.style.display = 'block';
+            pinForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        if (pwdForm) pwdForm.style.display = 'none';
+    }
+
+    function cacherPinForm() {
+        const pinForm = document.getElementById('pinForm');
+        if (pinForm) pinForm.style.display = 'none';
+    }
+
+    // Récupération du cookie CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Validation du PIN (Version JSON Optimisée avec async/await)
+    async function validerPin() {
+        const start = performance.now();
+        
+        const ancienPin = document.getElementById('ancien_pin').value;
+        const nouveauPin = document.getElementById('nouveau_pin').value;
+        const confirmationPin = document.getElementById('confirmation_pin').value;
+        const globalError = document.getElementById('pin-global-error');
+        const submitBtn = document.getElementById('submit-pin');
+
+        if (!ancienPin || !nouveauPin || !confirmationPin) {
+            if (globalError) {
+                globalError.textContent = "Veuillez remplir tous les champs.";
+                globalError.style.display = 'block';
+            }
+            return;
+        }
+
+        // Indicateur de chargement
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Traitement...';
+        }
+        if (globalError) globalError.style.display = 'none';
+
+        try {
+            const response = await fetch("{% url 'core:changer_pin' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    ancien: ancienPin,
+                    nouveau: nouveauPin,
+                    confirmation: confirmationPin
+                })
+            });
+            
+            const data = await response.json();
+            const duration = performance.now() - start;
+            console.log(`Temps d'exécution total (Client+Serveur): ${duration.toFixed(2)}ms`);
+            
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Valider';
+            }
+
+            if (response.status === 200 && data.success) {
+                // Mise à jour dynamique du DOM sans rechargement
+                const formBody = document.getElementById('pin-form-body');
+                if (formBody) {
+                    formBody.innerHTML = `
+                        <div style="text-align: center; padding: 20px; animation: scaleIn 0.3s ease-out;">
+                            <div style="margin-bottom: 15px; color: #22c55e;">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <h4 style="color: #166534; margin: 0 0 8px 0;">PIN modifié avec succès</h4>
+                            <p style="color: #15803d; font-size: 13px; margin: 0;">Performance: ${data.duration}</p>
+                            <button type="button" onclick="cacherPinForm()" class="btn-cancel" style="margin-top: 15px; padding: 8px 20px; border-radius: 8px;">Fermer</button>
+                        </div>
+                    `;
+                }
+            } else {
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                    return;
+                }
+                const errorMsg = data.error || "Erreur lors du changement de PIN.";
+                if (globalError) {
+                    globalError.textContent = errorMsg;
+                    globalError.style.display = 'block';
+                } else {
+                    alert(errorMsg);
+                }
+            }
+        } catch (err) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Valider';
+            }
+            console.error('Fetch error:', err);
+            alert("Erreur réseau ou serveur inaccessible.");
+        }
+    }
+
+    function updateAvatar() {
+        const prenom = document.getElementById('edit-prenom').value;
+        const nom = document.getElementById('edit-nom').value;
+        const initiales = (prenom[0] || '').toUpperCase() + (nom[0] || '').toUpperCase();
+        const avatar = document.getElementById('edit-avatar');
+        if (avatar) avatar.textContent = initiales || '?';
+    }
+</script>
+<script src="{% static 'js/profil.js' %}"></script>
+{% endblock %}

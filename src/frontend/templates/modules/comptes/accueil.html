@@ -1,10 +1,12 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
 
-{% block content %}
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/comptes.css' %}">
+{% endblock %}
 
+{% block content %}
 <div class="comptes-accueil-container">
 
     <!-- En-tête -->
@@ -41,7 +43,7 @@
                     Exporter
                 </button>
                 <div id="exportMenu"
-                    style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #edf2f7; z-index: 1000; min-width: 160px; overflow: hidden; animation: fadeInExport 0.2s ease-out;">
+                    class="bg-card" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #edf2f7; z-index: 1000; min-width: 160px; overflow: hidden; animation: fadeInExport 0.2s ease-out;">
                     <a href="{% url 'comptes:export_comptes_pdf' %}" class="export-item"
                         style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #1e293b; text-decoration: none; font-size: 14px; transition: background 0.2s;">
                         <span style="font-size: 1.2rem;">📄</span> PDF
@@ -255,7 +257,7 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
     <h2 class="section-title" style="margin: 0;">Aperçu des mouvements</h2>
-    <button class="toggle-visibility" onclick="toggleAmountsGlobal()" style="border: none; background: white; padding: 10px 14px; border-radius: 12px; cursor: pointer; color: #475569; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.08); transition: 0.2s; display: flex; align-items: center; justify-content: center;">
+    <button class="bg-card toggle-visibility text-muted" onclick="toggleAmountsGlobal()" style="border: none; padding: 10px 14px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.08); transition: 0.2s; display: flex; align-items: center; justify-content: center;">
         <span id="eye-icon" style="display: flex;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
@@ -321,12 +323,12 @@
     </div>
     
     <div class="cd-blocks">
-        <div class="cd-block-item" style="border-left-color: #f59e0b;">
+        <div class="text-warning cd-block-item" style="border-left-">
             <div class="cd-item-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 Liquidités
             </div>
-            <div class="cd-item-val secret-val-simple" style="color: #f59e0b;">{{ liquidites|intspace }} <span style="font-size: 14px;">GNF</span></div>
+            <div class="text-warning cd-item-val secret-val-simple" >{{ liquidites|intspace }} <span style="font-size: 14px;">GNF</span></div>
         </div>
         <div class="cd-block-item" style="border-left-color: #f39c12;">
             <div class="cd-item-title">
@@ -336,7 +338,7 @@
             <div class="cd-item-val secret-val-simple" style="color: #f39c12; font-size: 1.3em;">
                 {{ total_poids_or|floatformat:-2|default:"0" }} <span style="font-size: 0.8em;">g</span>
             </div>
-            <div class="secret-val-simple" style="color: #6b7280; font-size: 0.9em; margin-top: 4px; font-weight: 500;">
+            <div class="text-muted secret-val-simple" style="font-size: 0.9em; margin-top: 4px; font-weight: 500;">
                 {% if prix_or %}
                     (valorisation : {{ total_or_gnf|intspace }} GNF)
                 {% else %}
@@ -348,9 +350,9 @@
 </div>
 
 <!-- ================= COURS DE L'OR COMPACT ================= -->
-<div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 15px;">
+<div class="bg-card" style="border: 1px solid #e2e8f0; border-radius: 16px; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 15px;">
     <div style="display: flex; align-items: center; gap: 15px;">
-        <div style="background: #fffbeb; color: #f59e0b; padding: 10px; border-radius: 12px; display: flex;">
+        <div class="text-warning" style="background: #fffbeb; padding: 10px; border-radius: 12px; display: flex;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="8" />
                 <line x1="12" y1="8" x2="12" y2="16" />
@@ -358,11 +360,11 @@
             </svg>
         </div>
         <div>
-            <div style="color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 2px;">Cours de l'Or (24K)</div>
+            <div class="text-muted" style="font-size: 13px; font-weight: 600; margin-bottom: 2px;">Cours de l'Or (24K)</div>
             <div style="font-size: 18px; font-weight: 800; color: #1e293b; line-height: 1;">
-                {{ prix_or.prix_gramme|intspace|default:"0" }} <span style="font-size: 13px; font-weight: 600; color: #94a3b8;">GNF/g</span>
+                {{ prix_or.prix_gramme|intspace|default:"0" }} <span class="text-muted" style="font-size: 13px; font-weight: 600;">GNF/g</span>
             </div>
-            <div style="font-size: 11px; color: #94a3b8; margin-top: 5px; font-weight: 500;">
+            <div class="text-muted" style="font-size: 11px; margin-top: 5px; font-weight: 500;">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 2px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Maj : {{ prix_or.date_saisie|date:"d/m/Y H:i"|default:"Indisponible" }}
             </div>
@@ -373,10 +375,10 @@
         <form method="post" action="{% url 'comptes:saisie_prix_or_manuel' %}" class="gold-input-group">
             {% csrf_token %}
             <input type="text" name="prix_manuel" placeholder="Nouveau prix..." required inputmode="numeric" oninput="formatMontant(this)">
-            <span style="font-size: 14px; font-weight: 600; color: #94a3b8;">GNF</span>
+            <span class="text-muted" style="font-size: 14px; font-weight: 600;">GNF</span>
             <button type="submit" class="btn-fixer">Fixer</button>
         </form>
-        <small style="color: #94a3b8; font-size: 10px; margin-top: 2px; width: 100%; text-align: right; display: block;">Max 12 chiffres</small>
+
     </div>
         
         <a href="https://www.goldrate24.com" target="_blank" rel="noopener noreferrer" class="btn-web">

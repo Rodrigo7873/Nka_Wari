@@ -166,7 +166,7 @@
                 <td class="font-bold">{{ karfa.beneficiaire }}</td>
                 <td>{{ karfa.motif|default:"-" }}</td>
                 <td class="text-right nowrap">{{ karfa.montant_initial|intspace }} GNF</td>
-                <td class="text-right font-bold nowrap" style="color: #10b981;">{{ karfa.montant_actuel|intspace }} GNF
+                <td class="nowrap text-success font-bold text-right" >{{ karfa.montant_actuel|intspace }} GNF
                 </td>
             </tr>
             {% endfor %}
@@ -174,7 +174,7 @@
     </table>
 
     {% if dernieres_ops %}
-    <div class="section-title" style="border-left-color: #64748b; margin-top: 30px;">Historique des dernières opérations
+    <div class="text-muted section-title" style="border-left- margin-top: 30px;">Historique des dernières opérations
     </div>
     <table>
         <thead>
@@ -188,7 +188,7 @@
         <tbody>
             {% for op in dernieres_ops %}
             <tr>
-                <td style="color: #64748b;">{{ op.date|date:"d/m/Y H:i" }}</td>
+                <td class="text-muted" >{{ op.date|date:"d/m/Y H:i" }}</td>
                 <td class="font-bold">{{ op.karfa.beneficiaire }}</td>
                 <td>
                     <span class="{% if op.type == 'AJOUT' %}badge-ajout{% else %}badge-retrait{% endif %}">

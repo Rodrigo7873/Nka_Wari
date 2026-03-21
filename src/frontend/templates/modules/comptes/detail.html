@@ -36,11 +36,11 @@
         <div style="margin-top: 20px;">
             <div style="font-size: 0.9em; opacity: 0.8;">{% if is_or %}Poids actuel{% else %}Solde actuel{% endif %}
             </div>
-            <div style="font-size: 2.5em; font-weight: 700;">
+            <div style="font-size: clamp(1.8rem, 8vw, 2.5rem); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -1px;">
                 {% if is_or %}
-                {{ compte.poids_grammes|floatformat:-2 }} g
+                {{ compte.poids_grammes|floatformat:-2 }} <span style="font-size: 0.6em; opacity: 0.8;">g</span>
                 {% else %}
-                {{ compte.solde|milliers }} GNF
+                {{ compte.solde|milliers }} <span style="font-size: 0.5em; opacity: 0.8;">GNF</span>
                 {% endif %}
             </div>
         </div>
@@ -67,7 +67,7 @@
         <form method="post" action="{% url 'comptes:archiver_compte' compte.id %}?type={% if is_or %}or{% else %}argent{% endif %}" style="display: inline;">
             {% csrf_token %}
             <button type="button" data-confirm="Archiver ce compte ? Il pourra être désarchivé plus tard."
-                style="background: #f1f5f9; color: #475569; padding: 10px 24px; border: 1px solid #e2e8f0; border-radius: 30px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
+                class="text-muted" style="background: #f1f5f9; padding: 10px 24px; border: 1px solid #e2e8f0; border-radius: 30px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
                 onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -96,7 +96,7 @@
         {% if is_or and compte.poids_grammes == 0 or not is_or and compte.solde == 0 %}
         <a href="{% url 'comptes:supprimer_compte' compte.id %}?type={% if is_or %}or{% else %}argent{% endif %}"
             data-confirm="Supprimer définitivement ce compte ? Action irréversible."
-            style="background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
+            class="text-danger" style="background: #fef2f2; border: 1px solid #fee2e2; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
             onmouseover="this.style.background='#fee2e2';" onmouseout="this.style.background='#fef2f2';">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -113,7 +113,7 @@
 
     <!-- Formulaire d'opération (caché par défaut) -->
     <div id="operationForm"
-        style="display: none; background: white; border-radius: 16px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        class="bg-card" style="display: none; border-radius: 16px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
         <h3 id="formTitle" style="margin-top: 0;">{% if is_or %}Ajouter de l'or{% else %}Ajouter de l'argent{% endif %}
         </h3>
         <form method="post" action="{% url 'comptes:operation_compte' compte.id %}?type={% if is_or %}or{% else %}argent{% endif %}">
@@ -128,8 +128,10 @@
                     Montant (GNF)
                     {% endif %}
                 </label>
-                <input type="number" step="any" name="montant" required min="1"
-                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                <input type="text" name="montant" id="montant-operation" required 
+                    oninput="formatMontant(this)" inputmode="numeric" autocomplete="off"
+                    placeholder="Ex: 50 000"
+                    style="width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 12px; font-size: 16px; outline: none; transition: border-color 0.2s;">
             </div>
 
             <div style="margin-bottom: 20px;">
@@ -157,21 +159,21 @@
 
     <!-- Historique des mouvements -->
     <h2>Historique des mouvements</h2>
-    <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    <div class="bg-card" style="border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
         <div id="history-container" style="max-height: 400px; overflow-y: auto; transition: max-height 0.3s ease;">
             {% for mouvement in mouvements %}
-            <div class="history-item" style="display: {% if forloop.counter > 5 %}none{% else %}flex{% endif %}; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #edf2f7;">
-                <div>
-                    <span style="font-weight: 500;">{{ mouvement.get_type_display }}</span>
-                    <span style="margin-left: 10px; color: #6b7280;">{{ mouvement.date|date:"d/m/Y H:i" }}</span>
+            <div class="history-item" style="display: {% if forloop.counter > 5 %}none{% else %}flex{% endif %}; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #edf2f7; gap: 10px;">
+                <div style="min-width: 0; flex: 1;">
+                    <div style="font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ mouvement.get_type_display }}</div>
+                    <div class="text-muted" style="font-size: 12px;">{{ mouvement.date|date:"d/m/Y H:i" }}</div>
                 </div>
-                <div style="text-align: right;">
+                <div style="text-align: right; flex-shrink: 0;">
                     <span
-                        style="background: {% if mouvement.type == 'AJOUT' %}#27ae60{% else %}#e74c3c{% endif %}; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 600;">
+                        style="background: {% if mouvement.type == 'AJOUT' %}#27ae60{% else %}#e74c3c{% endif %}; color: white; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 13px; white-space: nowrap; display: inline-block;">
                         {% if mouvement.type == 'AJOUT' %}+{% else %}-{% endif %}{{ mouvement.montant|milliers }} {% if is_or %}g{% else %}GNF{% endif %}
                     </span>
                     {% if mouvement.note %}
-                    <div style="margin-top: 4px; color: #6b7280; font-size: 0.85em;">{{ mouvement.note }}</div>
+                    <div class="text-muted" style="margin-top: 2px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">{{ mouvement.note }}</div>
                     {% endif %}
                 </div>
             </div>

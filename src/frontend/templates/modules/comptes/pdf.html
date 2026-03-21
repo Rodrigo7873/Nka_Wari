@@ -173,7 +173,7 @@
 
     {% if comptes_dette %}
     <div class="section">
-        <div class="section-title" style="border-left-color: #ef4444;">Comptes Dette (Passifs)</div>
+        <div class="text-danger section-title" style="border-left-">Comptes Dette (Passifs)</div>
         <table>
             <thead>
                 <tr>
@@ -187,7 +187,7 @@
                 <tr>
                     <td class="font-bold">{{ compte.nom }}</td>
                     <td><span class="badge badge-dette">À REMBOURSER</span></td>
-                    <td class="text-right font-bold nowrap" style="color: #ef4444;">{{ compte.solde|intspace }} GNF</td>
+                    <td class="nowrap font-bold text-danger text-right" >{{ compte.solde|intspace }} GNF</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -200,7 +200,7 @@
 
     {% if comptes_or %}
     <div class="section">
-        <div class="section-title" style="border-left-color: #f59e0b;">Comptes Or (Métaux Précieux)</div>
+        <div class="text-warning section-title" style="border-left-">Comptes Or (Métaux Précieux)</div>
         <table>
             <thead>
                 <tr>

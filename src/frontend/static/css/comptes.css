@@ -12,7 +12,7 @@ body {
 }
 
 .compte-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 24px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -31,7 +31,7 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     /* Hover léger */
-    border-color: #e2e8f0;
+    border-color:  var(--border);
 }
 
 .badge {
@@ -114,7 +114,7 @@ select:focus {
 
 .page-title {
     margin: 0;
-    color: #1e2b3c;
+    color: var(--text-primary);
     font-size: 28px;
     font-weight: 700;
 }
@@ -155,9 +155,9 @@ select:focus {
 }
 
 .btn-gray {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-page);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
 }
 
 .btn-gray:hover {
@@ -176,8 +176,8 @@ select:focus {
 }
 
 .summary-card-light {
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 20px;
     padding: 24px;
     margin-bottom: 24px;
@@ -195,7 +195,7 @@ select:focus {
 }
 
 .card-label-light {
-    color: #64748b;
+    color: var(--text-secondary);
 }
 
 .card-value {
@@ -209,7 +209,7 @@ select:focus {
 }
 
 .card-value-light {
-    color: #1e2b3c;
+    color: var(--text-primary);
 }
 
 .metrics-row {
@@ -236,10 +236,10 @@ select:focus {
 
 /* Section Or */
 .gold-section {
-    background: white;
+    background: var(--bg-card);
     border-radius: 20px;
     padding: 24px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     margin-bottom: 30px;
     display: flex;
     justify-content: space-between;
@@ -276,7 +276,7 @@ select:focus {
 
 .gold-date {
     font-size: 12px;
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-weight: 400;
 }
 
@@ -288,10 +288,10 @@ select:focus {
 }
 
 .module-card {
-    background: white;
+    background: var(--bg-card);
     padding: 24px;
     border-radius: 20px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -310,7 +310,7 @@ select:focus {
 }
 
 .module-title {
-    color: #64748b;
+    color: var(--text-secondary);
     font-weight: 600;
     font-size: 14px;
     display: flex;
@@ -336,7 +336,7 @@ select:focus {
 }
 
 .module-subtitle {
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-size: 13px;
     margin-top: 8px;
 }

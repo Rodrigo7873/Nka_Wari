@@ -1,33 +1,15 @@
-# N'ka Wari
+# N'Ka Wari 
 
-Application de Gestion de Budget Personnel
+N'Ka Wari est une **Progressive Web App (PWA) de gestion métier** dédiée aux professionnels de l'orpaillage en Guinée (et en Afrique de l'Ouest). Elle permet de gérer de manière simple, robuste et sécurisée les opérations de karfa (réception/don d'or), les dettes (aides financières) et les différents comptes (Liquidité, Caisse) associés à l'activité, y compris en mode hors-ligne.
 
-## Description
+## Livrables
+Toute la documentation complète du projet se trouve dans le sous-dossier `docs/` pour répondre aux exigences du CDC :
+- **[Guide Utilisateur](docs/user_guide.md)** : Mode d'emploi couvrant toutes les fonctionnalités (Inscription, Karfa, Dettes, Profils).
+- **[Guide Technique](docs/technical_guide.md)** : Manuel d'installation, configuration et architecture globale (Django, PWA).
+- **[Déploiement](docs/deployment.md)** : Instructions pas à pas pour la mise en production via Nginx / Gunicorn.
 
-N'ka Wari (Mon Argent / Ma Richesse) est une application web mobile
-de gestion complète du budget personnel, adaptée au contexte guinéen
-avec gestion du Franc Guinéen (GNF) et de l'or comme valeur refuge.
-
-## Fonctionnalités 80% Offline
-
-L'application fonctionne sans connexion internet permanente,
-avec synchronisation différée.
-
-## Modules
-
-- **Module 1** : Gestion de Karfa
-- **Module 2** : Gestion des Dettes  
-- **Module 3** : Gestion des Comptes (Argent et Or)
-- **Module 4** : Paramètres et Sécurité
-- **Module 4.1** : À Propos
-
-## Développeur
-
-**Demba DOUMBOUYA**
-- Email : Rodrigodoumbouya@gmail.com
-- Téléphone : +224 628 74 19 60
-- Localisation : U-de Labé, Guinée
-
-## Remerciements
-
-Cheick Mohamed DIALLO
+## Caractéristiques Principales
+1. **Interface Moderne** : Design soigné (Premium), notifications animées, icônes fluides, et thèmes dynamiques.
+2. **Dashboard de Gestion Synthétique** : Aperçu net et clair du patrimoine global avec bouton de confidentialité ("Mode discret" pour cacher ou rendre flou les montants).
+3. **Sécurité Forte avec Code PIN** : Connexion par mot de passe et un code PIN sécurisé (à 4 chiffres) pour le confort quotidien (re-connexion facile avec verrouillage automatique après expiration).
+4. **App (Offline-First)** : Interface web intégrée fonctionnant comme une application native, permettant de comptabiliser vos chiffres même en pleine brousse (sans réseau). La "synchronisation au serveur" s'effectue automatiquement au retour du réseau.

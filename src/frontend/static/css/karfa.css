@@ -2,8 +2,8 @@
 /* Variables et Typographie */
 .tous-karfa-container {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f9fafb;
-    color: #1f2937;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem 1rem;
     box-sizing: border-box;
@@ -33,7 +33,7 @@
 .page-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -59,15 +59,15 @@
 }
 
 .btn-light {
-    background-color: white;
+    background-color: var(--bg-card);
     color: #374151;
-    border-color: #e5e7eb;
+    border-color:  var(--border);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-light:hover {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
+    background-color: var(--bg-page);
+    border-color:  var(--border);
 }
 
 /* Grille 1/2/3 colonnes */
@@ -94,10 +94,10 @@
 
 /* Carte Karfa */
 .karfa-card {
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1rem;
     padding: 1.5rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     /* Ombre subtile */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -129,14 +129,14 @@
 .card-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0 0 0.25rem 0;
     line-height: 1.3;
 }
 
 .card-motif {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--text-secondary);
 }
 
 .status-badge {
@@ -161,8 +161,8 @@
 }
 
 .badge-rendu {
-    background-color: #f3f4f6;
-    color: #4b5563;
+    background-color: var(--bg-page);
+    color: var(--text-secondary);
 }
 
 /* Bas de la carte (Date et Montant) */
@@ -182,7 +182,7 @@
 .card-amount {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     line-height: 1;
     white-space: nowrap;
 }
@@ -199,8 +199,8 @@
 /* Variables et Typographie */
 .operations-container {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f9fafb;
-    color: #1f2937;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem 1rem;
     box-sizing: border-box;
@@ -222,7 +222,7 @@
 .page-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -235,16 +235,16 @@
     font-weight: 500;
     font-size: 0.875rem;
     text-decoration: none;
-    background-color: white;
+    background-color: var(--bg-card);
     color: #374151;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
 }
 
 .btn-light:hover {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
+    background-color: var(--bg-page);
+    border-color:  var(--border);
 }
 
 /* Regroupement par date */
@@ -255,10 +255,10 @@
 .date-header {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--text-secondary);
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 2px solid var(--border);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -266,10 +266,10 @@
 
 /* Liste d'opérations */
 .operations-card {
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1rem;
     padding: 1.5rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     margin-bottom: 1rem;
     display: flex;
@@ -293,7 +293,7 @@
 
 .op-beneficiary {
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-primary);
     font-size: 1rem;
     white-space: nowrap;
     overflow: hidden;
@@ -302,7 +302,7 @@
 
 .op-time {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: var(--text-secondary);
     white-space: nowrap;
 }
 
@@ -351,17 +351,17 @@
 .empty-state {
     text-align: center;
     padding: 4rem 1rem;
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1rem;
-    border: 1px dashed #d1d5db;
+    border: 1px dashed var(--border);
 }
 
 /* From list.html */
 /* Variables et Typographie */
 .karfa-dashboard {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f9fafb;
-    color: #1f2937;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem 1rem;
     box-sizing: border-box;
@@ -391,7 +391,7 @@
 .dashboard-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -442,14 +442,14 @@
 
 /* Exporter (gris) */
 .btn-gray {
-    background-color: white;
-    color: #1e2b3c;
-    border: 1px solid #e2e8f0;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-gray:hover {
-    background-color: #f8fafc;
+    background-color: var(--bg-page);
     transform: translateY(-1px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -527,7 +527,7 @@
 
 /* Dernières opérations */
 .operations-section {
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1.5rem;
     padding: 2rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
@@ -537,7 +537,7 @@
 .operations-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #111827;
+    color: var(--text-primary);
     margin-top: 0;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
@@ -572,7 +572,7 @@
 
 .op-beneficiary {
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-primary);
     font-size: 0.95rem;
     white-space: nowrap;
     overflow: hidden;
@@ -581,7 +581,7 @@
 
 .op-date {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: var(--text-secondary);
     white-space: nowrap;
 }
 
@@ -633,7 +633,7 @@
 .form-page {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh;
-    background: #f8fafc;
+    background: var(--bg-page);
     padding: 30px 16px;
     box-sizing: border-box;
 }
@@ -668,18 +668,18 @@
     margin: 0;
     font-size: 22px;
     font-weight: 700;
-    color: #1e2b3c;
+    color: var(--text-primary);
 }
 
 .form-header-text p {
     margin: 4px 0 0;
     font-size: 13px;
-    color: #64748b;
+    color: var(--text-secondary);
 }
 
 /* Card */
 .form-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 20px;
     padding: 32px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
@@ -707,7 +707,7 @@
 
 .field-hint {
     font-size: 11.5px;
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-weight: 400;
     margin-left: 4px;
 }
@@ -715,11 +715,11 @@
 .field-input {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--border);
     border-radius: 12px;
     font-size: 15px;
-    color: #1e2b3c;
-    background: #f8fafc;
+    color: var(--text-primary);
+    background: var(--bg-page);
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     box-sizing: border-box;
     font-family: inherit;
@@ -729,7 +729,7 @@
 
 .field-input:focus {
     border-color: #3b82f6;
-    background: white;
+    background: var(--bg-card);
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
 }
 
@@ -755,7 +755,7 @@ textarea.field-input {
     left: 16px;
     font-size: 14px;
     font-weight: 700;
-    color: #64748b;
+    color: var(--text-secondary);
     pointer-events: none;
     user-select: none;
 }
@@ -769,7 +769,7 @@ textarea.field-input {
     right: 16px;
     font-size: 12px;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--text-secondary);
     pointer-events: none;
 }
 
@@ -791,9 +791,9 @@ textarea.field-input {
     flex: 1;
     padding: 13px;
     border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
-    background: white;
-    color: #64748b;
+    border: 1.5px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -804,8 +804,8 @@ textarea.field-input {
 }
 
 .btn-cancel:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+    background: var(--bg-page);
+    border-color:  var(--border);
     color: #374151;
     transform: translateY(-1px);
 }
@@ -844,8 +844,8 @@ textarea.field-input {
 /* Variables et Typographie */
 .karfa-detail-container {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f9fafb;
-    color: #1f2937;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem 1rem;
     box-sizing: border-box;
@@ -871,23 +871,23 @@ textarea.field-input {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    background-color: white;
+    background-color: var(--bg-card);
     color: #374151;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     text-decoration: none;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
 }
 
 .btn-back:hover {
-    background-color: #f3f4f6;
-    color: #111827;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
 }
 
 .header-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -1027,11 +1027,11 @@ textarea.field-input {
 /* Formulaire d'opération (Caché par défaut) */
 .operation-form {
     display: none;
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1rem;
     padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     margin-bottom: 2rem;
     animation: slideDown 0.3s ease-out forwards;
 }
@@ -1052,7 +1052,7 @@ textarea.field-input {
     font-size: 1.125rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .form-group {
@@ -1070,7 +1070,7 @@ textarea.field-input {
 .form-control {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     font-size: 1rem;
     font-family: inherit;
@@ -1092,11 +1092,11 @@ textarea.field-input {
 
 /* Historique des mouvements */
 .history-section {
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1rem;
     padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
 }
 
 .history-title {
@@ -1104,7 +1104,7 @@ textarea.field-input {
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 1.5rem;
-    color: #111827;
+    color: var(--text-primary);
     padding-bottom: 1rem;
     border-bottom: 1px solid #f3f4f6;
 }
@@ -1118,8 +1118,18 @@ textarea.field-input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
+    padding: 1.25rem 0;
     border-bottom: 1px solid #f3f4f6;
+    gap: 12px;
+}
+
+@media (max-width: 480px) {
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 0;
+        gap: 6px;
+    }
 }
 
 .history-item:last-child {
@@ -1128,31 +1138,46 @@ textarea.field-input {
 }
 
 .history-date {
-    font-size: 0.875rem;
-    color: #6b7280;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
     font-weight: 500;
+    white-space: nowrap;
+    line-height: 1.2;
+    min-width: 70px;
 }
 
 .history-details {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     text-align: right;
+    min-width: 0;
+}
+
+@media (max-width: 480px) {
+    .history-details {
+        width: 100%;
+        justify-content: space-between;
+        text-align: left;
+    }
 }
 
 .history-type {
-    font-size: 0.875rem;
-    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 999px;
-    background-color: #f3f4f6;
-    color: #4b5563;
-    font-weight: 500;
+    background-color: var(--bg-page);
+    color: var(--text-secondary);
+    font-weight: 600;
+    max-width: none; /* Plus de limite sur mobile car sur sa propre ligne */
+    border: 1px solid #f1f5f9;
 }
 
 .history-amount {
     font-weight: 700;
-    font-size: 1.125rem;
-    min-width: 100px;
+    font-size: 0.95rem; /* Légèrement réduit pour gagner de l'espace global */
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .text-green {
@@ -1179,8 +1204,8 @@ textarea.field-input {
 /* Variables et Typographie */
 .archives-container {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f9fafb;
-    color: #1f2937;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem 1rem;
     box-sizing: border-box;
@@ -1202,7 +1227,7 @@ textarea.field-input {
 .page-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -1215,16 +1240,16 @@ textarea.field-input {
     font-weight: 500;
     font-size: 0.875rem;
     text-decoration: none;
-    background-color: white;
+    background-color: var(--bg-card);
     color: #374151;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
 }
 
 .btn-light:hover {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
+    background-color: var(--bg-page);
+    border-color:  var(--border);
 }
 
 /* Regroupement par date */
@@ -1235,10 +1260,10 @@ textarea.field-input {
 .date-header {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--text-secondary);
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 2px solid var(--border);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1258,10 +1283,10 @@ textarea.field-input {
 }
 
 .archive-card {
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1rem;
     padding: 1.5rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
@@ -1293,7 +1318,7 @@ textarea.field-input {
     justify-content: center;
     width: 2.5rem;
     height: 2.5rem;
-    background-color: #f3f4f6;
+    background-color: var(--bg-page);
     border-radius: 0.75rem;
     font-size: 1.25rem;
 }
@@ -1306,13 +1331,13 @@ textarea.field-input {
 .beneficiary-name {
     font-weight: 600;
     font-size: 1.125rem;
-    color: #111827;
+    color: var(--text-primary);
     margin: 0 0 0.25rem 0;
 }
 
 .motif-text {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--text-secondary);
 }
 
 /* Bas de la carte */
@@ -1348,8 +1373,8 @@ textarea.field-input {
     font-weight: 600;
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
-    background-color: #f3f4f6;
-    color: #4b5563;
+    background-color: var(--bg-page);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -1357,7 +1382,7 @@ textarea.field-input {
 .empty-state {
     text-align: center;
     padding: 4rem 1rem;
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 1rem;
-    border: 1px dashed #d1d5db;
+    border: 1px dashed var(--border);
 }

@@ -29,6 +29,7 @@ class Dette(models.Model):
     garantie = models.TextField(blank=True)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='NON_PAYEE')
     date_creation = models.DateTimeField(auto_now_add=True)
+    date_modification = models.DateTimeField(auto_now=True)
     date_dernier_paiement = models.DateTimeField(null=True, blank=True)
     archive = models.BooleanField(default=False)
     date_archivage = models.DateTimeField(null=True, blank=True)

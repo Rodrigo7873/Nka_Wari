@@ -37,8 +37,10 @@ class Karfa(models.Model):
     )
     
     # Bénéficiaire (celui qui confie l'argent)
-    beneficiaire = models.CharField(
-        max_length=100,
+    beneficiaire = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='karfas_recus',
         verbose_name='Bénéficiaire'
     )
     

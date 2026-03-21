@@ -2,10 +2,8 @@
 :root {
     /* Palette Mobile First & Moderne */
     --bg-global: #f1f5f9;
-    /* Doux et neutre */
     --bg-card: #ffffff;
     --primary: #3b82f6;
-    /* Bleu vif pour action */
     --text-main: #1e2b3c;
     --text-muted: #64748b;
     --nav-height: 60px;
@@ -15,14 +13,23 @@
     --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
+body.sombre {
+    --bg-global: #0f172a;
+    --bg-card: #1e293b;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --shadow-subtle: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 body {
-    background-color: var(--bg-global) !important;
-    margin: 0;
-    padding: 0;
     font-family: 'Inter', sans-serif;
+    background-color: var(--bg-global) !important;
     color: var(--text-main);
+    line-height: 1.6;
+    margin: 0;
     /* Pb margin bottom pour que la bottom bar ne cache pas le content mobile */
     padding-bottom: calc(var(--nav-height) + 20px);
+    transition: background-color 0.3s ease, color 0.3s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -66,18 +73,6 @@ body {
     font-size: 22px;
     position: relative;
     cursor: pointer;
-}
-
-.notification-icon::after {
-    content: '';
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 8px;
-    height: 8px;
-    background: #ef4444;
-    border-radius: 50%;
-    border: 2px solid var(--bg-global);
 }
 
 /* App Container */
@@ -215,9 +210,45 @@ body {
         top: calc(var(--nav-height) + 10px);
         left: 50%;
         transform: translateX(-50%);
-        width: 100%;
-        max-width: 1200px;
-        padding: 10px 40px;
         background: transparent;
     }
+}
+
+/* =========================================
+   CLASSES SÉMANTIQUES (REMPLACEMENT DES INLINES)
+   ========================================= */
+
+.bg-card { background-color: var(--bg-card); }
+.bg-page { background-color: var(--bg-global); }
+.text-main { color: var(--text-main); }
+.text-muted { color: var(--text-muted); }
+
+/* Couleurs d'état (s'adaptent en mode sombre via theme.css) */
+.text-success { color: #10b981; }
+.text-warning { color: #f59e0b; }
+.text-danger { color: #ef4444; }
+.text-info { color: var(--primary); }
+
+.bg-success-light { background-color: rgba(16, 185, 129, 0.1); }
+.bg-warning-light { background-color: rgba(245, 158, 11, 0.1); }
+.bg-danger-light { background-color: rgba(239, 68, 68, 0.1); }
+
+/* Boutons utilitaires génériques */
+.btn-icon-light {
+    border: 1px solid rgba(0,0,0,0.05);
+    background-color: var(--bg-card);
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon-light:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
 }

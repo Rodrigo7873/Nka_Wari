@@ -1,0 +1,54 @@
+{% load static %}
+<!-- Panneau de Don Premium (Sliding Panel) -->
+<div id="donOverlay" class="don-overlay"></div>
+
+<aside id="donPanel" class="don-panel">
+    <header class="don-header">
+        <h2><img src="{% static 'images/don_icon.png' %}" alt="" style="width: 24px; vertical-align: middle; margin-right: 10px;">Faire un don</h2>
+        <button class="close-btn" onclick="closeDonPanel()" aria-label="Fermer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+    </header>
+
+    <div class="don-content">
+        <div class="don-message">
+            Merci de choisir votre moyen de paiement pour nous donner de la force 💪
+        </div>
+
+        <div class="payment-methods">
+            <!-- Orange Money -->
+            <a href="tel:*144*1*1*628741960#" class="payment-card">
+                <div class="payment-logo">
+                    <img src="{% static 'images/orange_logo.jpg' %}" alt="Orange Money">
+                </div>
+                <div class="payment-info">
+                    <span class="name">Orange Money</span>
+                    <span class="status code-ussd">*144*1*1*628741960#</span>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto;"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+
+            <!-- Mobile Money -->
+            <a href="tel:*440*1*1*663616233#" class="payment-card">
+                <div class="payment-logo">
+                    <img src="{% static 'images/momo_logo.png' %}" alt="MTN Mobile Money">
+                </div>
+                <div class="payment-info">
+                    <span class="name">MTN Mobile Money</span>
+                    <span class="status code-ussd">*440*1*1*663616233#</span>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto;"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+        </div>
+
+        <div class="desktop-manual-notice">
+            <p>📱 Disponible uniquement sur mobile</p>
+            <span>Sur ordinateur, composez manuellement le code affiché.</span>
+        </div>
+    </div>
+
+    <footer class="don-footer">
+        <p>Projet N'Ka Wari</p>
+        <p>By Demba DOUMBOUYA</p>
+    </footer>
+</aside>

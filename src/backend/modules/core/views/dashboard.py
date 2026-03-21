@@ -107,7 +107,7 @@ def accueil(request):
     ops.sort(key=lambda x: x['date'], reverse=True)
     recentes_ops = ops[:3]
 
-    return render(request, 'core/accueil.html', {
+    return render(request, 'modules/core/accueil.html', {
         'patrimoine_net': patrimoine_net,
         'total_cash': total_cash,
         'prix_or': prix_or_val,
@@ -173,7 +173,38 @@ def toutes_operations(request):
         })
         
     ops.sort(key=lambda x: x['date'], reverse=True)
-    return render(request, 'core/toutes_operations.html', {'operations': ops})
+    return render(request, 'modules/core/toutes_operations.html', {'operations': ops})
 
 
-# --- PROFIL ---
+# --- PWA ---
+def offline_view(request):
+    return render(request, 'offline.html')
+
+@login_required
+def notifications_view(request):
+    """Vue pour afficher toutes les notifications d'un utilisateur."""
+    from modules.core.models import Notification
+    notifications = Notification.objects.filter(user=request.user)
+    
+    # Marquer tout comme lu quand on visite la page
+    notifications.filter(is_read=False).update(is_read=True)
+    
+    return render(request, 'modules/core/notifications_list.html', {
+        'notifications': notifications
+    })
+
+def service_worker(request):
+    from django.http import HttpResponse
+    import os
+    from django.conf import settings
+    sw_path = os.path.join(settings.BASE_DIR.parent, 'frontend', 'static', 'sw.js')
+    with open(sw_path, 'r') as f:
+        return HttpResponse(f.read(), content_type='application/javascript')
+
+def manifest_view(request):
+    from django.http import HttpResponse
+    import os
+    from django.conf import settings
+    manifest_path = os.path.join(settings.BASE_DIR.parent, 'frontend', 'static', 'manifest.json')
+    with open(manifest_path, 'r') as f:
+        return HttpResponse(f.read(), content_type='application/json')

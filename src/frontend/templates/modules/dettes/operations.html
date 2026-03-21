@@ -7,7 +7,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
     <div style="display: flex; align-items: center; gap: 15px;">
         <a href="{% url 'dettes:liste_dettes' %}"
-            style="text-decoration: none; color: #64748b; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            class="bg-card text-muted" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -18,14 +18,14 @@
     </div>
 </div>
 
-<div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+<div class="bg-card" style="border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
     {% if operations %}
     {% regroup operations by date|date:"Y-m-d" as ops_par_jour %}
 
     {% for group in ops_par_jour %}
     <div style="margin-bottom: 30px;">
         <h3
-            style="font-size: 16px; color: #64748b; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+            class="text-muted" style="font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
             {% if group.grouper == today_date %}Aujourd'hui
             {% elif group.grouper == yesterday_date %}Hier
             {% else %}{{ group.list.0.date|date:"l d F Y" }}{% endif %}
@@ -54,10 +54,10 @@
                     {% endif %}
                 </div>
                 <div>
-                    <div style="font-weight: 600; font-size: 16px; color: #1e2b3c;">
+                    <div style="font-weight: 600; font-size: 16px; ">
                         {{ op.dette.personne }}
                     </div>
-                    <div style="font-size: 13px; color: #64748b; margin-top: 4px;">
+                    <div class="text-muted" style="font-size: 13px; margin-top: 4px;">
                         {{ op.get_type_display }}
                         {% if op.note %}
                         <span style="color: #cbd5e1; margin: 0 5px;">•</span> {{ op.note }}
@@ -69,7 +69,7 @@
                 <div style="font-weight: 700; font-size: 17px; color: {% if op.type == 'AJOUT' %}#27ae60{% elif op.type == 'REMBOURSEMENT' %}#e74c3c{% else %}#3498db{% endif %};">
                     {% if op.type == 'AJOUT' %}+{% else %}-{% endif %} {{ op.montant|milliers }} GNF
                 </div>
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+                <div class="text-muted" style="font-size: 12px; margin-top: 4px;">
                     {{ op.date|date:"H:i" }}
                 </div>
             </div>
@@ -78,7 +78,7 @@
     </div>
     {% endfor %}
     {% else %}
-    <div style="text-align: center; padding: 40px; color: #64748b;">
+    <div class="text-muted" style="text-align: center; padding: 40px;">
         <p>Aucune opération n'a été enregistrée pour le moment.</p>
     </div>
     {% endif %}

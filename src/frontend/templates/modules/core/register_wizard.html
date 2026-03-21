@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="wizard-wrapper">
+    <div class="wizard-card">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+            <div class="steps-indicators">
+                <div class="step-dot active" data-step="1">1</div>
+                <div class="step-dot" data-step="2">2</div>
+                <div class="step-dot" data-step="3">3</div>
+                <div class="step-dot" data-step="4">4</div>
+            </div>
+        </div>
+
+        <div id="step-content">
+            <!-- STEP 1: Informations personnelles -->
+            <div class="wizard-step active" id="step-1">
+                <div class="step-header">
+                    <h2 class="step-title">Bienvenue !</h2>
+                    <p class="step-subtitle">Commençons par faire connaissance</p>
+                </div>
+                <!-- STEP 1 -->
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <div class="form-group">
+                        <label>Prénom <span class="req">*</span></label>
+                        <input type="text" id="prenom" placeholder="Ex: Demba" required
+                            style="width: 100%; box-sizing: border-box;">
+                        <div class="err-msg" id="err-prenom"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom <span class="req">*</span></label>
+                        <input type="text" id="nom" placeholder="Ex: Sylla" required
+                            style="width: 100%; box-sizing: border-box;">
+                        <div class="err-msg" id="err-nom"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email (Optionnel)</label>
+                    <input type="email" id="email" placeholder="moussa@gmail.com">
+                    <div class="err-msg" id="err-email"></div>
+                    <small class="field-hint">Si rempli, doit être un email valide.</small>
+                </div>
+                <div class="step-actions">
+                    <button class="btn-next" onclick="nextStep(2)">Suivant</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Sécurité -->
+            <div class="wizard-step" id="step-2">
+                <div class="step-header">
+                    <h2 class="step-title">Sécurité</h2>
+                    <p class="step-subtitle">Protégez l'accès à vos finances</p>
+                </div>
+                <!-- STEP 2 -->
+                <div class="form-group">
+                    <label>Numéro de téléphone <span class="req">*</span></label>
+                    <div class="tel-container">
+                        <div class="tel-prefix">
+                            <span class="flag-svg">
+                                <svg width="20" height="14" viewBox="0 0 3 2">
+                                    <rect width="1" height="2" fill="#ce1126" />
+                                    <rect x="1" width="1" height="2" fill="#fcd116" />
+                                    <rect x="2" width="1" height="2" fill="#009460" />
+                                </svg>
+                            </span>
+                            <span>+224</span>
+                        </div>
+                        <input type="tel" id="telephone" placeholder="610 00 00 00" required maxlength="12">
+                    </div>
+                    <div class="err-msg" id="err-telephone"></div>
+                    <small class="field-hint">9 chiffres maximum (ex: 610 00 00 00)</small>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <div class="form-group">
+                        <label>Mot de passe <span class="req">*</span></label>
+                        <div class="input-with-eye">
+                            <input type="password" id="password" placeholder="••••••••" required
+                                style="width: 100%; box-sizing: border-box;">
+                            <button type="button" class="eye-btn" onclick="togglePass('password', 'eye-p')">
+                                <span id="eye-p"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg></span>
+                            </button>
+                        </div>
+                        <div class="err-msg" id="err-password"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmer <span class="req">*</span></label>
+                        <div class="input-with-eye">
+                            <input type="password" id="password_confirm" placeholder="••••••••" required
+                                style="width: 100%; box-sizing: border-box;">
+                            <button type="button" class="eye-btn" onclick="togglePass('password_confirm', 'eye-pc')">
+                                <span id="eye-pc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg></span>
+                            </button>
+                        </div>
+                        <div class="err-msg" id="err-password-confirm"></div>
+                    </div>
+                </div>
+                <div class="step-actions">
+                    <button class="btn-back" onclick="prevStep(1)">Retour</button>
+                    <button class="btn-next" onclick="nextStep(3)">Suivant</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Récupération -->
+            <div class="wizard-step" id="step-3">
+                <div class="step-header">
+                    <h2 class="step-title">Récupération</h2>
+                    <p class="step-subtitle">En cas d'oubli de vos identifiants</p>
+                </div>
+                <!-- STEP 3 -->
+                <div class="form-group">
+                    <label>Question secrète <span class="req">*</span></label>
+                    <select id="question_secrete">
+                        <option value="equipe">Votre équipe préférée ?</option>
+                        <option value="ecole">Le nom de votre première école ?</option>
+                        <option value="animal">Le nom de votre premier animal ?</option>
+                        <option value="ville">Votre ville de naissance ?</option>
+                        <option value="mere">Le nom de jeune fille de votre mère ?</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Réponse <span class="req">*</span></label>
+                    <input type="text" id="reponse" placeholder="Votre réponse" required>
+                    <div class="err-msg" id="err-reponse"></div>
+                </div>
+                <div class="form-group">
+                    <label>Confirmer la réponse <span class="req">*</span></label>
+                    <input type="text" id="reponse_confirm" placeholder="Confirmez votre réponse" required>
+                    <div class="err-msg" id="err-reponse-confirm"></div>
+                </div>
+                <!-- Erreur globale (ex: erreur serveur) -->
+                <div class="err-msg" id="err-global" style="text-align: center;"></div>
+                <div class="step-actions">
+                    <button class="btn-back" onclick="prevStep(2)">Retour</button>
+                    <button class="btn-finish" onclick="finalizeRegistration()">Créer mon compte</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Confirmation -->
+            <div class="wizard-step" id="step-4">
+                <div class="success-header">
+                    <div class="success-icon">✓</div>
+                    <h2 class="step-title">Compte créé avec succès !</h2>
+                </div>
+                <div class="id-card">
+                    <p class="id-label">Votre Identifiant (ID)</p>
+                    <div class="id-value" id="display-user-id">---</div>
+                </div>
+                <p class="id-hint">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                    Conservez précieusement cet identifiant pour toute récupération de compte.
+                </p>
+                <div class="step-actions centered">
+                    <a href="{% url 'core:accueil' %}" class="btn-home">Aller à l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/core.css' %}?v=1.2">
+<style>
+    /* === Messages d'erreur inline === */
+    .err-msg {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 10px;
+        margin-top: 6px;
+        animation: errShake 0.3s ease;
+    }
+
+    .err-msg.show {
+        display: flex;
+    }
+
+    .err-msg svg {
+        flex-shrink: 0;
+    }
+
+    @keyframes errShake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-4px);
+        }
+
+        75% {
+            transform: translateX(4px);
+        }
+    }
+
+    input.invalid,
+    select.invalid {
+        border-color: #ef4444 !important;
+        background: #fef2f2 !important;
+    }
+
+    .tel-container.invalid {
+        border-color: #ef4444 !important;
+        background: #fef2f2 !important;
+    }
+</style>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    // Masquage forcé des navbars standard
+    document.addEventListener("DOMContentLoaded", () => {
+        const navs = document.querySelectorAll('.hamburger, .smart-nav, .topbar');
+        navs.forEach(n => n.style.display = 'none');
+
+        // Validation Tel: chiffres uniquement
+        const telInput = document.getElementById('telephone');
+        telInput.addEventListener('input', (e) => {
+            // On récupère uniquement les chiffres
+            let val = e.target.value.replace(/\D/g, '').substring(0, 9);
+
+            // On applique le formatage 000 00 00 00
+            let formatted = "";
+            if (val.length > 0) {
+                formatted = val.substring(0, 3);
+                if (val.length > 3) {
+                    formatted += " " + val.substring(3, 5);
+                    if (val.length > 5) {
+                        formatted += " " + val.substring(5, 7);
+                        if (val.length > 7) {
+                            formatted += " " + val.substring(7, 9);
+                        }
+                    }
+                }
+            }
+            e.target.value = formatted;
+        });
+
+        // Retrait de la classe rouge au focus
+        document.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('focus', () => {
+                el.classList.remove('invalid');
+                if (el.parentElement.classList.contains('tel-container')) el.parentElement.classList.remove('invalid');
+            });
+        });
+    });
+
+    // ====== Utilitaires d'erreur ======
+    const ICON_ERR = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+
+    function showError(id, msg) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = ICON_ERR + ' ' + msg;
+        el.classList.add('show');
+        // Reforce l'animation en retirant/ajoutant la classe
+        el.style.animation = 'none';
+        requestAnimationFrame(() => { el.style.animation = ''; });
+    }
+
+    function clearError(id) {
+        const el = document.getElementById(id);
+        if (el) { el.innerHTML = ''; el.classList.remove('show'); }
+    }
+
+    function clearAllErrors() {
+        document.querySelectorAll('.err-msg').forEach(el => { el.innerHTML = ''; el.classList.remove('show'); });
+        document.querySelectorAll('input.invalid, select.invalid').forEach(el => el.classList.remove('invalid'));
+        document.querySelectorAll('.tel-container.invalid').forEach(el => el.classList.remove('invalid'));
+    }
+
+    function markInvalid(input) {
+        input.classList.add('invalid');
+        input.addEventListener('input', () => {
+            input.classList.remove('invalid');
+            clearError('err-' + input.id.replace('_', '-'));
+        }, { once: true });
+        input.addEventListener('focus', () => {
+            input.classList.remove('invalid');
+        }, { once: true });
+    }
+
+    // ====== Validation par étape ======
+    function validateStep(step) {
+        clearAllErrors();
+        let isValid = true;
+
+        if (step === 1) {
+            const prenom = document.getElementById('prenom');
+            const nom = document.getElementById('nom');
+            const email = document.getElementById('email');
+
+            if (!prenom.value.trim()) {
+                markInvalid(prenom); showError('err-prenom', 'Le prénom est requis'); isValid = false;
+            }
+            if (!nom.value.trim()) {
+                markInvalid(nom); showError('err-nom', 'Le nom est requis'); isValid = false;
+            }
+            if (email.value && !email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                markInvalid(email); showError('err-email', 'Email invalide (ex: nom@gmail.com)'); isValid = false;
+            }
+        }
+
+        if (step === 2) {
+            const tel = document.getElementById('telephone');
+            const p1 = document.getElementById('password');
+            const p2 = document.getElementById('password_confirm');
+            const telVal = tel.value.replace(/\s/g, '');
+
+            if (telVal.length < 9) {
+                tel.parentElement.classList.add('invalid');
+                showError('err-telephone', 'Numéro incomplet — 9 chiffres requis');
+                isValid = false;
+            }
+            if (p1.value.length < 8) {
+                markInvalid(p1);
+                showError('err-password', 'Minimum 8 caractères requis');
+                isValid = false;
+            }
+            if (p1.value !== p2.value && p2.value.length > 0) {
+                markInvalid(p2);
+                showError('err-password-confirm', 'Les mots de passe ne correspondent pas');
+                isValid = false;
+            } else if (!p2.value.trim()) {
+                markInvalid(p2);
+                showError('err-password-confirm', 'Confirmez votre mot de passe');
+                isValid = false;
+            }
+        }
+
+        if (step === 3) {
+            const rep = document.getElementById('reponse');
+            const repC = document.getElementById('reponse_confirm');
+
+            if (!rep.value.trim()) {
+                markInvalid(rep); showError('err-reponse', 'La réponse est requise'); isValid = false;
+            }
+            if (!repC.value.trim()) {
+                markInvalid(repC); showError('err-reponse-confirm', 'Confirmez votre réponse'); isValid = false;
+            } else if (rep.value.trim() !== repC.value.trim()) {
+                markInvalid(repC); showError('err-reponse-confirm', 'Les réponses ne correspondent pas'); isValid = false;
+            }
+        }
+
+        return isValid;
+    }
+
+    function updateProgress() {
+        document.querySelectorAll('.step-dot').forEach((dot, idx) => {
+            const stepNum = idx + 1;
+            dot.classList.toggle('active', stepNum === currentStep);
+            dot.classList.toggle('completed', stepNum < currentStep);
+        });
+        const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+        document.querySelector('.progress-bar').style.setProperty('--progress-w', `${progress}%`);
+        // Workaround pour l'after via CSS variable
+        const style = document.createElement('style');
+        style.innerHTML = `.progress-bar::after { width: ${progress}%; }`;
+        document.head.appendChild(style);
+    }
+
+    function nextStep(step) {
+        if (!validateStep(currentStep)) return;
+        document.getElementById(`step-${currentStep}`).classList.remove('active');
+        currentStep = step;
+        document.getElementById(`step-${currentStep}`).classList.add('active');
+        updateProgress();
+    }
+
+    function prevStep(step) {
+        document.getElementById(`step-${currentStep}`).classList.remove('active');
+        currentStep = step;
+        document.getElementById(`step-${currentStep}`).classList.add('active');
+        updateProgress();
+    }
+
+    function togglePass(id, eyeId) {
+        const input = document.getElementById(id);
+        const icon = document.getElementById(eyeId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+        } else {
+            input.type = 'password';
+            icon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+        }
+    }
+
+    async function finalizeRegistration() {
+        if (!validateStep(3)) return;
+
+        const data = {
+            prenom: document.getElementById('prenom').value,
+            nom: document.getElementById('nom').value,
+            email: document.getElementById('email').value,
+            telephone: document.getElementById('telephone').value.replace(/\s/g, ''),
+            password: document.getElementById('password').value,
+            question: document.getElementById('question_secrete').value,
+            reponse: document.getElementById('reponse').value
+        };
+
+        const btn = document.querySelector('.btn-finish');
+        btn.disabled = true;
+        btn.textContent = 'Création...';
+
+        try {
+            const response = await fetch('{% url "core:register_wizard" %}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify(data)
+            });
+            const resData = await response.json();
+            if (resData.success) {
+                document.getElementById('display-user-id').innerText = resData.user_id;
+                nextStep(4);
+            } else {
+                showError('err-global', resData.error || "Erreur lors de la création du compte.");
+                btn.disabled = false;
+                btn.textContent = 'Créer mon compte';
+            }
+        } catch (e) {
+            showError('err-global', "Erreur réseau — vérifiez votre connexion.");
+            btn.disabled = false;
+            btn.textContent = 'Créer mon compte';
+        }
+    }
+</script>
+{% endblock %}

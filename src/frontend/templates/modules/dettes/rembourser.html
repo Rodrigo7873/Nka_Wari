@@ -30,10 +30,10 @@
                 {% csrf_token %}
 
                 <!-- Info Dette Actuelle -->
-                <div style="background: #fff5f5; border: 1px solid #fee2e2; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: #991b1b; font-size: 14px; font-weight: 500;">Reste à payer :</span>
-                        <span style="color: #dc2626; font-size: 18px; font-weight: 700;">{{ dette.montant_restant|milliers }} GNF</span>
+                <div style="background: #fff5f5; border: 1px solid #fee2e2; border-radius: 12px; padding: 12px 15px; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: nowrap;">
+                        <span style="color: #991b1b; font-size: 13px; font-weight: 600; white-space: nowrap;">Reste à payer :</span>
+                        <span style="color: #dc2626; font-size: clamp(14px, 4vw, 18px); font-weight: 700; white-space: nowrap;">{{ dette.montant_restant|milliers }} GNF</span>
                     </div>
                 </div>
 
@@ -47,7 +47,7 @@
                         <input class="field-input" type="text" id="montant" name="montant"
                             value="{{ dette.montant_restant }}" required inputmode="numeric" oninput="formatMontant(this)">
                     </div>
-                    <small style="color: #94a3b8; font-size: 11px; margin-top: 5px; display: block;">Max 12 chiffres</small>
+
                 </div>
 
                 <!-- Mode de remboursement -->
@@ -58,13 +58,13 @@
                             <input type="radio" name="mode_paiement" value="especes" checked 
                                    onchange="document.getElementById('compte_select_div').style.display='none'; document.getElementById('compte_id').required=false;"
                                    style="margin-right: 8px;">
-                            <span style="font-size: 14px; font-weight: 500; color: #1e2b3c;">💵 Espèces</span>
+                            <span style="font-size: 14px; font-weight: 500; ">💵 Espèces</span>
                         </label>
                         <label style="flex: 1; cursor: pointer;">
                             <input type="radio" name="mode_paiement" value="compte" 
                                    onchange="document.getElementById('compte_select_div').style.display='block'; document.getElementById('compte_id').required=true;"
                                    style="margin-right: 8px;">
-                            <span style="font-size: 14px; font-weight: 500; color: #1e2b3c;">💳 Compte</span>
+                            <span style="font-size: 14px; font-weight: 500; ">💳 Compte</span>
                         </label>
                     </div>
                 </div>

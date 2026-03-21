@@ -6,16 +6,16 @@
 <div style="max-width: 700px; margin: 0 auto; padding: 20px;">
     <!-- En-tête -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h1 style="margin: 0; color: #1e2b3c;">{% if modifier %}Modifier le compte{% else %}Nouveau compte{% endif %}
+        <h1 style="margin: 0; ">{% if modifier %}Modifier le compte{% else %}Nouveau compte{% endif %}
         </h1>
         <a href="{% url 'comptes:liste_comptes' %}"
-            style="background: white; border: 1px solid #e2e8f0; color: #64748b; padding: 8px 18px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.9em; transition: all 0.2s;">
+            class="bg-card text-muted" style="border: 1px solid #e2e8f0; padding: 8px 18px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.9em; transition: all 0.2s;">
             ← Annuler
         </a>
     </div>
 
     <div
-        style="background: white; border-radius: 20px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+        class="bg-card" style="border-radius: 20px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
 
         <!-- Sélecteur de type (Argent ou Or) - Caché en mode Edition -->
         {% if not modifier %}
@@ -31,7 +31,7 @@
                 </svg> Argent
             </button>
             <button type="button" id="btn-or" onclick="toggleFields('or')"
-                style="flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; color: #64748b; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
+                class="text-muted" style="flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="8" />
@@ -59,7 +59,7 @@
 
             <!-- Nom du compte -->
             <div style="margin-bottom: 25px;">
-                <label for="nom" style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Nom du
+                <label for="nom" class="text-muted" style="display: block; margin-bottom: 10px; font-weight: 600;">Nom du
                     compte</label>
                 <input type="text" name="nom" id="nom" required value="{{ compte.nom|default:'' }}"
                     placeholder="Ex: Coffre-fort, Compte Orange Money..."
@@ -70,10 +70,10 @@
             <div id="fields-argent" {% if modifier and nature == 'or' %}style="display: none;" {% endif %}>
                 <div style="margin-bottom: 25px;">
                     <label for="type_argent"
-                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Type de
+                        class="text-muted" style="display: block; margin-bottom: 10px; font-weight: 600;">Type de
                         compte</label>
                     <select name="type_compte" id="type_argent" onchange="checkTypeDette(this.value)"
-                        style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; background: white; cursor: pointer; box-sizing: border-box;">
+                        class="bg-card" style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; cursor: pointer; box-sizing: border-box;">
                         <option value="BANQUE" {% if compte.type_compte == 'BANQUE' %}selected{% endif %}>Banque</option>
                         <option value="MOBILE_MONEY" {% if compte.type_compte == 'MOBILE_MONEY' %}selected{% endif %}>
                             Mobile Money</option>
@@ -88,11 +88,11 @@
                 <div id="field-dette-liee"
                     style="margin-bottom: 25px; {% if compte.type_compte != 'DETTE' %}display: none;{% endif %} animation: slideDown 0.3s ease-out;">
                     <label for="dette_liee"
-                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">
+                        class="text-muted" style="display: block; margin-bottom: 10px; font-weight: 600;">
                         Lier à une dette existante (Optionnel)
                     </label>
                     <select name="dette_liee" id="dette_liee"
-                        style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; background: white; cursor: pointer; box-sizing: border-box;">
+                        class="bg-card" style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; cursor: pointer; box-sizing: border-box;">
                         <option value="">-- Sélectionner une dette --</option>
                         {% for choice in form.dette_liee.field.queryset %}
                         <option value="{{ choice.id }}" {% if compte.dette_liee and choice.id == compte.dette_liee.id %}selected{% endif %}>
@@ -103,13 +103,13 @@
                 </div>
 
                 <div style="margin-bottom: 25px;">
-                    <label for="solde" style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">
+                    <label for="solde" class="text-muted" style="display: block; margin-bottom: 10px; font-weight: 600;">
                         Solde {% if modifier %}actuel{% else %}initial{% endif %} (GNF)
                     </label>
                     <input type="text" name="solde" id="solde" value="{{ compte.solde|stringformat:'d'|default:'0' }}"
                         inputmode="numeric" oninput="formatMontant(this)"
                         style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; box-sizing: border-box;">
-                    <small style="color: #94a3b8; font-size: 11px; margin-top: 5px; display: block;">Max 12 chiffres</small>
+
                 </div>
             </div>
 
@@ -117,18 +117,18 @@
             <div id="fields-or" {% if not modifier or nature == 'argent' %}style="display: none;" {% endif %}>
                 <div style="margin-bottom: 25px;">
                     <label for="poids"
-                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Poids
+                        class="text-muted" style="display: block; margin-bottom: 10px; font-weight: 600;">Poids
                         (Grammes)</label>
                     <input type="number" step="0.01" name="poids_grammes" id="poids"
                         value="{{ compte.poids_grammes|stringformat:'.2f'|default:'0' }}" min="0"
                         oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"
                         style="width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-size: 1em; box-sizing: border-box;">
-                    <small style="color: #94a3b8; font-size: 0.85em; margin-top: 8px; display: block;">Le poids peut
-                        avoir jusqu'à 2 décimales (Ex: 10.25). Max 12 chiffres.</small>
+                    <small class="text-muted" style="font-size: 0.85em; margin-top: 8px; display: block;">Le poids peut
+                        avoir jusqu'à 2 décimales (Ex: 10.25).</small>
                 </div>
                 <div style="margin-bottom: 25px;">
                     <label for="carat"
-                        style="display: block; margin-bottom: 10px; font-weight: 600; color: #475569;">Pureté
+                        class="text-muted" style="display: block; margin-bottom: 10px; font-weight: 600;">Pureté
                         (Carat)</label>
                     <input type="number" name="carat" id="carat" value="{{ compte.carat|default:'24' }}" min="1"
                         max="24"

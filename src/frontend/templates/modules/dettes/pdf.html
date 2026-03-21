@@ -155,7 +155,7 @@
                 <tr>
                     <td class="font-bold">{{ d.personne }}</td>
                     <td>{{ d.motif|default:"-" }}</td>
-                    <td class="text-right font-bold nowrap" style="color: #ef4444;">{{ d.montant_restant|intspace }} GNF
+                    <td class="nowrap font-bold text-danger text-right" >{{ d.montant_restant|intspace }} GNF
                     </td>
                 </tr>
                 {% endfor %}
@@ -170,7 +170,7 @@
     <!-- ON ME DOIT (CREANCES) -->
     {% if dettes_on_me_doit %}
     <div class="section">
-        <div class="section-title" style="border-left-color: #10b981;">Ce qu'on me doit (Mes Créances)</div>
+        <div class="text-success section-title" style="border-left-">Ce qu'on me doit (Mes Créances)</div>
         <table>
             <thead>
                 <tr>
@@ -199,7 +199,7 @@
     <!-- DERNIERS PAIEMENTS -->
     {% if derniers_paiements %}
     <div class="section">
-        <div class="section-title" style="border-left-color: #64748b;">Historique des 10 dernières opérations</div>
+        <div class="text-muted section-title" style="border-left-">Historique des 10 dernières opérations</div>
         <table>
             <thead>
                 <tr>
@@ -212,7 +212,7 @@
             <tbody>
                 {% for p in derniers_paiements %}
                 <tr>
-                    <td style="color: #64748b;">{{ p.date|date:"d/m/Y H:i" }}</td>
+                    <td class="text-muted" >{{ p.date|date:"d/m/Y H:i" }}</td>
                     <td class="font-bold">{{ p.dette.personne }}</td>
                     <td>
                         <span
