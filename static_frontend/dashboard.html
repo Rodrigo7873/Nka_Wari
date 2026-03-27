@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Tableau de bord | N'Ka Wari</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="css/don.css">
+    <link rel="stylesheet" href="css/core.css">
+    <meta name="theme-color" content="#1e2b3c">
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        .finance-showcase {
+            position: relative;
+            max-width: 100%;
+            height: 170px;
+            perspective: 1200px;
+            margin-bottom: 30px;
+            margin-top: 15px;
+        }
+        .finance-card-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .finance-showcase.flipped .finance-card-wrapper {
+            transform: rotateY(180deg);
+        }
+        .finance-card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 25px 30px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+        }
+        .finance-face-front {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            color: white;
+        }
+        .finance-face-back {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+        .fc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .fc-title {
+            font-size: 1.15em;
+            font-weight: 500;
+            opacity: 0.95;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .fc-toggle-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(5px);
+        }
+        .fc-toggle-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .fc-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .fc-amount-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 2px;
+        }
+        .fc-amount {
+            font-size: 2.6em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            transition: filter 0.3s ease;
+        }
+        .fc-currency {
+            font-size: 1.1em;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+        .fc-formula {
+            font-size: 0.9em;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+        .secret-blurred .fc-amount, 
+        .secret-blurred .gold-price, 
+        .secret-blurred .op-amount {
+            filter: blur(12px) !important;
+            user-select: none !important;
+            pointer-events: none !important;
+            transition: filter 0.3s ease;
+        }
+        .secret-blurred .fc-currency {
+            filter: blur(6px) !important;
+            user-select: none;
+        }
+        @media (max-width: 480px) {
+            .fc-amount { font-size: 2.1em; }
+            .finance-showcase { height: 150px; }
+            .fc-title { font-size: 1em; }
+            .finance-card-face { padding: 20px; }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+
+<body class="theme-clair clair">
+
+    <!-- Topbar simplifiée pour le statique -->
+    <div class="topbar">
+        <button class="hamburger" aria-label="Menu" onclick="logoutFromSupabase()">
+            <!-- Icône de déconnexion pour le frontend statique -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+        </button>
+        <div class="topbar-right">
+            <span class="notification-icon" title="Notifications">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                </svg>
+            </span>
+        </div>
+    </div>
+
+    <!-- Conteneur Principal -->
+    <div class="app-container">
+
+        <div class="welcome-header" style="margin-bottom: 30px; margin-top: 10px; animation: slideInLeft 0.5s ease-out;">
+            <h1 style="font-size: 26px; font-weight: 850; margin: 0; letter-spacing: -0.8px;">
+                Bonjour, <span id="userName">Utilisateur</span> 👋
+            </h1>
+            <p style="font-size: 14.5px; font-weight: 500; margin-top: 4px;" class="welcome-subtitle">Ravi de vous revoir sur N'Ka Wari.</p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 class="section-title" style="margin: 0; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;">Aperçu financier</h2>
+            <button class="toggle-visibility btn-icon-light" onclick="toggleAmountsGlobal()">
+                <span id="eye-icon" style="display: flex;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>
+                    </svg>
+                </span>
+            </button>
+        </div>
+
+        <div class="finance-showcase" id="finance-showcase">
+            <div class="finance-card-wrapper">
+                <div class="finance-card-face finance-face-front">
+                    <div class="fc-header">
+                        <div class="fc-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> 
+                            Patrimoine Net
+                        </div>
+                        <button class="fc-toggle-btn" onclick="flipFinanceCard()">
+                            Liquidités <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                    </div>
+                    <div class="fc-body">
+                        <div class="fc-amount-row secret-val secret-blurred">
+                            <span class="fc-amount" id="patrimoineNet">0</span>
+                            <span class="fc-currency">GNF</span>
+                        </div>
+                        <div class="fc-formula">Comptes + Créances - Dettes</div>
+                    </div>
+                </div>
+
+                <div class="finance-card-face finance-face-back">
+                    <div class="fc-header">
+                        <div class="fc-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> 
+                            Liquidités
+                        </div>
+                        <button class="fc-toggle-btn" onclick="flipFinanceCard()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Patrimoine Net 
+                        </button>
+                    </div>
+                    <div class="fc-body">
+                        <div class="fc-amount-row secret-val secret-blurred">
+                            <span class="fc-amount" id="liquidites">0</span>
+                            <span class="fc-currency">GNF</span>
+                        </div>
+                        <div class="fc-formula">Comptes Argent + Karfa</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="gold-section">
+            <div class="gold-info secret-val secret-blurred">
+                <span class="gold-label">Prix d'or fixé</span>
+                <span class="gold-price" id="prixOr">0 GNF/g</span>
+            </div>
+            <a href="https://www.goldrate24.com" target="_blank" rel="noopener noreferrer" class="gold-btn">
+                Cours de l'or →
+            </a>
+        </div>
+
+        <h2 class="section-title">Nouvelles opérations</h2>
+        <div class="actions-grid">
+            <a href="karfa_create.html" class="action-card">
+                <div class="action-icon text-success">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+                </div>
+                <span class="action-title">Nouveau karfa</span>
+            </a>
+            <a href="karfa_list.html" class="action-card">
+                <div class="action-icon text-warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /></svg>
+                </div>
+                <span class="action-title">Retirer karfa</span>
+            </a>
+            <a href="dettes_create.html" class="action-card">
+                <div class="action-icon text-danger">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg>
+                </div>
+                <span class="action-title">Nouvelle dette</span>
+            </a>
+            <a href="dettes_list.html" class="action-card">
+                <div class="action-icon text-success">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+                </div>
+                <span class="action-title">Gérer dettes</span>
+            </a>
+        </div>
+
+        <h2 class="section-title">Vos opérations récentes</h2>
+        <div class="ops-list" id="opsList">
+            <!-- Opérations chargées depuis Supabase -->
+            <div style="text-align: center; color: var(--text-muted); font-size: 14px; padding: 10px 0;">
+                Chargement des opérations...
+            </div>
+        </div>
+        <a href="toutes_operations.html" class="btn-see-more">Voir plus d'opérations →</a>
+
+    </div>
+
+    <!-- Navigation Intelligente (Bottom Tabbar / Top Desktop navbar) -->
+    <nav class="smart-nav">
+        <!-- Accueil -->
+        <a href="dashboard.html" class="nav-item active">
+            <span class="icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+            </span>
+            <span>Accueil</span>
+        </a>
+        <a href="karfa_list.html" class="nav-item">
+            <span class="icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+            </span>
+            <span>Karfa</span>
+        </a>
+        <a href="dettes_list.html" class="nav-item">
+            <span class="icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </span>
+            <span>Dettes</span>
+        </a>
+        <a href="comptes.html" class="nav-item">
+            <span class="icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22" /><line x1="6" x2="6" y1="18" y2="11" /><line x1="10" x2="10" y1="18" y2="11" /><line x1="14" x2="14" y1="18" y2="11" /><line x1="18" x2="18" y1="18" y2="11" /><polygon points="12 2 20 7 4 7" /></svg>
+            </span>
+            <span>Comptes</span>
+        </a>
+    </nav>
+
+    <script src="js/supabase.js"></script>
+    <script>
+        const icon = document.getElementById('eye-icon');
+        const svgOpen = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        const svgClosed = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`;
+
+        function applyVisibility(hidden) {
+            const secretVals = document.querySelectorAll('.secret-val');
+            secretVals.forEach(el => {
+                if (hidden) el.classList.add('secret-blurred');
+                else el.classList.remove('secret-blurred');
+            });
+            icon.innerHTML = hidden ? svgClosed : svgOpen;
+        }
+
+        function toggleAmountsGlobal() {
+            const secretValNode = document.querySelector('.secret-val');
+            if(secretValNode) {
+                const currentlyHidden = secretValNode.classList.contains('secret-blurred');
+                applyVisibility(!currentlyHidden);
+            }
+        }
+
+        function flipFinanceCard() {
+            const showcase = document.getElementById('finance-showcase');
+            showcase.classList.toggle('flipped');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            applyVisibility(true); // Toujours masqué au départ
+
+            // Check if user is logged in
+            const user = await checkSession();
+            if (user) {
+                document.getElementById('userName').textContent = user.email.split('@')[0];
+                // L'appel aux données (patrimoine, liquidité) devrait être fait ici via Supabase
+                // ex: fetchUserStats(user.id);
+            }
+        });
+    </script>
+</body>
+</html>

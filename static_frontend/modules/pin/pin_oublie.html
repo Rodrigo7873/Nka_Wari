@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="bg-card" style="max-width: 400px; margin: 50px auto; padding: 30px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <h1 id="page-title" style="text-align: center; margin-bottom: 5px;">PIN oublié</h1>
+    <p id="step-description" style="text-align: center; color: #666; margin-bottom: 30px; font-size: 14px;">Identifiez-vous pour réinitialiser votre accès</p>
+    
+    <div id="alert-container" style="display: none; margin-bottom: 20px;">
+        <div id="alert-message" style="padding: 10px; border-radius: 8px;"></div>
+    </div>
+
+    <!-- ÉTAPE 1: IDENTIFICATION -->
+    <div id="step-identify">
+        <form id="form-identify">
+            {% csrf_token %}
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px;" for="identifier">ID ou Numéro de téléphone</label>
+                <input type="text" name="identifier" id="identifier" placeholder="ID ou Numéro" required autofocus style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px;" for="password">Mot de passe du compte</label>
+                <div style="position: relative;">
+                    <input type="password" name="password" id="password" placeholder="Mot de passe" required style="width: 100%; padding: 10px 40px 10px 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+                    <span onclick="togglePasswordVisibility('password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; display: flex; align-items: center;">
+                        <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            <button type="submit" id="btn-verify"
+                style="width: 100%; background: #10b981; color: white; padding: 14px; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);"
+                onmouseover="this.style.background='#059669'; this.style.transform='translateY(-2px)';"
+                onmouseout="this.style.background='#10b981'; this.style.transform='translateY(0)';"
+            >
+                Vérifier et réinitialiser
+            </button>
+        </form>
+    </div>
+
+    <!-- ÉTAPE 2: NOUVEAU PIN -->
+    <div id="step-reset" style="display: none;">
+        <form id="form-reset">
+            {% csrf_token %}
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px;" for="new_pin">Nouveau Code PIN</label>
+                <div style="position: relative;">
+                    <input type="password" name="new_pin" id="new_pin" placeholder="Nouveau PIN" maxlength="6" pattern="[0-9]*" inputmode="numeric" required style="width: 100%; padding: 10px 40px 10px 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+                    <span onclick="togglePasswordVisibility('new_pin', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; display: flex; align-items: center;">
+                        <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px;" for="confirm_pin">Confirmer le nouveau PIN</label>
+                <div style="position: relative;">
+                    <input type="password" name="confirm_pin" id="confirm_pin" placeholder="Confirmez" maxlength="6" pattern="[0-9]*" inputmode="numeric" required style="width: 100%; padding: 10px 40px 10px 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+                    <span onclick="togglePasswordVisibility('confirm_pin', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; display: flex; align-items: center;">
+                        <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            <button type="submit" id="btn-reset-final"
+                style="width: 100%; background: #10b981; color: white; padding: 14px; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);"
+                onmouseover="this.style.background='#059669'; this.style.transform='translateY(-2px)';"
+                onmouseout="this.style.background='#10b981'; this.style.transform='translateY(0)';"
+            >
+                Enregistrer le nouveau PIN
+            </button>
+        </form>
+    </div>
+
+    <div style="margin-top: 25px; text-align: center;">
+        <a href="{% url 'core:verifier_pin' %}" class="text-danger" style="font-weight: bold; text-decoration: none; font-size: 14px;">Annuler</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/pin.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+<div class="solde-card">
+    <h3>Solde Total</h3>
+    <div class="solde-details">
+        <div class="solde-row">
+            <span>Disponible :</span>
+            <strong>{{ solde_disponible|floatformat:0 }} GNF</strong>
+        </div>
+        <div class="solde-row">
+            <span>Engagé (Karfa) :</span>
+            <strong>{{ total_engage|floatformat:0 }} GNF</strong>
+        </div>
+        <div class="solde-row total">
+            <span>Total :</span>
+            <strong>{{ solde_total|floatformat:0 }} GNF</strong>
+        </div>
+    </div>
+</div>

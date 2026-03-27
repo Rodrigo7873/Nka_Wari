@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="card-header">
+            <h1 class="brand-title">N'Ka Wari</h1>
+            <p class="brand-subtitle">Rejoignez-nous pour gérer vos finances</p>
+        </div>
+
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="error-badge">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            
+            <!-- Étape 1 : Identifiants (Toujours visibles) -->
+            <div id="user-fields">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <div class="input-container">
+                        <span class="field-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </span>
+                        <input type="text" name="username" id="username" required placeholder="Choisissez un identifiant">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <div class="input-container">
+                        <span class="field-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </span>
+                        <input type="password" name="password" id="password" required placeholder="Votre mot de passe secret">
+                        <button type="button" class="eye-toggle" onclick="togglePasswordVisibility('password', 'eye-1')">
+                            <span id="eye-1">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="button" id="next-btn" class="login-btn" style="width: 100%; margin-top: 1rem;" onclick="revealConfirmField()">
+                    S'inscrire
+                </button>
+            </div>
+
+            <!-- Étape 2 : Confirmation (Révélée au clic) -->
+            <div id="confirm-field" style="display: none; animation: fadeIn 0.3s ease-out;">
+                <div class="form-group">
+                    <label for="password_confirm">Confirmer le mot de passe</label>
+                    <div class="input-container">
+                        <span class="field-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </span>
+                        <input type="password" name="password_confirm" id="password_confirm" placeholder="Répétez le mot de passe">
+                        <button type="button" class="eye-toggle" onclick="togglePasswordVisibility('password_confirm', 'eye-2')">
+                            <span id="eye-2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" style="width: 100%; margin-top: 1.5rem;">
+                    Finaliser l'inscription
+                </button>
+            </div>
+
+            <div class="register-hint" style="margin-top: 2rem; text-align: center;">
+                Déjà inscrit ? <a href="{% url 'core:login' %}" class="register-link">Se connecter</a>
+            </div>
+        </form>
+
+        <div class="login-footer">
+            &copy; 2025 N'Ka Wari - Système de Gestion
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/core.css' %}">
+
+<script>
+    function revealConfirmField() {
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        
+        if (user && pass) {
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('confirm-field').style.display = 'block';
+            document.getElementById('password_confirm').required = true;
+            document.getElementById('password_confirm').focus();
+        } else {
+            alert("Veuillez remplir le nom d'utilisateur et le mot de passe.");
+        }
+    }
+
+    function togglePasswordVisibility(id, eyeId) {
+        const input = document.getElementById(id);
+        const eye = document.getElementById(eyeId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            eye.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+        } else {
+            input.type = 'password';
+            eye.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+        }
+    }
+</script>
+{% endblock %}

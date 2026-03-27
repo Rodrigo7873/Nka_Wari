@@ -1,0 +1,12 @@
+<div class="form-group">
+    <label for="{{ id }}">{{ label }}{% if required %} <span class="required">*</span>{% endif %}</label>
+    <input 
+        type="{{ type|default:'text' }}" 
+        id="{{ id }}" 
+        name="{{ name }}" 
+        value="{{ value|default:'' }}"
+        placeholder="{{ placeholder|default:'' }}"
+        {% if required %}required{% endif %}
+        class="form-control"
+    >
+</div>

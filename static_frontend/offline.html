@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh; text-align: center; padding: 20px;">
+    <div style="background: rgba(30, 43, 60, 0.05); padding: 40px; border-radius: 50%; margin-bottom: 24px;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#1e2b3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/>
+        </svg>
+    </div>
+    <h1 style="font-size: 24px; color: #1e2b3c; margin-bottom: 12px; font-weight: 800;">Mode Hors Ligne</h1>
+    <p style="color: #64748b; font-size: 16px; margin-bottom: 30px; max-width: 300px;">
+        Il semble que vous n'ayez pas de connexion internet. L'application utilise les données mises en cache.
+    </p>
+    <button onclick="window.location.reload()" style="background: #1e2b3c; color: white; border: none; padding: 12px 30px; border-radius: 12px; font-weight: 600; cursor: pointer;">
+        Réessayer
+    </button>
+</div>
+{% endblock %}

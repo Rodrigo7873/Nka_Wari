@@ -54,3 +54,53 @@ def supabase_post(table, data, upsert=True):
         return response.json()
     except Exception:
         return None
+
+# =============================================================================
+# VUE DJANGO POUR LA SYNCHRONISATION PWA -> SUPABASE
+# =============================================================================
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+def sync_pwa_to_supabase(request):
+    """
+    Endpoint qui réceptionne la file d'attente hors ligne (la variable 'queue') 
+    envoyée par la PWA (sync.js) et la répercute sur Supabase via l'API REST.
+    """
+    if request.method == "POST":
+        try:
+            op = json.loads(request.body)
+            action_type = op.get("type", "CREATE")
+            table = op.get("table")
+            data = op.get("data", {})
+            
+            if not table:
+                return JsonResponse({"status": "error", "message": "Table manquante"}, status=400)
+                
+            # Traitement selon le type d'opération
+            if action_type in ["CREATE", "UPDATE"]:
+                res = supabase_post(table, data, upsert=True) # last-write-wins method
+                if res is not None:
+                    return JsonResponse({"status": "success", "result": res}, status=200)
+                else:
+                    return JsonResponse({"status": "error", "message": "Erreur Supabase"}, status=500)
+            
+            elif action_type == "DELETE":
+                # La suppression via REST nécessite l'ID 
+                obj_id = data.get("id")
+                if obj_id:
+                    url = os.getenv("SUPABASE_URL")
+                    headers = get_headers()
+                    response = requests.delete(f"{url}/rest/v1/{table}?id=eq.{obj_id}", headers=headers)
+                    if response.status_code in [200, 204]:
+                        return JsonResponse({"status": "success"}, status=200)
+                    
+            return JsonResponse({"status": "unhandled_operation"}, status=400)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "message": "JSON invalide"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            
+    return JsonResponse({"status": "method_not_allowed"}, status=405)

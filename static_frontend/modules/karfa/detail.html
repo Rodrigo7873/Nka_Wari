@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/karfa.css' %}?v=1.3">
+
+<div class="karfa-detail-container">
+    <div class="wrapper">
+
+        <!-- En-tête -->
+        <header class="detail-header">
+            <a href="{% url 'karfa:liste_tous_karfa' %}" class="btn-back" aria-label="Retour à la liste">
+                <span>&larr;</span>
+            </a>
+            <h1 class="header-title">{{ karfa.beneficiaire|default:"Détail du Karfa" }}</h1>
+        </header>
+
+        <!-- Carte d'infos -->
+        <div class="info-card">
+            <div style="width: 100%;">
+                <div class="amount-label"
+                    style="color: #cbd5e1 !important; font-weight: 600; letter-spacing: 0.1em; opacity: 1; margin-bottom: 8px;">
+                    Montant
+                    Actuel</div>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div class="amount-value"
+                        style="color: #ffffff !important; font-size: 2.5rem; font-weight: 800; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); white-space: nowrap;">
+                        {{ karfa.montant_actuel|milliers }} <span style="font-size: 0.7em; opacity: 0.8;">GNF</span>
+                    </div>
+                    <div class="status-badge"
+                        style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: #ffffff !important; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em;">
+                        {{ karfa.get_statut_display|default:"Actif" }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card-bottom">
+                <div class="meta-item">
+                    <span class="meta-label">Motif</span>
+                    <span class="meta-value">{{ karfa.motif|default:"Non spécifié" }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Date de création</span>
+                    <span class="meta-value">{{ karfa.date_creation|date:"d M. Y"|default:"Inconnue" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="action-buttons">
+            {% if not karfa.archive %}
+            <button type="button" class="btn btn-green" onclick="toggleForm('ajout')">
+                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg></span> Ajouter
+            </button>
+            <button type="button" class="btn btn-red" onclick="toggleForm('retrait')">
+                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg></span> Retirer
+            </button>
+            <a href="{% url 'karfa:archiver_karfa' karfa.id %}" class="btn btn-gray"
+                data-confirm="Voulez-vous vraiment archiver ce Karfa ?">
+                <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="4" rx="2" ry="2" width="20" height="5" />
+                        <path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9" />
+                        <path d="M10 13h4" />
+                    </svg></span> Archiver
+            </a>
+            {% else %}
+            <a href="{% url 'karfa:desarchiver_karfa' karfa.id %}" class="btn btn-gray" style="flex: auto;"
+                data-confirm="Ce Karfa sera remis dans la liste active. Continuer ?" data-confirm-type="success">
+                <span>↩️</span> Désarchiver
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Formulaire d'opération caché -->
+        <div id="operationForm" class="operation-form">
+            <h3 id="formTitle" class="form-title">Nouvelle opération</h3>
+            <form method="post" action="{% url 'karfa:ajouter_retirer_karfa' karfa.id %}">
+                {% csrf_token %}
+                <input type="hidden" id="operationType" name="type_mouvement" value="">
+
+                <div class="form-group">
+                    <label for="montant">Montant</label>
+                    <input type="text" id="montant" name="montant" class="form-control" placeholder="Ex: 50 000"
+                        required inputmode="numeric" oninput="formatMontant(this)">
+
+                </div>
+
+                <div class="form-group">
+                    <label for="motif_op">Motif (Optionnel)</label>
+                    <textarea id="motif_op" name="motif" rows="2" class="form-control"
+                        placeholder="Raison de l'opération"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submitBtn" class="btn btn-green" style="flex: 2;">Valider</button>
+                    <button type="button" class="btn btn-gray" onclick="closeForm()" style="flex: 1;">Annuler</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Historique des mouvements -->
+        <div class="history-section">
+            <h2 class="history-title">Historique des mouvements</h2>
+            <div class="history-list" id="history-container" style="max-height: 400px; overflow-y: auto; transition: max-height 0.3s ease-out;">
+                {% for m in mouvements %}
+                <div class="history-item" {% if forloop.counter > 5 %}style="display: none;"{% endif %}>
+                    <div class="history-date">
+                        {{ m.date|date:"d/m/Y H:i" }}
+                    </div>
+                    <div class="history-details">
+                        <span class="history-type">
+                            {{ m.note|default:m.get_type_display }}
+                        </span>
+                        <span class="history-amount {% if m.type == 'AJOUT' %}text-green{% else %}text-red{% endif %}">
+                            {{ m.montant|milliers }} GNF
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; color: #9ca3af; padding: 2rem 0;">
+                    Aucun mouvement
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if mouvements %}
+            <div style="text-align: center; margin-top: 15px;">
+                <button id="btn-toggle-history" onclick="toggleHistory()" data-expanded="false" class="text-muted" style="background: #f1f5f9; border: none; padding: 8px 24px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                    <span>Voir plus</span>
+                    <svg id="icon-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s;">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<!-- Script JS pour afficher/masquer le formulaire -->
+<script>
+    function toggleForm(type) {
+        const form = document.getElementById('operationForm');
+        const title = document.getElementById('formTitle');
+        const typeInput = document.getElementById('operationType');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.style.display = 'block';
+
+        if (type === 'ajout') {
+            title.textContent = 'Ajouter des fonds';
+            title.style.color = '#10b981';
+            typeInput.value = 'AJOUT';
+            submitBtn.className = 'btn btn-green';
+            submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Valider l\'ajout';
+        } else if (type === 'retrait') {
+            title.textContent = 'Retirer des fonds';
+            title.style.color = '#ef4444';
+            typeInput.value = 'RETRAIT';
+            submitBtn.className = 'btn btn-red';
+            submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><line x1="5" y1="12" x2="19" y2="12"/></svg> Valider le retrait';
+        }
+
+        // Scroll fluide vers le formulaire
+        form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        document.getElementById('montant').focus();
+    }
+
+    function closeForm() {
+        const form = document.getElementById('operationForm');
+        form.style.display = 'none';
+        document.getElementById('montant').value = '';
+        document.getElementById('motif_op').value = '';
+    }
+
+    function toggleHistory() {
+        const container = document.getElementById('history-container');
+        if (!container) return;
+        
+        const items = container.querySelectorAll('.history-item');
+        const btn = document.getElementById('btn-toggle-history');
+        if (!btn) return;
+
+        const btnText = btn.querySelector('span');
+        const icon = document.getElementById('icon-arrow');
+        const isExpanded = btn.getAttribute('data-expanded') === 'true';
+
+        if (isExpanded) {
+            items.forEach((item, index) => {
+                if (index >= 5) item.style.display = 'none';
+            });
+            if (btnText) btnText.innerText = "Voir plus";
+            if (icon) icon.style.transform = "rotate(0deg)";
+            btn.setAttribute('data-expanded', 'false');
+            container.style.maxHeight = "400px";
+        } else {
+            items.forEach(item => { item.style.display = ''; });
+            if (btnText) btnText.innerText = "Voir moins";
+            if (icon) icon.style.transform = "rotate(180deg)";
+            btn.setAttribute('data-expanded', 'true');
+            container.style.maxHeight = "none";
+        }
+    }
+</script>
+{% endblock %}

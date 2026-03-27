@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/karfa.css' %}">
+
+<div class="operations-container">
+    <div class="wrapper">
+
+        <!-- En-tête -->
+        <header class="page-header">
+            <h1 class="page-title">Toutes les opérations</h1>
+            <a href="javascript:history.back()" class="btn-light">
+                <span>&larr;</span> Retour
+            </a>
+        </header>
+
+        <!-- Regroupement par jour -->
+        {% regroup operations|dictsortreversed:"date" by date|date:"d F Y" as operations_par_date %}
+
+        {% for groupe in operations_par_date %}
+        <div class="date-group">
+            <div class="date-header">
+                <span>📅</span> {{ groupe.grouper }}
+            </div>
+
+            <div class="operations-list">
+                {% for op in groupe.list %}
+                <div class="operations-card">
+                    <div class="op-left">
+                        <span class="op-beneficiary">{{ op.karfa.beneficiaire|default:"Bénéficiaire" }}</span>
+                        <!-- N'afficher que l'heure car le jour est dans l'en-tête de groupe -->
+                        <span class="text-muted op-time" style="font-size: 0.85em;">• Le {{ op.date|date:"d/m/Y à H:i" }}</span>
+                    </div>
+
+                    <div class="op-right" style="gap: 15px;">
+                        {% if op.type == 'AJOUT' %}
+                        <span class="op-type type-ajout" style="white-space: nowrap;">{{ op.get_type_display|default:"AJOUT" }}</span>
+                        <span class="op-amount amount-positive" style="white-space: nowrap;">+ {{ op.montant|default:0|milliers }} GNF</span>
+                        {% else %}
+                        <span class="op-type type-retrait" style="white-space: nowrap;">{{ op.get_type_display|default:"RETRAIT" }}</span>
+                        <span class="op-amount amount-negative" style="white-space: nowrap;">- {{ op.montant|default:0|milliers }} GNF</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <!-- État vide -->
+        <div class="empty-state">
+            <div style="font-size: 3rem; margin-bottom: 1rem; color: #9ca3af;">📝</div>
+            <h3 style="color: #374151; margin-bottom: 0.5rem; font-weight: 600;">Aucune opération</h3>
+            <p class="text-muted" style="font-size: 0.875rem;">Les mouvements liés à vos Karfa apparaîtront ici.</p>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

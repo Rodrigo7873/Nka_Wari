@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/dettes.css' %}">
+
+<div class="form-page">
+    <div class="form-container">
+
+        <!-- Header -->
+        <div class="form-header">
+            <div class="form-header-icon icon-je-dois" style="background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                </svg>
+            </div>
+            <div class="form-header-text">
+                <h1>Augmenter la Dette</h1>
+                <p>Nouveau montant emprunté à <strong>{{ dette.personne }}</strong></p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+
+                <div style="background: #fff5f5; border: 1px solid #fee2e2; border-radius: 12px; padding: 12px 15px; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: nowrap;">
+                        <span style="color: #991b1b; font-size: 13px; font-weight: 600; white-space: nowrap;">Dette actuelle :</span>
+                        <span style="color: #dc2626; font-size: clamp(14px, 4vw, 18px); font-weight: 700; white-space: nowrap;">{{ dette.montant_restant|milliers }} GNF</span>
+                    </div>
+                </div>
+
+                <!-- Montant à ajouter -->
+                <div class="field-group">
+                    <label class="field-label" for="montant">
+                        Montant à ajouter (GNF) <span class="required">*</span>
+                    </label>
+                    <div class="amount-wrapper">
+                        <span class="amount-prefix">GNF</span>
+                        <input class="field-input" type="text" id="montant" name="montant" placeholder="0" required 
+                            inputmode="numeric" oninput="formatMontant(this)">
+                    </div>
+
+                </div>
+
+
+
+                <!-- Motif -->
+                <div class="field-group">
+                    <label class="field-label" for="motif">
+                        Motif de l'emprunt <span class="field-hint">— optionnel</span>
+                    </label>
+                    <textarea class="field-input" id="motif" name="motif" rows="2" placeholder="Ex: Besoin urgent pour..."></textarea>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <a href="{% url 'dettes:detail_dette' dette.id %}" class="btn-cancel">Annuler</a>
+                    <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14" />
+                            <path d="M12 5v14" />
+                        </svg>
+                        Confirmer l'emprunt
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

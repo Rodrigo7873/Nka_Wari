@@ -1,0 +1,20 @@
+<div class="karfa-card">
+    <div class="karfa-header">
+        <h4>{{ karfa.beneficiaire }}</h4>
+        <span class="statut statut-{{ karfa.statut|lower }}">
+            {{ karfa.get_statut_display }}
+        </span>
+    </div>
+    <div class="karfa-body">
+        <p class="motif">{{ karfa.motif|default:"Sans motif" }}</p>
+        <p class="montant">{{ karfa.montant_actuel|floatformat:0 }} GNF</p>
+    </div>
+    <div class="karfa-footer">
+        <small>Créé le {{ karfa.date_creation|date:"d/m/Y" }}</small>
+        {% if karfa.statut == "ACTIF" %}
+           <a href="{% url 'karfa:karfa_restituer' karfa.id %}" class="btn btn-sm btn-warning">
+    Restituer
+</a>
+        {% endif %}
+    </div>
+</div>

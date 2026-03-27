@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/karfa.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="karfa-dashboard">
+    <div class="dashboard-container">
+
+        <header class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+            <h1 class="dashboard-title" style="margin: 0; font-size: 24px; font-weight: 700; ">Mon Dashboard Karfa</h1>
+            <div class="header-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <a href="{% url 'karfa:karfa_create' %}" class="text-success btn-action" style="background- color: white; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Nouveau Karfa
+                </a>
+                <a href="{% url 'karfa:liste_tous_karfa' %}" class="btn-action" style="background-color: #3b82f6; color: white; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                    Liste Karfa
+                </a>
+                <div class="export-dropdown" style="position: relative; display: inline-block;">
+                    <button class="bg-card btn-action" id="exportToggle" style="border: 1px solid #e2e8f0; color: #4b5563; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap; cursor: pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg> Exporter
+                    </button>
+                    <div id="exportMenu" class="bg-card" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #edf2f7; z-index: 1000; min-width: 160px; overflow: hidden; animation: fadeInExport 0.2s ease-out;">
+                        <a href="{% url 'karfa:export_karfa_pdf' %}" class="export-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #1e293b; text-decoration: none; font-size: 14px; transition: background 0.2s;">
+                            <span>📄</span> PDF
+                        </a>
+                        <a href="{% url 'karfa:export_karfa_csv' %}" class="export-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #1e293b; text-decoration: none; font-size: 14px; transition: background 0.2s; border-top: 1px solid #f1f5f9;">
+                            <span>📊</span> CSV
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="balance-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px;">
+            <div class="balance-main" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <span class="balance-label" style="font-size: 1rem; opacity: 0.9; margin-bottom: 8px;">Total Engagé (Karfa Actifs)</span>
+                <span class="balance-amount" style="font-size: clamp(1.8rem, 8vw, 3.2rem); word-break: break-all; line-height: 1.2;">{{ total_engage|default:0|milliers }} <span style="font-size: 0.5em; opacity: 0.8;">GNF</span></span>
+            </div>
+        </div>
+
+        <!-- Dernières opérations (Uniformisé avec Dettes) -->
+        <div class="bg-card" style="border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px;">
+            <h3 style="margin-top: 0; margin-bottom: 20px;  font-size: 1.25rem; font-weight: 600;">Dernières opérations</h3>
+
+            <div class="op-list" style="display: flex; flex-direction: column;">
+                {% for op in dernieres_ops %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: {% if op.type == 'AJOUT' %}#ebf5ff{% else %}#fff5f5{% endif %}; display: flex; align-items: center; justify-content: center;">
+                            {% if op.type == 'AJOUT' %}
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            {% else %}
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
+                                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                                <polyline points="1 13 1 6 8 6"></polyline>
+                            </svg>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; ">
+                                <a href="{% url 'karfa:detail_karfa' op.karfa.id %}" style="text-decoration: none; color: inherit;">
+                                    {{ op.karfa.beneficiaire }}
+                                </a>
+                                <span class="text-muted" style="margin: 0 5px;">•</span>
+                                <span style="color: {% if op.type == 'AJOUT' %}#27ae60{% else %}#e74c3c{% endif %}; font-size: 0.9em; font-weight: 700;">
+                                    {{ op.get_type_display }}
+                                </span>
+                            </div>
+                            <div class="text-muted" style="font-size: 12px;">
+                                {{ op.date|date:"d/m/Y H:i" }}
+                                {% if op.note %} - {{ op.note }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700; color: {% if op.type == 'AJOUT' %}#27ae60{% else %}#e74c3c{% endif %}; font-size: 1.1em; white-space: nowrap;">
+                            {% if op.type == 'AJOUT' %}+{% else %}-{% endif %} {{ op.montant|milliers }} GNF
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted" style="text-align: center; padding: 20px 0;">Aucune opération récente.</p>
+                {% endfor %}
+            </div>
+
+            <div style="text-align: right; margin-top: 15px;">
+                <a href="{% url 'karfa:toutes_operations' %}" style="color: #3498db; text-decoration: none; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 4px;">
+                    Voir plus
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInExport {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Supprimer le !important qui cassait la visibilité */
+    .btn-action:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style spécifique pour le bouton exporter (fond blanc) */
+    #exportToggle:hover {
+        background-color: #f8fafc !important;
+    }
+
+    .export-item:hover {
+        background-color: #f8fafc;
+    }
+</style>
+
+<script>
+    (function () {
+        var toggle = document.getElementById('exportToggle');
+        var menu = document.getElementById('exportMenu');
+        if (toggle && menu) {
+            toggle.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
+            document.addEventListener('click', function () { menu.style.display = 'none'; });
+            menu.addEventListener('click', function (e) { e.stopPropagation(); });
+        }
+    })();
+</script>
+
+{% endblock %}

@@ -16,12 +16,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ENVIRONNEMENT & SÉCURITÉ (à configurer via variables d'environnement en prod)
 # =============================================================================
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-key-change-in-production')
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'  # True par défaut en dev
+DEBUG = True  # Mode DEV local réactivé
 
-if DEBUG:
-    ALLOWED_HOSTS = ['10.0.2.2', '127.0.0.1', 'localhost']
-else:
-    ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ['tonusername.pythonanywhere.com', '127.0.0.1', 'localhost', '10.0.2.2', '*']
+CSRF_TRUSTED_ORIGINS = ['https://tonusername.pythonanywhere.com']
 
 # Session persistante ultra-compatible
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False

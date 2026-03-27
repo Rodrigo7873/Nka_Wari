@@ -1,0 +1,241 @@
+/* src/frontend/static/css/don.css */
+
+.don-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    box-shadow: 10px 0 50px rgba(0,0,0,0.1);
+    z-index: 2200;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(-100%);
+    padding: 0; /* On gère le padding par section */
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+.don-panel.open {
+    transform: translateX(0);
+}
+
+.don-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    z-index: 2199;
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.don-overlay.open {
+    display: block;
+}
+
+.don-header {
+    padding: 32px 24px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.don-header h2 {
+    font-size: 22px;
+    font-weight: 850;
+    color: #1e293b;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.don-header .close-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.don-header .close-btn:hover {
+    background: #000;
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+.don-content {
+    flex: 1;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.don-message {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    padding: 20px;
+    border-radius: 20px;
+    color: #0369a1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 32px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(186, 230, 253, 0.3);
+}
+
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-card {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 20px;
+    border: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none; /* Pour les ancres */
+}
+
+.payment-card:hover {
+    transform: scale(1.02);
+    border-color: #6366f1;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.1);
+}
+
+.payment-card:active {
+    transform: scale(0.98);
+}
+
+.payment-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: transparent;
+}
+
+.payment-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.payment-info .name {
+    display: block;
+    font-weight: 800;
+    color: #1e293b;
+    font-size: 16px;
+}
+
+.code-ussd {
+    display: block;
+    font-size: 13px;
+    color: #4f46e5;
+    background: #eef2ff;
+    padding: 2px 10px;
+    border-radius: 8px;
+    margin-top: 4px;
+    font-weight: 750;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+}
+
+.desktop-manual-notice {
+    margin-top: 32px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid #f1f5f9;
+}
+
+.desktop-manual-notice p {
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.desktop-manual-notice span {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* On cache la notice sur mobile car l'appel est direct */
+@media (max-width: 768px) {
+    .desktop-manual-notice {
+        display: none;
+    }
+}
+
+.don-footer {
+    margin-top: auto;
+    padding: 32px 24px;
+    border-top: 1px solid #f1f5f9;
+    text-align: center;
+}
+
+.don-footer p {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 4px 0;
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Redesign for the menu item */
+.menu-item-don {
+    padding: 12px 18px !important;
+    margin: 4px 12px !important;
+    border-radius: 14px !important;
+    transition: all 0.3s !important;
+}
+
+.menu-item-don:hover {
+    background: #fef2f2 !important;
+    transform: translateX(5px);
+}
+
+.menu-item-don .menu-icon {
+    background: #fee2e2 !important;
+    transition: all 0.3s !important;
+}
+
+.menu-item-don:hover .menu-icon {
+    background: #ef4444 !important;
+    color: #fff !important;
+}
+
+@media (max-width: 480px) {
+    .don-panel {
+        width: 100%;
+        border-right: none;
+    }
+}

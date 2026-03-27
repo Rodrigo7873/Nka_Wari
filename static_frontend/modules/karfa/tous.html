@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/tableaux.css' %}?v=1.4">
+
+<div class="tous-karfa-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    
+    <!-- En-tête -->
+    <header class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h1 class="page-title" style="margin: 0;  font-size: 24px; font-weight: 700;">Tous les Karfa (Dépôts)</h1>
+            <p class="text-muted" style="margin: 5px 0 0; font-size: 14px;">Liste complète de l'argent qui vous est confié.</p>
+        </div>
+
+        <div class="header-actions" style="display: flex; gap: 10px; align-items: center;">
+            <a href="{% url 'karfa:karfa_list' %}" class="bg-card text-muted" style="border: 1px solid #e2e8f0; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+                ← Accueil
+            </a>
+            <a href="{% url 'karfa:liste_archives' %}" class="bg-card text-muted" style="border: 1px solid #e2e8f0; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" rx="2" ry="2" width="20" height="5"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/>
+                </svg> Archives
+            </a>
+        </div>
+    </header>
+
+    <!-- Liste des éléments (Style Tableau) -->
+    <div class="table-container">
+        {% for k in karfas %}
+        <a href="{% url 'karfa:detail_karfa' k.id %}" class="table-row">
+            <div class="row-left">
+                <div class="row-icon" style="background: #eef2ff; color: #6366f1;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="row-info">
+                    <span class="row-title">{{ k.beneficiaire|default:"Bénéficiaire" }}</span>
+                    <span class="row-subtitle">
+                        {{ k.motif|default:"Sans motif" }} • {{ k.date_creation|date:"d/m/Y" }}
+                    </span>
+                </div>
+            </div>
+            <div class="row-right">
+                <div class="row-amount" style="color: {% if k.statut == 'RENDU_TOTAL' %}#94a3b8{% else %}#6366f1{% endif %};">
+                    {{ k.montant_actuel|default:0|milliers }} GNF
+                </div>
+                {% if k.statut == 'RENDU_TOTAL' %}
+                <span class="text-muted badge-row" style="background: #f1f5f9;">RENDU</span>
+                {% elif k.statut == 'PARTIELLEMENT_RENDU' %}
+                <span class="text-warning badge-row" style="background: #fff9eb;">PARTIEL</span>
+                {% else %}
+                <span class="badge-row" style="background: #eef2ff; color: #6366f1;">ACTIF</span>
+                {% endif %}
+            </div>
+        </a>
+        {% empty %}
+        <div class="bg-card text-muted" style="text-align: center; padding: 40px; border-radius: 12px; border: 1px dashed #e2e8f0;">
+            Aucun Karfa enregistré.
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

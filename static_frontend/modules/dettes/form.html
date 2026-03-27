@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/dettes.css' %}">
+
+<div class="form-page">
+    <div class="form-container">
+
+        <!-- Header -->
+        <div class="form-header">
+            <div class="form-header-icon icon-je-dois" id="header-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+            </div>
+            <div class="form-header-text">
+                <h1 id="form-title">Nouvelle Dette</h1>
+                <p id="form-subtitle">Enregistrez une dette ou une créance</p>
+            </div>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert-box alert-error">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            Veuillez corriger les erreurs ci-dessous.
+        </div>
+        {% endif %}
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.sens }}
+
+                <!-- Sens (toggle) -->
+                <div class="sens-toggle">
+                    <label class="sens-option">
+                        <input type="radio" name="sens_selector" id="sens_je_dois" value="JE_DOIS" checked
+                            onchange="updateSens('JE_DOIS')">
+                        <div class="sens-label label-je-dois">
+                            <div class="sens-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m19 12-7-7-7 7" />
+                                    <path d="M12 19V5" />
+                                </svg>
+                            </div>
+                            <span class="sens-title">Je dois</span>
+                            <span class="sens-desc">Je suis débiteur</span>
+                        </div>
+                    </label>
+                    <label class="sens-option">
+                        <input type="radio" name="sens_selector" id="sens_on_me_doit" value="ON_ME_DOIT"
+                            onchange="updateSens('ON_ME_DOIT')">
+                        <div class="sens-label label-on-me-doit">
+                            <div class="sens-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m5 12 7 7 7-7" />
+                                    <path d="M12 5v14" />
+                                </svg>
+                            </div>
+                            <span class="sens-title">On me doit</span>
+                            <span class="sens-desc">Je suis créancier</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Personne & Montant -->
+                <div class="fields-row">
+                    <div class="field-group">
+                        <label class="field-label" for="{{ form.personne.id_for_label }}">
+                            Personne <span class="required">*</span>
+                        </label>
+                        {{ form.personne }}
+                        {% if form.personne.errors %}<div class="field-error">{{ form.personne.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="{{ form.montant.id_for_label }}">
+                            Montant <span class="required">*</span>
+                        </label>
+                        <div class="amount-wrapper">
+                            <span class="amount-prefix">GNF</span>
+                            {{ form.montant }}
+                        </div>
+
+                        {% if form.montant.errors %}<div class="field-error">{{ form.montant.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Compte à débiter (Visible seulement pour ON_ME_DOIT) -->
+                <div id="compte-selection-group" class="field-group" style="display:none;">
+                    <label class="field-label" for="{{ form.compte_debit.id_for_label }}">
+                        Compte à débiter <span class="required">*</span>
+                    </label>
+                    <div style="position: relative;">
+                        {{ form.compte_debit }}
+                        <div class="text-muted" style="margin-top: 6px; font-size: 12px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2"
+                                style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                            Selectionnez le compte d'où provient l'argent prêté.
+                        </div>
+                    </div>
+                    {% if form.compte_debit.errors %}<div class="field-error">{{ form.compte_debit.errors.0 }}</div>{% endif %}
+                </div>
+
+                <!-- Motif -->
+                <div class="field-group">
+                    <label class="field-label" for="{{ form.motif.id_for_label }}">
+                        Motif <span class="field-hint">— optionnel</span>
+                    </label>
+                    {{ form.motif }}
+                    {% if form.motif.errors %}<div class="field-error">{{ form.motif.errors.0 }}</div>{% endif %}
+                </div>
+
+                <hr class="form-divider">
+
+                <!-- Échéance & Garantie -->
+                <div class="fields-row">
+                    <div class="field-group" style="margin-bottom: 0;">
+                        <label class="field-label" for="{{ form.echeance.id_for_label }}">
+                            Échéance <span class="field-hint">— optionnelle</span>
+                        </label>
+                        {{ form.echeance }}
+                        {% if form.echeance.errors %}<div class="field-error">{{ form.echeance.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="field-group" style="margin-bottom: 0;">
+                        <label class="field-label" for="{{ form.garantie.id_for_label }}">
+                            Garantie <span class="field-hint">— optionnelle</span>
+                        </label>
+                        {{ form.garantie }}
+                        {% if form.garantie.errors %}<div class="field-error">{{ form.garantie.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <a href="{% url 'dettes:toutes_dettes' %}" class="btn-cancel">Annuler</a>
+                    <button type="submit" class="btn-submit" id="submit-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function updateSens(val) {
+        const icon = document.getElementById('header-icon');
+        const title = document.getElementById('form-title');
+        const subtitle = document.getElementById('form-subtitle');
+        const btn = document.getElementById('submit-btn');
+        const compteGroup = document.getElementById('compte-selection-group');
+
+        // Mettre à jour le champ caché du formulaire Django
+        const hiddenSens = document.getElementById('{{ form.sens.id_for_label }}');
+        if (hiddenSens) hiddenSens.value = val;
+
+        if (val === 'JE_DOIS') {
+            icon.className = 'form-header-icon icon-je-dois';
+            icon.style.boxShadow = '0 8px 20px rgba(239, 68, 68, 0.3)';
+            title.textContent = 'Nouvelle Dette';
+            subtitle.textContent = 'Je suis le débiteur';
+            btn.style.background = 'linear-gradient(135deg, #ef4444, #b91c1c)';
+            btn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+            compteGroup.style.display = 'none';
+        } else {
+            icon.className = 'form-header-icon icon-on-me-doit';
+            icon.style.boxShadow = '0 8px 20px rgba(16, 185, 129, 0.3)';
+            title.textContent = 'Nouvelle Créance';
+            subtitle.textContent = 'On me doit de l\'argent';
+            btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            btn.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+            compteGroup.style.display = 'block';
+        }
+    }
+
+    // Initialisation au chargement
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectedSens = document.querySelector('input[name="sens_selector"]:checked').value;
+        updateSens(selectedSens);
+    });
+</script>
+
+<style>
+    .field-error {
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fee2e2;
+        color: #b91c1c;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+{% endblock %}
