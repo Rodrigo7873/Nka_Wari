@@ -4,106 +4,164 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>Connexion | N'Ka Wari</title>
-    <!-- Modern Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/core.css">
-    <meta name="theme-color" content="#1e2b3c">
-    
-    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .tel-prefix-inline { display: flex; align-items: center; gap: 8px; padding-left: 14px; background: #f8fafc; border-right: 1px solid #e2e8f0; height: 100%; border-radius: 12px 0 0 12px; }
+        .input-wrapper { display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 12px; height: 55px; background: white; transition: 0.2s; position: relative; }
+        .input-wrapper:focus-within { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+        .input-wrapper input { border: none; outline: none; flex: 1; height: 100%; padding: 0 16px; font-size: 16px; border-radius: 0 12px 12px 0; }
+        .input-wrapper input.no-prefix { border-radius: 12px; padding-left: 48px; }
+        .toggle-mode-btn { background: none; border: none; cursor: pointer; color: #64748b; padding-right: 14px; display: flex; align-items: center; }
+        .input-icon-main { position: absolute; left: 16px; color: #94a3b8; display: none; }
+        #smart-input-wrapper.id-mode .tel-prefix-inline { display: none; }
+        #smart-input-wrapper.id-mode .input-icon-main { display: flex; }
+    </style>
 </head>
 <body class="theme-clair clair">
-
     <div class="app-container">
         <div class="login-wrapper">
             <div class="login-card">
                 <div class="login-header" style="display: flex; flex-direction: column; align-items: center;">
-                    <img src="images/logo.jpg" alt="Logo N'Ka Wari" 
-                         style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.1); border: 2px solid white; object-fit: contain; background: white;"
-                         onerror="this.src=''; this.style.backgroundColor='#10b981';">
-                    <h1 class="brand-name" style="margin-bottom: 5px;">N'Ka Wari</h1>
-                    <p class="brand-subtitle">Connectez-vous à votre espace de gestion</p>
+                    <img src="images/logo.jpg" alt="Logo N'Ka Wari" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 12px; border: 2px solid white; object-fit: contain; background: white;">
+                    <h1 class="brand-name">N'Ka Wari</h1>
+                    <p class="brand-subtitle">Connectez-vous à votre espace</p>
                 </div>
 
                 <div class="alert-container" id="alertContainer" style="display: none;">
-                    <div class="alert alert-error" id="errorMessage"></div>
+                    <div class="alert alert-error" id="errorMessage" style="background: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;"></div>
                 </div>
 
                 <form class="login-form" id="loginForm">
+                    <input type="hidden" id="login_mode" value="tel">
+                    
                     <div class="form-group">
-                        <label>Email de connexion</label>
-                        <div class="input-wrapper">
-                            <span class="input-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <label id="input-label">Numéro de téléphone</label>
+                        <div class="input-wrapper" id="smart-input-wrapper">
+                            <!-- Prefix Tel -->
+                            <div class="tel-prefix-inline" id="tel-prefix">
+                                <span class="flag-svg">
+                                    <svg width="20" height="14" viewBox="0 0 3 2"><rect width="1" height="2" fill="#ce1126"/><rect x="1" width="1" height="2" fill="#fcd116"/><rect x="2" width="1" height="2" fill="#009460"/></svg>
+                                </span>
+                                <span style="font-weight: 600; color: #475569;">+224</span>
+                            </div>
+                            
+                            <!-- Icon ID/Email -->
+                            <span class="input-icon-main" id="mode-icon-main">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             </span>
-                            <input type="email" id="email" required placeholder="votre@email.com" style="padding-left: 48px;">
-                        </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label>Mot de passe</label>
-                        <div class="input-wrapper">
-                            <span class="input-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            </span>
-                            <input type="password" id="password" required placeholder="••••••••" style="padding-left: 48px;">
-                            <button type="button" class="eye-btn" onclick="togglePassword()">
-                                <span id="eye-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <input type="text" id="login_value" required placeholder="610 00 00 00" maxlength="12">
+                            
+                            <button type="button" class="toggle-mode-btn" onclick="toggleLoginMode()" title="Changer le mode">
+                                <span id="toggle-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="13" y2="16"/></svg>
                                 </span>
                             </button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-login-premium" id="loginBtn">
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Mot de passe</label>
+                        <div class="input-wrapper" style="position: relative;">
+                            <span style="position: absolute; left: 16px; top: 15px; color: #94a3b8;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <input type="password" id="password" required placeholder="••••••••" style="padding-left: 48px; width: 100%; border-radius: 12px;">
+                            <button type="button" onclick="togglePassword()" style="position: absolute; right: 16px; top: 15px; background: none; border: none; cursor: pointer; color: #64748b;">
+                                <span id="eye-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-login-premium" id="loginBtn" style="width: 100%; margin-top: 30px; height: 55px; background: #10b981; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">
                         Se connecter
                     </button>
                 </form>
 
-                <div class="login-footer">
-                    <p>Pas encore de compte ? <a href="register.html">S'inscrire</a></p>
-                    <div class="copyright">&copy; 2026 N'Ka Wari - Système de Gestion</div>
+                <div class="login-footer" style="margin-top: 25px; text-align: center;">
+                    <p>Pas encore de compte ? <a href="register.html" style="color: #10b981; text-decoration: none; font-weight: 600;">S'inscrire</a></p>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="js/supabase.js"></script>
     <script>
-        function togglePassword() {
-            const passInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eye-icon');
-            if (passInput.type === 'password') {
-                passInput.type = 'text';
-                eyeIcon.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+        let currentMode = 'tel';
+        const valInput = document.getElementById('login_value');
+
+        valInput.addEventListener('input', (e) => {
+            if (currentMode === 'tel') {
+                let val = e.target.value.replace(/\D/g, '').substring(0, 9);
+                let formatted = "";
+                if (val.length > 0) {
+                    formatted = val.substring(0, 3);
+                    if (val.length > 3) formatted += " " + val.substring(3, 5);
+                    if (val.length > 5) formatted += " " + val.substring(5, 7);
+                    if (val.length > 7) formatted += " " + val.substring(7, 9);
+                }
+                e.target.value = formatted;
+            }
+        });
+
+        function toggleLoginMode() {
+            const wrapper = document.getElementById('smart-input-wrapper');
+            const label = document.getElementById('input-label');
+            const toggleIcon = document.getElementById('toggle-icon');
+            valInput.value = "";
+
+            if (currentMode === 'tel') {
+                currentMode = 'id';
+                label.innerText = "Identifiant Unique ou Email";
+                valInput.placeholder = "votre@email.com";
+                valInput.classList.add('no-prefix');
+                wrapper.classList.add('id-mode');
+                toggleIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.19-2.19a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
             } else {
-                passInput.type = 'password';
-                eyeIcon.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+                currentMode = 'tel';
+                label.innerText = "Numéro de téléphone";
+                valInput.placeholder = "610 00 00 00";
+                valInput.classList.remove('no-prefix');
+                wrapper.classList.remove('id-mode');
+                toggleIcon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="13" y2="16"/></svg>`;
+            }
+        }
+
+        function togglePassword() {
+            const p = document.getElementById('password');
+            const eye = document.getElementById('eye-icon');
+            if (p.type === 'password') {
+                p.type = 'text';
+                eye.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+            } else {
+                p.type = 'password';
+                eye.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
             }
         }
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const alertContainer = document.getElementById('alertContainer');
-            const errorMessage = document.getElementById('errorMessage');
             const btn = document.getElementById('loginBtn');
+            const val = valInput.value;
+            const pass = document.getElementById('password').value;
+            btn.disabled = true; btn.textContent = 'Connexion...';
             
-            btn.disabled = true;
-            btn.textContent = 'Connexion...';
-            alertContainer.style.display = 'none';
-
             try {
-                await signInWithSupabase(email, password);
-                // Si la connexion réussit, la redirection est gérée dans supabase.js
-            } catch (error) {
-                errorMessage.textContent = error.message;
-                alertContainer.style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = 'Se connecter';
+                if (currentMode === 'tel') {
+                    // Pour Supabase, on peut utiliser le téléphone si configuré, 
+                    // sinon on simule ou on demande l'email. 
+                    // Ici on appelle la fonction générique qui sera adaptée dans supabase.js
+                    await signInWithSupabase(val.replace(/\s/g, ''), pass, 'tel');
+                } else {
+                    await signInWithSupabase(val, pass, 'email');
+                }
+            } catch (err) {
+                document.getElementById('errorMessage').textContent = err.message;
+                document.getElementById('alertContainer').style.display = 'block';
+                btn.disabled = false; btn.textContent = 'Se connecter';
             }
         });
     </script>

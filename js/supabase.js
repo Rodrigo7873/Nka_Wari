@@ -1,5 +1,4 @@
 // Initialize Supabase Client
-// Remplacez avec vos clés Supabase réelles pour le déploiement
 const supabaseUrl = 'https://VOTRE_PROJET_SUPABASE.supabase.co';
 const supabaseKey = 'VOTRE_CLE_ANONYME_SUPABASE';
 
@@ -7,25 +6,27 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // Déconnexion
 async function logoutFromSupabase() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-        console.error("Erreur de déconnexion:", error.message);
-    }
+    await supabase.auth.signOut();
     window.location.href = 'index.html';
 }
 
-// Connexion
-async function signInWithSupabase(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-    });
+// Connexion (Améliorée pour gérer Tel ou Email)
+async function signInWithSupabase(identifier, password, mode = 'email') {
+    let loginParams = { password: password };
 
-    if (error) {
-        throw error;
+    if (mode === 'tel') {
+        // Nettoyage et formatage pour Supabase (ex: +224...)
+        let phone = identifier.replace(/\s/g, '');
+        if (!phone.startsWith('+')) phone = '+224' + phone;
+        loginParams.phone = phone;
+    } else {
+        loginParams.email = identifier;
     }
+
+    const { data, error } = await supabase.auth.signInWithPassword(loginParams);
+
+    if (error) throw error;
     
-    // Si succès, redirection
     window.location.href = 'dashboard.html';
     return data;
 }
@@ -37,11 +38,7 @@ async function signUpWithSupabase(email, password) {
         password: password,
     });
 
-    if (error) {
-        throw error;
-    }
-    
-    // Si succès, redirection vers login avec message
+    if (error) throw error;
     window.location.href = 'login.html';
     return data;
 }
@@ -49,11 +46,11 @@ async function signUpWithSupabase(email, password) {
 // Vérification de session
 async function checkSession() {
     const { data: { session }, error } = await supabase.auth.getSession();
-    
     if (error || !session) {
-        window.location.href = 'login.html';
+        if (!window.location.href.includes('login.html') && !window.location.href.includes('index.html') && !window.location.href.includes('register.html')) {
+            window.location.href = 'login.html';
+        }
         return null;
     }
-    
     return session.user;
 }
