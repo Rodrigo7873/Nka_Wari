@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="wizard-wrapper">
+    <div class="wizard-card">
+        <div class="success-header">
+            <div class="confetti-icon">🎉</div>
+            <h2 class="step-title">Inscription Réussie !</h2>
+            <p class="step-subtitle">Bienvenue dans l'univers <strong>N'Ka Wari</strong>.</p>
+        </div>
+
+        <div class="id-display-container">
+            <div class="id-premium-card">
+                <div class="card-glow"></div>
+                <p class="id-label">VOTRE IDENTIFIANT UNIQUE</p>
+                <div class="id-value-wrapper">
+                    <span class="id-value" id="user-id">{{ user_id }}</span>
+                    <button class="copy-btn" onclick="copyId()" title="Copier l'identifiant">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+                <div class="copy-status" id="copy-status">Copié !</div>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <div class="alert-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="alert-content">
+                <strong>Action requise :</strong> Notez cet identifiant. C'est votre clé d'accès unique pour vous connecter et sécuriser vos fonds.
+            </div>
+        </div>
+
+        <div class="step-actions centered">
+            <a href="{% url 'core:accueil' %}" class="btn-primary-premium">
+                <span>Accéder à mon tableau de bord</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+        </div>
+        
+        <div class="premium-footer">
+            <p>&copy; 2025 N'Ka Wari - Votre gestion, simplifiée.</p>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/core.css' %}">
+
+<script>
+    function copyId() {
+        const idText = document.getElementById('user-id').innerText;
+        navigator.clipboard.writeText(idText).then(() => {
+            const status = document.getElementById('copy-status');
+            status.style.opacity = '1';
+            status.style.bottom = '15px';
+            setTimeout(() => {
+                status.style.opacity = '0';
+                status.style.bottom = '10px';
+            }, 2000);
+        });
+    }
+</script>
+{% endblock %}

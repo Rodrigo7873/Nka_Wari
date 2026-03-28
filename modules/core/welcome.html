@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Bienvenue | N'Ka Wari</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --text-white: #ffffff;
+            --text-muted: #d1d5db;
+            /* Éclairci pour un fond sombre */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            /* Aligné vers le bas */
+            justify-content: center;
+            padding-bottom: 12vh;
+            /* Espace depuis le bas de l'écran */
+            overflow: hidden;
+            position: relative;
+            /* L'image de fond et son overlay sombre pour la lisibilité */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)),
+            url("{% static 'images/welcome-bg.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Carte de bienvenue avec effet Glassmorphism */
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 32px;
+            padding: 50px 30px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+            /* Animation d'apparition Fade-in Slide-up */
+            opacity: 0;
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Icône centrale animée (bounce) */
+        .hero-icon {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            /* Arrondi parfait pour le logo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            animation: bounce 3s infinite ease-in-out;
+            background: white;
+            /* Fond blanc au cas où l'image aurait de la transparence */
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Assure que le logo en entier est visible */
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            color: var(--text-white);
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        /* Bouton "Commencer" animé au survol */
+        .btn-start {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-start:hover {
+            background: var(--primary-dark);
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Footer discret (optionnel) */
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="welcome-card">
+        <div class="hero-icon">
+            <img src="{% static 'images/logo.jpg' %}" alt="Logo N'Ka Wari">
+        </div>
+
+        <h1>Bienvenue dans N'Ka Wari</h1>
+        <p>Gérez votre business d'orpaillage en toute sécurité</p>
+
+        <a href="{% url 'core:login' %}" class="btn-start">
+            Commencer
+        </a>
+    </div>
+
+    <div class="footer">N'Ka Wari &copy; 2026</div>
+
+</body>
+
+</html>

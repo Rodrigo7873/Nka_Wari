@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h1>Archives des Comptes</h1>
+    <a href="{% url 'comptes:liste_comptes' %}"
+        class="bg-card" style="border: 1px solid #e2e8f0; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+        onmouseover="this.style.background='#f8fafc'; this.style.transform='translateY(-1px)';"
+        onmouseout="this.style.background='white'; this.style.transform='translateY(0)';">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6" />
+        </svg> Retour
+    </a>
+</div>
+
+{% regroup comptes_archives by date_archivage|date:"d F Y" as archives_par_jour %}
+
+{% for jour in archives_par_jour %}
+<h2 style="margin: 30px 0 15px;">{{ jour.grouper }}</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+    {% for compte in jour.list %}
+    <div class="bg-card" style="border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <strong style="font-size: 1.1em;">{{ compte.nom }}</strong>
+            {% if compte|get_class == 'CompteArgent' %}
+            <span style="background: #e6f7e6; color: #27ae60; padding: 4px 12px; border-radius: 20px;">
+                {{ compte.get_type_compte_display }}
+            </span>
+            {% else %}
+            <span style="background: #fef9e7; color: #f39c12; padding: 4px 12px; border-radius: 20px;">
+                {{ compte.carat|default:"24" }} carats
+            </span>
+            {% endif %}
+        </div>
+
+        <div
+            style="font-size: 1.3em; font-weight: 600; color: {% if compte|get_class == 'CompteArgent' %}#27ae60{% else %}#f39c12{% endif %}; margin: 10px 0;">
+            {% if compte|get_class == 'CompteArgent' %}
+            {{ compte.solde|milliers }} GNF
+            {% else %}
+            {{ compte.poids_grammes|floatformat:-2 }} g
+            {% endif %}
+        </div>
+
+        <div class="text-muted" style="margin-bottom: 15px;">
+            Archivé le {{ compte.date_archivage|date:"d/m/Y H:i" }}
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'comptes:detail_compte' compte.id %}?type={% if compte|get_class == 'CompteArgent' %}argent{% else %}or{% endif %}"
+                style="background: #eff6ff; color: #3b82f6; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-size: 0.85em; font-weight: 600; transition: all 0.2s;"
+                onmouseover="this.style.background='#dbeafe';" onmouseout="this.style.background='#eff6ff';">
+                Consulter
+            </a>
+
+            {% if compte.solde == 0 or compte.poids_grammes == 0 %}
+            <form method="post" action="{% url 'comptes:supprimer_compte' compte.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="button" data-confirm="Supprimer définitivement ce compte ? Action irréversible."
+                    class="text-danger" style="background: #fef2f2; border: 1px solid #fee2e2; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.2s;"
+                    onmouseover="this.style.background='#fee2e2';" onmouseout="this.style.background='#fef2f2';">
+                    Supprimer
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% empty %}
+<p class="bg-card" style="text-align: center; padding: 40px; border-radius: 16px;">
+    Aucun compte archivé.
+</p>
+{% endfor %}
+{% endblock %}

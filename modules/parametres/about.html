@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}?v=1.3">
+
+<div class="about-wrapper">
+    <!-- Back Button Float -->
+    <a href="{% url 'parametres' %}" class="back-btn-float" aria-label="Retour">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </a>
+
+    <!-- Hero Section Premium -->
+    <div class="hero-section">
+        <div class="app-icon-large">
+            <!-- Logo Icon SVN Custom -->
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h1 class="app-name">{{ infos.nom_app }}</h1>
+        <p class="app-version">Version v{{ params.version }}</p>
+    </div>
+
+    <!-- Info Cards Container -->
+    <div class="info-cards-container">
+        
+        <!-- App Details -->
+        <div class="premium-card" style="animation-delay: 0.2s;">
+            <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                Développement & Mission
+            </div>
+            
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span class="label">Créateur</span>
+                        <div class="value">{{ infos.developpeur }}</div>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span class="label">Siège</span>
+                        <div class="value">{{ infos.localisation }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Options -->
+        <div class="premium-card" style="animation-delay: 0.3s;">
+            <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2h4M21 2v4M21 2l-5 5M11 7H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/><path d="M15 2l5 5"/></svg>
+                Canaux officiels
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v14H3z"/><polyline points="3 7 12 13 21 7"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span class="label">Email de Support</span>
+                        <div class="value"><a href="mailto:{{ infos.email }}">{{ infos.email }}</a></div>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span class="label">Téléphone</span>
+                        <div class="value">{{ infos.telephone }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heart Acknowledgement -->
+        <div class="premium-card" style="animation-delay: 0.4s;">
+            <div class="thanks-section">
+                <span class="thanks-heart">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <p class="text-muted" style="font-size: 14px; margin-bottom: 4px;">Merci infiniment à</p>
+                <p style="font-weight: 800; color: var(--p-text); font-size: 18px; margin: 0;">{{ infos.remerciements }}</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

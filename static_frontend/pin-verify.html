@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr" class="theme-clair clair">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Vérification PIN | N'Ka Wari</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/core.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .pin-input-container { display: flex; gap: 15px; justify-content: center; margin-top: 40px; }
+        .pin-digit { width: 50px; height: 60px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 24px; text-align: center; font-weight: 700; background: #fff; }
+        .pin-digit:focus { border-color: #10b981; outline: none; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 300px; margin: 40px auto; }
+        .num-btn { height: 70px; border-radius: 50%; border: none; background: #f1f5f9; font-size: 22px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body class="theme-clair clair">
+    <div class="app-container" style="text-align: center; padding-top: 60px;">
+        <h1 style="font-size: 24px;">Entrez votre PIN</h1>
+        <p style="color:#64748b;">Sécurisez votre accès</p>
+
+        <div class="pin-input-container">
+            <div class="pin-digit" id="d1">•</div>
+            <div class="pin-digit" id="d2">•</div>
+            <div class="pin-digit" id="d3">•</div>
+            <div class="pin-digit" id="d4">•</div>
+        </div>
+
+        <div class="numpad">
+            <button class="num-btn" onclick="addNum('1')">1</button>
+            <button class="num-btn" onclick="addNum('2')">2</button>
+            <button class="num-btn" onclick="addNum('3')">3</button>
+            <button class="num-btn" onclick="addNum('4')">4</button>
+            <button class="num-btn" onclick="addNum('5')">5</button>
+            <button class="num-btn" onclick="addNum('6')">6</button>
+            <button class="num-btn" onclick="addNum('7')">7</button>
+            <button class="num-btn" onclick="addNum('8')">8</button>
+            <button class="num-btn" onclick="addNum('9')">9</button>
+            <button class="num-btn" onclick="clearPIN()">C</button>
+            <button class="num-btn" onclick="addNum('0')">0</button>
+            <button class="num-btn" onclick="checkPIN()">✓</button>
+        </div>
+    </div>
+
+    <script src="js/supabase.js"></script>
+    <script>
+        let currentPIN = "";
+        function addNum(n) {
+            if(currentPIN.length < 4) {
+               currentPIN += n;
+               updateDisplay();
+            }
+        }
+        function updateDisplay() {
+            for(let i=1; i<=4; i++) {
+                document.getElementById('d'+i).textContent = currentPIN.length >= i ? "*" : "•";
+                document.getElementById('d'+i).style.borderColor = currentPIN.length >= i ? "#10b981" : "#e2e8f0";
+            }
+        }
+        function clearPIN() { currentPIN = ""; updateDisplay(); }
+        async function checkPIN() {
+            if(currentPIN.length === 4) {
+                // await verifyPIN(currentPIN) ...
+                window.location.href = 'dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html>

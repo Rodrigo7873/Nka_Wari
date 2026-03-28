@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>N'Ka Wari - Karfa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>N'Ka Wari - Gestion Karfa</h1>
+    
+    <div>
+        <h2>Nouveau Karfa</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="beneficiaire" placeholder="Bénéficiaire" required>
+            <input type="number" name="montant" placeholder="Montant (GNF)" required>
+            <textarea name="motif" placeholder="Motif (optionnel)"></textarea>
+            <button type="submit">Créer Karfa</button>
+        </form>
+    </div>
+    
+    <div>
+        <h2>Mes Karfa</h2>
+        <ul>
+            {% for karfa in karfas %}
+            <li>
+                {{ karfa.beneficiaire }} - {{ karfa.montant_actuel }} GNF
+                ({{ karfa.get_statut_display }})
+            </li>
+            {% empty %}
+            <li>Aucun Karfa</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
