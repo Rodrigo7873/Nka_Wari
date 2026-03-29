@@ -8,42 +8,36 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/core.css">
-    <!-- Load SDK then supabase.js -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof window.signUpWithSupabase !== 'function') {
-                console.error("Critical: window.signUpWithSupabase is not defined!");
-                alert("Erreur critique : le module d'authentification n'est pas chargé correctement.");
-            } else {
-                console.log("Check: signUpWithSupabase exists.");
-            }
-        });
-    </script>
     <style>
         .register-step { display: none; animation: fadeIn 0.4s ease; }
         .register-step.active { display: block; }
-        @keyframes fadeIn { from { opacity:0; transform: translateX(10px); } to { opacity:1; transform: translateX(0); } }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
         .wizard-progress { display: flex; gap: 8px; margin-bottom: 30px; justify-content: center; }
         .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0; transition: 0.3s; }
         .progress-dot.active { background: #10b981; transform: scale(1.3); }
+        .progress-dot.completed { background: #10b981; }
+        .id-card { background: #f8fafc; border: 2px dashed #10b981; border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; }
+        .id-value { font-size: 32px; font-weight: 800; color: #1e293b; letter-spacing: 2px; margin: 10px 0; }
     </style>
 </head>
 <body class="theme-clair clair">
     <div class="app-container">
         <div class="login-wrapper">
             <div class="login-card" style="max-width: 480px; width: 95%;">
-                <div class="login-header" style="text-align: center; margin-bottom: 30px;">
-                    <img src="images/logo.jpg" alt="Logo" style="width: 70px; border-radius: 50%; margin-bottom: 10px;">
-                    <h1 style="font-size: 24px; font-weight: 850;">Créer un compte</h1>
-                    <p style="color: #64748b; font-size: 14px;">Rejoignez la révolution de la gestion d'or</p>
-                </div>
+                <div id="registrationHeader">
+                    <div class="login-header" style="text-align: center; margin-bottom: 30px;">
+                        <img src="images/logo.jpg" alt="Logo" style="width: 70px; border-radius: 50%; margin-bottom: 10px;">
+                        <h1 style="font-size: 24px; font-weight: 850;">Créer un compte</h1>
+                        <p style="color: #64748b; font-size: 14px;">Rejoignez la révolution de la gestion d'or</p>
+                    </div>
 
-                <div class="wizard-progress">
-                    <div class="progress-dot active" id="dot1"></div>
-                    <div class="progress-dot" id="dot2"></div>
-                    <div class="progress-dot" id="dot3"></div>
+                    <div class="wizard-progress">
+                        <div class="progress-dot active" id="dot1"></div>
+                        <div class="progress-dot" id="dot2"></div>
+                        <div class="progress-dot" id="dot3"></div>
+                    </div>
                 </div>
 
                 <form id="registerWizard">
@@ -51,11 +45,11 @@
                     <div class="register-step active" id="step1">
                         <div class="form-group">
                             <label>Prénom</label>
-                            <input type="text" id="first_name" required placeholder="Votre prénom" style="width: 100%; height: 52px;">
+                            <input type="text" id="first_name" required placeholder="Ex: Moussa" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                         </div>
                         <div class="form-group" style="margin-top: 15px;">
                             <label>Nom</label>
-                            <input type="text" id="last_name" required placeholder="Votre nom de famille" style="width: 100%; height: 52px;">
+                            <input type="text" id="last_name" required placeholder="Ex: Camara" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                         </div>
                         <button type="button" onclick="nextStep(2)" style="width: 100%; margin-top: 25px; height: 52px; background: #10b981; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">Continuer</button>
                     </div>
@@ -64,11 +58,11 @@
                     <div class="register-step" id="step2">
                         <div class="form-group">
                             <label>Email (Optionnel)</label>
-                            <input type="email" id="email" placeholder="votre@email.com" style="width: 100%; height: 52px;">
+                            <input type="email" id="email" placeholder="votre@email.com" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                         </div>
                         <div class="form-group" style="margin-top: 15px;">
                             <label>Question Secrète</label>
-                            <select id="secret_question" style="width: 100%; height: 52px;">
+                            <select id="secret_question" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                                 <option value="equipe">Votre équipe préférée ?</option>
                                 <option value="ecole">Le nom de votre première école ?</option>
                                 <option value="animal">Le nom de votre premier animal ?</option>
@@ -78,11 +72,11 @@
                         </div>
                         <div class="form-group" style="margin-top: 15px;">
                             <label>Réponse Secrète</label>
-                            <input type="text" id="secret_answer" required placeholder="Votre réponse" style="width: 100%; height: 52px;">
+                            <input type="text" id="secret_answer" required placeholder="Votre réponse" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                         </div>
                         <div style="display: flex; gap: 10px; margin-top: 25px;">
-                            <button type="button" onclick="nextStep(1)" style="flex: 1; height: 52px;">Retour</button>
-                            <button type="button" onclick="nextStep(3)" style="flex: 2; height: 52px;">Continuer</button>
+                            <button type="button" onclick="nextStep(1)" style="flex: 1; height: 52px; background: #f1f5f9; border-radius: 12px; border:none; cursor:pointer;">Retour</button>
+                            <button type="button" onclick="nextStep(3)" style="flex: 2; height: 52px; background: #10b981; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">Suivant</button>
                         </div>
                     </div>
 
@@ -90,25 +84,42 @@
                     <div class="register-step" id="step3">
                         <div class="form-group">
                             <label>Numéro de téléphone</label>
-                            <input type="tel" id="phone" required placeholder="610 00 00 00" style="width: 100%; height: 52px;">
+                            <input type="tel" id="phone" required placeholder="620 00 00 00" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                         </div>
                         <div class="form-group" style="margin-top: 15px;">
                             <label>Mot de passe</label>
-                            <input type="password" id="password" required placeholder="Min. 8 caractères" style="width: 100%; height: 52px;">
+                            <input type="password" id="password" required placeholder="Min. 8 caractères" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                         </div>
                         <div class="form-group" style="margin-top: 15px;">
                             <label>Confirmation</label>
-                            <input type="password" id="passwordConfirm" required placeholder="Répétez le mot de passe" style="width: 100%; height: 52px;">
+                            <input type="password" id="passwordConfirm" required placeholder="Confirmez" style="width: 100%; height: 52px; border-radius: 12px; border: 1.5px solid #e2e8f0; padding: 0 15px;">
                         </div>
                         <div style="display: flex; gap: 10px; margin-top: 25px;">
-                            <button type="button" onclick="nextStep(2)" style="flex: 1; height: 52px;">Retour</button>
-                            <button type="submit" id="finishBtn" style="flex: 2; height: 52px; background: #10b981; color: white;">Créer mon compte</button>
+                            <button type="button" onclick="nextStep(2)" style="flex: 1; height: 52px; background: #f1f5f9; border-radius: 12px; border:none; cursor:pointer;">Retour</button>
+                            <button type="submit" id="finishBtn" style="flex: 2; height: 52px; background: #10b981; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">Terminer</button>
                         </div>
                     </div>
                 </form>
 
-                <div style="margin-top: 25px; text-align: center;">
-                    Pas de compte ? <a href="login.html" style="color: #10b981; font-weight: 700;">Se connecter</a>
+                <!-- Étape 4 : Succès & ID -->
+                <div class="register-step" id="step4">
+                    <div style="text-align: center;">
+                        <div style="width: 80px; height: 80px; background: #dcfce7; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 40px;">✓</div>
+                        <h2 style="font-weight: 800; color: #1e293b;">Compte créé !</h2>
+                        <p style="color: #64748b; margin-top: 5px;">Bienvenue dans l'aventure N'Ka Wari.</p>
+                        
+                        <div class="id-card">
+                            <p style="text-transform: uppercase; font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 1px;">Votre Identifiant (ID)</p>
+                            <div class="id-value" id="displayID">------</div>
+                            <p style="font-size: 13px; color: #ef4444; font-weight: 600;">⚠️ Notez-le bien, il servira à vous connecter !</p>
+                        </div>
+
+                        <button onclick="window.location.href='login.html'" style="width: 100%; height: 56px; background: #1e293b; color: white; border: none; border-radius: 14px; font-weight: 700; cursor: pointer;">Continuer vers la connexion</button>
+                    </div>
+                </div>
+
+                <div id="loginLink" style="margin-top: 25px; text-align: center; font-size: 14px; color: #64748b;">
+                    Déjà inscrit ? <a href="login.html" style="color: #10b981; font-weight: 700; text-decoration: none;">Se connecter</a>
                 </div>
             </div>
         </div>
@@ -116,9 +127,15 @@
     <script>
         function nextStep(step) {
             document.querySelectorAll('.register-step').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.progress-dot').forEach(d => d.classList.remove('active'));
             document.getElementById('step' + step).classList.add('active');
-            for(let i=1; i<=step; i++) document.getElementById('dot'+i).classList.add('active');
+            
+            // Progress dots
+            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+                if (index < step) dot.classList.add('completed');
+                else dot.classList.remove('completed');
+                if (index === step - 1) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
         }
 
         document.getElementById('registerWizard').addEventListener('submit', async (e) => {
@@ -130,24 +147,32 @@
             const btn = document.getElementById('finishBtn');
             btn.disabled = true; btn.textContent = "Création...";
 
+            const phoneVal = document.getElementById('phone').value.replace(/\s/g, '');
             const userData = {
                 first_name: document.getElementById('first_name').value,
                 last_name: document.getElementById('last_name').value,
-                email: document.getElementById('email').value || (document.getElementById('phone').value.replace(/\s/g, '') + "@nkawari.local"),
+                email: document.getElementById('email').value || (phoneVal + "@nkawari.local"),
                 password: pass,
-                phone: document.getElementById('phone').value,
+                phone: phoneVal,
                 secret_question: document.getElementById('secret_question').value,
                 secret_answer: document.getElementById('secret_answer').value
             };
 
             try {
-                if (typeof window.signUpWithSupabase !== 'function') throw new Error("Fonction d'inscription non disponible");
-                await window.signUpWithSupabase(userData);
-                alert("Compte créé avec succès ! Connectez-vous.");
-                window.location.href = 'login.html';
+                const res = await window.signUpWithSupabase(userData);
+                
+                // Affichage de l'ID (on utilise le numéro de téléphone comme ID métier simplifié)
+                document.getElementById('displayID').textContent = phoneVal;
+                
+                // Masquer le header et le footer pour l'écran de succès
+                document.getElementById('registrationHeader').style.display = 'none';
+                document.getElementById('loginLink').style.display = 'none';
+                document.getElementById('registerWizard').style.display = 'none';
+                
+                nextStep(4);
             } catch(err) {
                 alert("Erreur : " + err.message);
-                btn.disabled = false; btn.textContent = "Créer mon compte";
+                btn.disabled = false; btn.textContent = "Terminer";
             }
         });
     </script>
