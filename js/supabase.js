@@ -1,16 +1,22 @@
-// Supabase Configuration
-// Remplacez par vos clés réelles
+// Supabase Client and Auth functions for N'Ka Wari
+console.log("supabase.js initializing...");
+
+// Remplacez avec vos clés réelles
 const supabaseUrl = 'https://VOTRE_PROJET.supabase.co';
 const supabaseKey = 'VOTRE_ANON_KEY';
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+if (typeof window.supabase === 'undefined') {
+    console.error("ERREUR : Le SDK Supabase (via CDN) n'est pas chargé !");
+} else {
+    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    console.log("Client Supabase initialisé dans window.supabaseClient");
+}
 
-/**
- * AUTHENTICATION
- */
-
-async function signInWithSupabase(identifier, password, mode = 'email') {
+// 1️⃣ Connexion
+window.signInWithSupabase = async function(identifier, password, mode = 'email') {
+    console.log("signInWithSupabase appelé (mode: " + mode + ")");
     let loginParams = { password: password };
+    
     if (mode === 'tel') {
         let phone = identifier.replace(/\s/g, '');
         if (!phone.startsWith('+')) phone = '+224' + phone;
@@ -19,14 +25,21 @@ async function signInWithSupabase(identifier, password, mode = 'email') {
         loginParams.email = identifier;
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword(loginParams);
-    if (error) throw error;
+    const { data, error } = await window.supabaseClient.auth.signInWithPassword(loginParams);
+    if (error) {
+        console.error("Erreur de connexion:", error.message);
+        throw error;
+    }
+    
+    console.log("Connexion réussie ! Redirection...");
     window.location.href = 'dashboard.html';
     return data;
-}
+};
 
-async function signUpWithSupabase(userData) {
-    const { data, error } = await supabase.auth.signUp({
+// 2️⃣ Inscription
+window.signUpWithSupabase = async function(userData) {
+    console.log("signUpWithSupabase appelé");
+    const { data, error } = await window.supabaseClient.auth.signUp({
         email: userData.email,
         password: userData.password,
         options: {
@@ -39,61 +52,43 @@ async function signUpWithSupabase(userData) {
             }
         }
     });
-    if (error) throw error;
+
+    if (error) {
+        console.error("Erreur d'inscription:", error.message);
+        throw error;
+    }
+    
+    console.log("Inscription réussie !");
     return data;
-}
+};
 
-async function logoutFromSupabase() {
-    await supabase.auth.signOut();
+// 3️⃣ Déconnexion
+window.logoutFromSupabase = async function() {
+    console.log("logoutFromSupabase appelé");
+    await window.supabaseClient.auth.signOut();
     window.location.href = 'index.html';
-}
+};
 
-async function checkSession() {
-    const { data: { session }, error } = await supabase.auth.getSession();
+// 4️⃣ Vérification de session
+window.checkSession = async function() {
+    console.log("checkSession appelé");
+    const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+    
     if (error || !session) {
-        const path = window.location.pathname;
-        if (!path.includes('login.html') && !path.includes('index.html') && !path.includes('register.html')) {
+        console.warn("Pas de session active");
+        const isPublicPage = window.location.pathname.includes('login.html') || 
+                             window.location.pathname.includes('index.html') || 
+                             window.location.pathname.includes('register.html');
+        
+        if (!isPublicPage) {
+            console.log("Redirection vers login.html car page protégée.");
             window.location.href = 'login.html';
         }
         return null;
     }
-    return session;
-}
-
-/**
- * PIN MANAGEMENT
- */
-
-async function verifyPIN(pin) {
-    const { data: { user } } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-        .from('user_profiles')
-        .select('pin_code')
-        .eq('user_id', user.id)
-        .single();
     
-    if (error || data.pin_code !== pin) return false;
-    return true;
-}
+    console.log("Session active pour:", session.user.email);
+    return session.user;
+};
 
-async function setupPIN(pin) {
-    const { data: { user } } = await supabase.auth.getUser();
-    const { error } = await supabase
-        .from('user_profiles')
-        .upsert({ user_id: user.id, pin_code: pin });
-    if (error) throw error;
-}
-
-/**
- * DATA CRUD (STUBS)
- */
-
-async function fetchDashboardStats() {
-    // Exemple de fetch Supabase
-    // const { data, error } = await supabase.from('operations').select('*');
-    return {
-        patrimoine_net: 0,
-        total_cash: 0,
-        prix_or: 0
-    };
-}
+console.log("supabase.js prêt.");
