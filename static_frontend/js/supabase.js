@@ -2,8 +2,8 @@
 console.log("supabase.js initializing...");
 
 // Remplacez avec vos clés réelles
-const supabaseUrl = 'https://VOTRE_PROJET.supabase.co';
-const supabaseKey = 'VOTRE_ANON_KEY';
+const supabaseUrl = 'https://fvrdaulagutwhlrgrcta.supabase.co';
+const supabaseKey = 'sb_publishable_CxLEYNMH7gsv-zpcIJQmKg_fFfQ1NNu';
 
 if (typeof window.supabase === 'undefined') {
     console.error("ERREUR : Le SDK Supabase (via CDN) n'est pas chargé !");
