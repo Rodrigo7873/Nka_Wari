@@ -1,79 +1,72 @@
-// Main App Logic for N'Ka Wari
-console.log("app.js loaded");
+// UI and Dashboard functions for N'Ka Wari
+console.log("app.js initializing...");
 
-// Expose functions to window for global access
-window.createKarfa = async function() {
-    console.log("createKarfa called");
-    
-    const session = await checkSession();
-    if (!session) return;
-
-    const nom = prompt("Nom du Karfa (ex: Karfa de Mamadou) :");
-    if (!nom) return;
-
-    const montant = prompt("Montant (GNF) :");
-    if (!montant) return;
-
-    try {
-        const { data, error } = await supabase
-            .from('karfa')
-            .insert([{ 
-                user_id: session.id, 
-                name: nom, 
-                amount: parseFloat(montant),
-                created_at: new Date()
-            }]);
-
-        if (error) throw error;
-        
-        alert("Karfa créé avec succès !");
-        window.location.reload();
-    } catch (err) {
-        console.error("Erreur creation Karfa:", err.message);
-        alert("Erreur: " + err.message);
+// 1️⃣ Système de Notification (Toasts) Moderne
+window.showToast = function(message, type = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
     }
-};
 
-window.createDette = async function() {
-    console.log("createDette called");
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
     
-    const session = await checkSession();
-    if (!session) return;
+    // Détermination de l'icône
+    let icon = '🔔';
+    if(type === 'success') icon = '✅';
+    if(type === 'error') icon = '❌';
+    if(type === 'warning') icon = '⚠️';
 
-    const destinataire = prompt("Nom du créancier/débiteur :");
-    if (!destinataire) return;
+    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+    
+    // Fermeture manuelle au clic
+    toast.onclick = () => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 400);
+    };
 
-    const montant = prompt("Montant (GNF) :");
-    if (!montant) return;
+    container.appendChild(toast);
 
-    try {
-        const { data, error } = await supabase
-            .from('dettes')
-            .insert([{ 
-                user_id: session.id, 
-                person: destinataire, 
-                amount: parseFloat(montant),
-                status: 'active',
-                created_at: new Date()
-            }]);
+    // Auto-suppression après 4 secondes
+    setTimeout(() => {
+        if(toast.parentElement) {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 400);
+        }
+    }, 4000);
+};
 
-        if (error) throw error;
-        
-        alert("Dette enregistrée !");
-        window.location.reload();
-    } catch (err) {
-        console.error("Erreur creation Dette:", err.message);
-        alert("Erreur: " + err.message);
+// Override standard alert for a better feel (Optional but recommended)
+// window.alert = (msg) => window.showToast(msg, 'info');
+
+// 2️⃣ Actions du Dashboard
+window.createKarfa = function() {
+    window.showToast("Ouverture de l'interface Karfa...", "success");
+    // Logique à implémenter pour Supabase
+};
+
+window.createDette = function() {
+    window.showToast("Ouverture de l'interface Dette...", "success");
+};
+
+window.addCollecte = function() {
+    window.showToast("Nouvelle collecte orpaillage...", "success");
+};
+
+window.addVente = function() {
+    window.showToast("Enregistrement vente d'or...", "success");
+};
+
+// 3️⃣ Initialisation au chargement
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log("DOM chargé, vérification session...");
+    if (window.checkSession) {
+        const user = await window.checkSession();
+        if (user && document.getElementById('userNameGreeting')) {
+            const firstName = user.user_metadata?.first_name || 'Utilisateur';
+            document.getElementById('userNameGreeting').textContent = `Bonjour, ${firstName}`;
+        }
     }
-};
-
-window.toggleMenu = function() {
-    console.log("toggleMenu called");
-    // Animation ou classe pour le menu (à implémenter si besoin)
-    alert("Menu latéral (en cours d'intégration)");
-};
-
-window.toggleNotifications = function() {
-    console.log("toggleNotifications called");
-    alert("Notifications (Aucune pour le moment)");
-};
+});

@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="css/core.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.signUpWithSupabase !== 'function') {
+                console.error("Critical: window.signUpWithSupabase is not defined!");
+                window.showToast("Erreur critique : module non chargé.", "error");
+            } else {
+                console.log("Check: signUpWithSupabase exists.");
+            }
+        });
+    </script>
     <style>
         .register-step { display: none; animation: fadeIn 0.4s ease; }
         .register-step.active { display: block; }
@@ -154,14 +165,14 @@
             });
 
             if (isValid) nextStep(step);
-            else alert("Veuillez remplir tous les champs obligatoires avant de continuer.");
+            else window.showToast("Veuillez remplir tous les champs obligatoires.", "warning");
         }
 
         document.getElementById('registerWizard').addEventListener('submit', async (e) => {
             e.preventDefault();
             const pass = document.getElementById('password').value;
             const confirm = document.getElementById('passwordConfirm').value;
-            if(pass !== confirm) { alert("Les mots de passe ne correspondent pas."); return; }
+            if(pass !== confirm) { window.showToast("Les mots de passe ne correspondent pas.", "warning"); return; }
 
             const btn = document.getElementById('finishBtn');
             btn.disabled = true; btn.textContent = "Création...";
@@ -179,6 +190,7 @@
 
             try {
                 const res = await window.signUpWithSupabase(userData);
+                window.showToast("Compte créé avec succès !", "success");
                 
                 // Affichage de l'ID (on utilise le numéro de téléphone comme ID métier simplifié)
                 document.getElementById('displayID').textContent = phoneVal;
@@ -190,7 +202,7 @@
                 
                 nextStep(4);
             } catch(err) {
-                alert("Erreur : " + err.message);
+                window.showToast("Erreur : " + err.message, "error");
                 btn.disabled = false; btn.textContent = "Terminer";
             }
         });

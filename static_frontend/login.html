@@ -11,11 +11,12 @@
     <!-- Load SDK then supabase.js -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
+    <script src="js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof window.signInWithSupabase !== 'function') {
                 console.error("Critical: window.signInWithSupabase is not defined!");
-                alert("Erreur critique : le module d'authentification n'est pas chargé correctement.");
+                window.showToast("Erreur critique : module non chargé.", "error");
             }
         });
     </script>
@@ -30,9 +31,6 @@
                     <p class="brand-subtitle" style="color: #64748b; font-size: 14px;">Connectez-vous à votre espace de gestion</p>
                 </div>
 
-                <div class="alert-container" id="alertContainer" style="display: none; margin-bottom: 20px;">
-                    <div class="alert alert-error" id="errorMessage" style="background: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 12px; font-size: 14px; border: 1px solid #fecaca;"></div>
-                </div>
 
                 <form class="login-form" id="loginForm">
                     <input type="hidden" id="login_mode" value="tel">
@@ -104,9 +102,9 @@
             try {
                 if (typeof window.signInWithSupabase !== 'function') throw new Error("Fonction de connexion non disponible");
                 await window.signInWithSupabase(val, pass, currentMode);
+                window.showToast("Connexion réussie !", "success");
             } catch (err) {
-                document.getElementById('errorMessage').textContent = err.message;
-                document.getElementById('alertContainer').style.display = 'block';
+                window.showToast(err.message, "error");
                 btn.disabled = false; btn.textContent = 'Se connecter';
             }
         });
