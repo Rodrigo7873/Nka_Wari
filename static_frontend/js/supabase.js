@@ -19,18 +19,22 @@ window.signInWithSupabase = async function(identifier, password, mode = 'email')
     
     // Détection intelligente du type d'identifiant
     if (mode === 'tel' || /^\d{9}$/.test(input.replace(/\s/g, ''))) {
-        // C'est un numéro de téléphone
+        // C'est un numéro de téléphone (9 chiffres)
         let phone = input.replace(/\s/g, '');
         loginParams.email = phone + "@nkawari.local";
+    } else if (/^[A-Z]{4}\d{6}$/.test(input.toUpperCase())) {
+        // C'est l'ID professionnel (ex: RAMO123456)
+        loginParams.email = input.toUpperCase() + "@nkawari.local";
     } else if (!input.includes('@') && /^\d+$/.test(input)) {
-        // C'est probablement un ID numérique
+        // Autre ID numérique
         loginParams.email = input + "@nkawari.local";
     } else {
-        // C'est un email classique ou un identifiant avec @
         loginParams.email = input;
     }
 
     console.log("Tentative de connexion avec:", loginParams.email);
+    // DEBUG: Afficher l'identifiant technique envoyé (à retirer en production)
+    // window.showToast("Login tech: " + loginParams.email, "info");
 
     const { data, error } = await window.supabaseClient.auth.signInWithPassword(loginParams);
     if (error) {
@@ -46,8 +50,9 @@ window.signInWithSupabase = async function(identifier, password, mode = 'email')
 window.signUpWithSupabase = async function(userData) {
     console.log("signUpWithSupabase appelé");
     
-    // On utilise le téléphone comme base pour l'Email technique si aucun email n'est fourni
-    const emailTech = userData.email.includes('@') ? userData.email : (userData.phone.replace(/\s/g, '') + "@nkawari.local");
+    // On utilise l'ID généré (ex: RAMO123456) comme base pour l'Email technique
+    const idPrefix = userData.display_id || userData.phone.replace(/\s/g, '');
+    const emailTech = userData.email.includes('@') ? userData.email : (idPrefix + "@nkawari.local");
 
     const { data, error } = await window.supabaseClient.auth.signUp({
         email: emailTech,
@@ -59,8 +64,7 @@ window.signUpWithSupabase = async function(userData) {
                 phone: userData.phone,
                 secret_question: userData.secret_question,
                 secret_answer: userData.secret_answer,
-                // On peut simuler un ID court basé sur le timestamp ou une partie de l'UUID
-                display_id: userData.phone.replace(/\s/g, '')
+                display_id: userData.display_id
             }
         }
     });
@@ -70,7 +74,7 @@ window.signUpWithSupabase = async function(userData) {
         throw error;
     }
     
-    console.log("Inscription réussie !");
+    console.log("Inscription réussie ! ID:", userData.display_id);
     return data;
 };
 

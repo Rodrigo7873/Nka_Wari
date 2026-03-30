@@ -149,6 +149,15 @@
             });
         }
 
+        function genererID(nom, prenom) {
+            const n = nom.trim().replace(/\s/g, '').toUpperCase();
+            const p = prenom.trim().replace(/\s/g, '').toUpperCase();
+            const pNom = n.length >= 2 ? n.slice(-2) : n;
+            const pPrenom = p.length >= 2 ? p.slice(0, 2) : p;
+            const chiffres = Math.floor(100000 + Math.random() * 900000); // 6 chiffres
+            return pNom + pPrenom + chiffres;
+        }
+
         function goToNextStep(step) {
             const currentStep = step - 1;
             const container = document.getElementById('step' + currentStep);
@@ -177,23 +186,29 @@
             const btn = document.getElementById('finishBtn');
             btn.disabled = true; btn.textContent = "Création...";
 
+            const prenom = document.getElementById('first_name').value;
+            const nom = document.getElementById('last_name').value;
             const phoneVal = document.getElementById('phone').value.replace(/\s/g, '');
+            
+            // Génération de l'ID professionnel comme dans Django
+            const generatedID = genererID(nom, prenom);
+
             const userData = {
-                first_name: document.getElementById('first_name').value,
-                last_name: document.getElementById('last_name').value,
-                email: document.getElementById('email').value || (phoneVal + "@nkawari.local"),
+                first_name: prenom,
+                last_name: nom,
+                email: document.getElementById('email').value || (generatedID + "@nkawari.local"),
                 password: pass,
                 phone: phoneVal,
                 secret_question: document.getElementById('secret_question').value,
-                secret_answer: document.getElementById('secret_answer').value
+                secret_answer: document.getElementById('secret_answer').value,
+                display_id: generatedID
             };
 
             try {
                 const res = await window.signUpWithSupabase(userData);
-                window.showToast("Compte créé avec succès !", "success");
                 
-                // Affichage de l'ID (on utilise le numéro de téléphone comme ID métier simplifié)
-                document.getElementById('displayID').textContent = phoneVal;
+                // Affichage de l'ID professionnel généré
+                document.getElementById('displayID').textContent = generatedID;
                 
                 // Masquer le header et le footer pour l'écran de succès
                 document.getElementById('registrationHeader').style.display = 'none';
@@ -201,6 +216,7 @@
                 document.getElementById('registerWizard').style.display = 'none';
                 
                 nextStep(4);
+                window.showToast("Compte créé avec succès !", "success");
             } catch(err) {
                 window.showToast("Erreur : " + err.message, "error");
                 btn.disabled = false; btn.textContent = "Terminer";
