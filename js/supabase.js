@@ -11,39 +11,60 @@ if (typeof window.supabase === 'undefined') {
     console.log("Client Supabase initialisé");
 }
 
+// Fonction utilitaire pour trouver l'email à partir d'un identifiant quelconque
+async function findEmailFromIdentifier(identifier) {
+    const input = identifier.trim();
+    
+    // Cas 1 : email direct
+    if (input.includes('@')) return input;
+
+    // Cas 2 : ID professionnel (ex: RAMO123456)
+    if (/^[A-Z]{4}[0-9]{6}$/.test(input.toUpperCase())) {
+        return `${input.toUpperCase()}@nkawari.local`;
+    }
+
+    // Cas 3 : numéro de téléphone (on cherche dans la table profiles)
+    // On nettoie le numéro (suppression espaces)
+    const phone = input.replace(/\s/g, '');
+    const { data, error } = await window.supabaseClient
+        .from('profiles')
+        .select('email')
+        .eq('phone', phone)
+        .maybeSingle();
+
+    if (error || !data) {
+        // Si non trouvé dans profiles, on tente le format par défaut par précaution
+        if (/^\d{9}$/.test(phone)) return phone + "@nkawari.local";
+        throw new Error("Aucun compte associé à cet identifiant");
+    }
+
+    return data.email;
+}
+
 // 1️⃣ Connexion
-window.signInWithSupabase = async function(identifier, password, mode = 'email') {
-    console.log("signInWithSupabase appelé (mode: " + mode + ")");
-    let loginParams = { password: password };
-    let input = identifier.trim();
-    
-    // Détection intelligente du type d'identifiant
-    if (mode === 'tel' || /^\d{9}$/.test(input.replace(/\s/g, ''))) {
-        // C'est un numéro de téléphone (9 chiffres)
-        let phone = input.replace(/\s/g, '');
-        loginParams.email = phone + "@nkawari.local";
-    } else if (/^[A-Z]{4}\d{6}$/.test(input.toUpperCase())) {
-        // C'est l'ID professionnel (ex: RAMO123456)
-        loginParams.email = input.toUpperCase() + "@nkawari.local";
-    } else if (!input.includes('@') && /^\d+$/.test(input)) {
-        // Autre ID numérique
-        loginParams.email = input + "@nkawari.local";
-    } else {
-        loginParams.email = input;
-    }
+window.signInWithSupabase = async function(identifier, password) {
+    console.log("signInWithSupabase appelé");
+    try {
+        const email = await findEmailFromIdentifier(identifier);
+        console.log("Tentative de connexion pour:", email);
+        
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
-    console.log("Tentative de connexion avec:", loginParams.email);
-    // DEBUG: Afficher l'identifiant technique envoyé (à retirer en production)
-    // window.showToast("Login tech: " + loginParams.email, "info");
+        if (error) throw error;
 
-    const { data, error } = await window.supabaseClient.auth.signInWithPassword(loginParams);
-    if (error) {
-        console.error("Erreur de connexion:", error.message);
-        throw error;
+        // Stockage optionnel de l'utilisateur (déjà géré par Supabase session)
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = "dashboard.html";
+        return data;
+    } catch (err) {
+        console.error("Erreur de connexion:", err.message);
+        if (window.showToast) window.showToast(err.message, "error");
+        else alert(err.message);
+        throw err;
     }
-    
-    window.location.href = 'dashboard.html';
-    return data;
 };
 
 // 2️⃣ Inscription

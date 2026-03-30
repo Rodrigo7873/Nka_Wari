@@ -207,6 +207,23 @@
             try {
                 const res = await window.signUpWithSupabase(userData);
                 
+                // 2️⃣ Insertion dans la table 'profiles' (obligatoire pour la recherche par identifiant)
+                if (res.user) {
+                    const { error: profileError } = await window.supabaseClient
+                        .from('profiles')
+                        .insert({
+                            id: res.user.id,
+                            identifiant: generatedID,
+                            phone: phoneVal,
+                            email: userData.email, // email technique ou réel
+                            full_name: prenom + " " + nom
+                        });
+                    
+                    if (profileError) {
+                        console.warn("Erreur création profil:", profileError.message);
+                    }
+                }
+
                 // Affichage de l'ID professionnel généré
                 document.getElementById('displayID').textContent = generatedID;
                 

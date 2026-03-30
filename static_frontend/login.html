@@ -101,7 +101,7 @@
             btn.disabled = true; btn.textContent = 'Connexion...';
             try {
                 if (typeof window.signInWithSupabase !== 'function') throw new Error("Fonction de connexion non disponible");
-                await window.signInWithSupabase(val, pass, currentMode);
+                await window.signInWithSupabase(val, pass);
                 window.showToast("Connexion réussie !", "success");
             } catch (err) {
                 window.showToast(err.message, "error");
