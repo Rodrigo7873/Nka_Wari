@@ -10,10 +10,21 @@ window.showToast = function(message, type = 'info') {
         document.body.appendChild(container);
     }
 
+    // Anti-Spam: Ne pas ajouter si le même message est déjà affiché
+    const existingToasts = container.querySelectorAll('.toast');
+    for (let t of existingToasts) {
+        if (t.innerText.includes(message)) return;
+    }
+
+    // Gestion du nombre maximum (ex: 3)
+    if (existingToasts.length >= 3) {
+        existingToasts[0].classList.add('hide');
+        setTimeout(() => existingToasts[0].remove(), 300);
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     
-    // Détermination de l'icône
     let icon = '🔔';
     if(type === 'success') icon = '✅';
     if(type === 'error') icon = '❌';
@@ -21,7 +32,6 @@ window.showToast = function(message, type = 'info') {
 
     toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
     
-    // Fermeture manuelle au clic
     toast.onclick = () => {
         toast.classList.add('hide');
         setTimeout(() => toast.remove(), 400);
@@ -29,13 +39,12 @@ window.showToast = function(message, type = 'info') {
 
     container.appendChild(toast);
 
-    // Auto-suppression après 4 secondes
     setTimeout(() => {
         if(toast.parentElement) {
             toast.classList.add('hide');
             setTimeout(() => toast.remove(), 400);
         }
-    }, 4000);
+    }, 3500);
 };
 
 // Override standard alert for a better feel (Optional but recommended)
