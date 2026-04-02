@@ -13,17 +13,24 @@ if (typeof window.supabase === 'undefined') {
 
 // Fonction utilitaire pour trouver l'email à partir d'un identifiant quelconque
 async function findEmailFromIdentifier(identifier) {
+    console.log("Recherche pour :", identifier);
+
     if (!identifier) throw new Error("Identifiant requis");
 
-    // 1. Si c'est déjà un email
-    if (identifier.includes('@')) return identifier;
-
-    // 2. Si c'est un ID professionnel (format XXXX999999)
-    if (/^[A-Z]{4}[0-9]{6}$/.test(identifier)) {
-        return `${identifier}@nkawari.local`;
+    // 1. Email direct
+    if (identifier.includes('@')) {
+        console.log("Email direct :", identifier);
+        return identifier;
     }
 
-    // 3. Si c'est un numéro de téléphone (format +224...)
+    // 2. ID professionnel (format XXXX999999)
+    if (/^[A-Z]{4}[0-9]{6}$/.test(identifier)) {
+        const email = `${identifier}@nkawari.local`;
+        console.log("ID pro converti en email :", email);
+        return email;
+    }
+
+    // 3. Numéro de téléphone (format +224...)
     if (identifier.startsWith('+224')) {
         const { data, error } = await window.supabaseClient
             .from('profiles')
@@ -31,8 +38,11 @@ async function findEmailFromIdentifier(identifier) {
             .eq('phone', identifier)
             .maybeSingle();
 
-        if (error) throw new Error("Erreur lors de la recherche");
-        if (!data) throw new Error("Aucun compte associé à ce numéro");
+        console.log("Résultat recherche téléphone :", data, error);
+
+        if (error || !data) {
+            throw new Error("Aucun compte associé à ce numéro");
+        }
         return data.email;
     }
 
@@ -44,7 +54,7 @@ window.signInWithSupabase = async function(identifier, password) {
     console.log("signInWithSupabase appelé");
     try {
         const email = await findEmailFromIdentifier(identifier);
-        console.log("Tentative de connexion pour:", email);
+        console.log("Tentative de connexion pour :", email);
         
         const { data, error } = await window.supabaseClient.auth.signInWithPassword({
             email: email,
@@ -53,11 +63,12 @@ window.signInWithSupabase = async function(identifier, password) {
 
         if (error) throw new Error(error.message);
 
+        console.log("Connexion réussie !");
         localStorage.setItem('user', JSON.stringify(data.user));
         window.location.href = "dashboard.html";
         return data;
     } catch (err) {
-        console.error("Erreur de connexion:", err.message);
+        console.error("Erreur de connexion :", err.message);
         if (window.showToast) window.showToast(err.message, "error");
         else alert("Erreur : " + err.message);
         throw err;
@@ -88,7 +99,7 @@ window.signUpWithSupabase = async function(userData) {
     });
 
     if (error) {
-        console.error("Erreur d'inscription:", error.message);
+        console.error("Erreur d'inscription :", error.message);
         throw error;
     }
     
