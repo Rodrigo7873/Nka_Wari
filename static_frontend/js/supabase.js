@@ -13,29 +13,39 @@ if (typeof window.supabase === 'undefined') {
 
 // Fonction utilitaire pour trouver l'email à partir d'un identifiant quelconque
 async function findEmailFromIdentifier(identifier) {
-    console.log("Recherche pour :", identifier);
-
     if (!identifier) throw new Error("Identifiant requis");
+    
+    // Nettoyage des espaces éventuels autour
+    const input = identifier.trim();
+    console.log("Recherche pour :", input);
 
     // 1. Email direct
-    if (identifier.includes('@')) {
-        console.log("Email direct :", identifier);
-        return identifier;
+    if (input.includes('@')) {
+        console.log("Email détecté :", input);
+        return input;
     }
 
     // 2. ID professionnel (format XXXX999999)
-    if (/^[A-Z]{4}[0-9]{6}$/.test(identifier)) {
-        const email = `${identifier}@nkawari.local`;
+    if (/^[A-Z]{4}[0-9]{6}$/.test(input.toUpperCase())) {
+        const email = `${input.toUpperCase()}@nkawari.local`;
         console.log("ID pro converti en email :", email);
         return email;
     }
 
     // 3. Numéro de téléphone (format +224...)
-    if (identifier.startsWith('+224')) {
+    if (input.startsWith('+224')) {
+        // Normalisation : suppression espaces et tirets
+        const normalized = input.replace(/\s|-/g, '');
+        console.log("Téléphone normalisé :", normalized);
+
+        if (!/^\+224[0-9]{9}$/.test(normalized)) {
+            throw new Error("Format de numéro +224 invalide");
+        }
+
         const { data, error } = await window.supabaseClient
             .from('profiles')
             .select('email')
-            .eq('phone', identifier)
+            .eq('phone', normalized)
             .maybeSingle();
 
         console.log("Résultat recherche téléphone :", data, error);
