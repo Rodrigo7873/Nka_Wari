@@ -77,3 +77,4 @@ Pour que le design CSS, les icônes et le JS s'affichent :
 ## 6. Lancement Final
 1. En haut de l'onglet **Web**, cliquez sur le gros bouton vert **Reload votre_username.pythonanywhere.com**.
 2. Visitez le lien généré (`https://votre_username.pythonanywhere.com`), votre site est en ligne avec le certificat HTTPS fourni gratuitement par PythonAnywhere. Il est désormais prêt pour l'étape de l'APK !
+cls

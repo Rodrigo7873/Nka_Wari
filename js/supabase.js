@@ -13,32 +13,35 @@ if (typeof window.supabase === 'undefined') {
 
 // Fonction utilitaire pour trouver l'email à partir d'un identifiant quelconque
 async function findEmailFromIdentifier(identifier) {
+    if (!identifier) throw new Error("Identifiant requis");
+
     const input = identifier.trim();
     
-    // Cas 1 : email direct
+    // 1. Si c'est déjà un email
     if (input.includes('@')) return input;
 
-    // Cas 2 : ID professionnel (ex: RAMO123456)
+    // 2. Si c'est un ID professionnel (format XXXX999999)
     if (/^[A-Z]{4}[0-9]{6}$/.test(input.toUpperCase())) {
         return `${input.toUpperCase()}@nkawari.local`;
     }
 
-    // Cas 3 : numéro de téléphone (on cherche dans la table profiles)
-    // On nettoie le numéro (suppression espaces)
+    // 3. Si c'est un numéro de téléphone (on cherche dans la table profiles)
+    // On nettoie le numéro (suppression espaces pour la recherche si nécessaire, mais on compare tel quel si startsWith +224)
     const phone = input.replace(/\s/g, '');
-    const { data, error } = await window.supabaseClient
-        .from('profiles')
-        .select('email')
-        .eq('phone', phone)
-        .maybeSingle();
+    if (phone.startsWith('+224') || /^\d{9}$/.test(phone)) {
+        const finalPhone = phone.startsWith('+224') ? phone : '+224' + phone;
+        const { data, error } = await window.supabaseClient
+            .from('profiles')
+            .select('email')
+            .eq('phone', finalPhone)
+            .maybeSingle();
 
-    if (error || !data) {
-        // Si non trouvé dans profiles, on tente le format par défaut par précaution
-        if (/^\d{9}$/.test(phone)) return phone + "@nkawari.local";
-        throw new Error("Aucun compte associé à cet identifiant");
+        if (error) throw new Error("Erreur lors de la recherche du téléphone");
+        if (!data) throw new Error("Aucun compte associé à ce numéro");
+        return data.email;
     }
 
-    return data.email;
+    throw new Error("Format d'identifiant invalide");
 }
 
 // 1️⃣ Connexion
@@ -46,23 +49,20 @@ window.signInWithSupabase = async function(identifier, password) {
     console.log("signInWithSupabase appelé");
     try {
         const email = await findEmailFromIdentifier(identifier);
-        console.log("Tentative de connexion pour:", email);
-        
         const { data, error } = await window.supabaseClient.auth.signInWithPassword({
             email: email,
             password: password
         });
 
-        if (error) throw error;
+        if (error) throw new Error(error.message);
 
-        // Stockage optionnel de l'utilisateur (déjà géré par Supabase session)
         localStorage.setItem('user', JSON.stringify(data.user));
         window.location.href = "dashboard.html";
         return data;
     } catch (err) {
         console.error("Erreur de connexion:", err.message);
         if (window.showToast) window.showToast(err.message, "error");
-        else alert(err.message);
+        else alert("Erreur : " + err.message);
         throw err;
     }
 };

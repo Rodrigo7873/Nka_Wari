@@ -16,8 +16,6 @@
             if (typeof window.signUpWithSupabase !== 'function') {
                 console.error("Critical: window.signUpWithSupabase is not defined!");
                 window.showToast("Erreur critique : module non chargé.", "error");
-            } else {
-                console.log("Check: signUpWithSupabase exists.");
             }
         });
     </script>
@@ -189,8 +187,9 @@
             const prenom = document.getElementById('first_name').value;
             const nom = document.getElementById('last_name').value;
             const phoneVal = document.getElementById('phone').value.replace(/\s/g, '');
+            const finalPhone = phoneVal.startsWith('+224') ? phoneVal : '+224' + phoneVal;
             
-            // Génération de l'ID professionnel comme dans Django
+            // Génération de l'ID professionnel
             const generatedID = genererID(nom, prenom);
 
             const userData = {
@@ -198,7 +197,7 @@
                 last_name: nom,
                 email: document.getElementById('email').value || (generatedID + "@nkawari.local"),
                 password: pass,
-                phone: phoneVal,
+                phone: finalPhone,
                 secret_question: document.getElementById('secret_question').value,
                 secret_answer: document.getElementById('secret_answer').value,
                 display_id: generatedID
@@ -214,8 +213,8 @@
                         .insert({
                             id: res.user.id,
                             identifiant: generatedID,
-                            phone: phoneVal,
-                            email: userData.email, // Utilise l'email technique ou réel généré plus haut
+                            phone: finalPhone,
+                            email: userData.email, // Email technique ou réel
                             full_name: prenom + " " + nom
                         });
                     
@@ -224,10 +223,10 @@
                     }
                 }
 
-                // Affichage de l'ID professionnel généré
+                // Affichage de l'ID professionnel
                 document.getElementById('displayID').textContent = generatedID;
                 
-                // Masquer le header et le footer pour l'écran de succès
+                // Masquer les éléments inutiles
                 document.getElementById('registrationHeader').style.display = 'none';
                 document.getElementById('loginLink').style.display = 'none';
                 document.getElementById('registerWizard').style.display = 'none';
