@@ -186,36 +186,32 @@
 
             const prenom = document.getElementById('first_name').value;
             const nom = document.getElementById('last_name').value;
+            const fullName = prenom + " " + nom;
             const phoneVal = document.getElementById('phone').value.replace(/\s/g, '');
-            const finalPhone = phoneVal.startsWith('+224') ? phoneVal : '+224' + phoneVal;
+            const phoneWithPrefix = phoneVal.startsWith('+224') ? phoneVal : '+224' + phoneVal;
             
             // Génération de l'ID professionnel
             const generatedID = genererID(nom, prenom);
-
-            const userData = {
-                first_name: prenom,
-                last_name: nom,
-                email: document.getElementById('email').value || (generatedID + "@nkawari.local"),
-                password: pass,
-                phone: finalPhone,
-                secret_question: document.getElementById('secret_question').value,
-                secret_answer: document.getElementById('secret_answer').value,
-                display_id: generatedID
-            };
+            const technicalEmail = `${generatedID}@nkawari.local`;
 
             try {
-                const res = await window.signUpWithSupabase(userData);
-                
-                // 2️⃣ Insertion dans la table 'profiles' (obligatoire pour la recherche par identifiant)
-                if (res.user) {
+                const { data, error } = await window.supabaseClient.auth.signUp({
+                    email: technicalEmail,
+                    password: pass,
+                    options: { data: { full_name: fullName } }
+                });
+
+                if (error) throw error;
+
+                if (data.user) {
                     const { error: profileError } = await window.supabaseClient
                         .from('profiles')
                         .insert({
-                            id: res.user.id,
+                            id: data.user.id,
                             identifiant: generatedID,
-                            phone: finalPhone,
-                            email: userData.email, // Email technique ou réel
-                            full_name: prenom + " " + nom
+                            phone: phoneWithPrefix,
+                            email: technicalEmail,
+                            full_name: fullName
                         });
                     
                     if (profileError) {
@@ -223,10 +219,10 @@
                     }
                 }
 
-                // Affichage de l'ID professionnel
+                // Affichage de l'ID professionnel généré
                 document.getElementById('displayID').textContent = generatedID;
                 
-                // Masquer les éléments inutiles
+                // Masquer le header et le footer pour l'écran de succès
                 document.getElementById('registrationHeader').style.display = 'none';
                 document.getElementById('loginLink').style.display = 'none';
                 document.getElementById('registerWizard').style.display = 'none';
@@ -236,6 +232,7 @@
             } catch(err) {
                 window.showToast("Erreur : " + err.message, "error");
                 btn.disabled = false; btn.textContent = "Terminer";
+                console.error("Erreur complète:", err);
             }
         });
     </script>

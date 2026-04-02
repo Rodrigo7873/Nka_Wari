@@ -15,28 +15,23 @@ if (typeof window.supabase === 'undefined') {
 async function findEmailFromIdentifier(identifier) {
     if (!identifier) throw new Error("Identifiant requis");
 
-    const input = identifier.trim();
-    
     // 1. Si c'est déjà un email
-    if (input.includes('@')) return input;
+    if (identifier.includes('@')) return identifier;
 
     // 2. Si c'est un ID professionnel (format XXXX999999)
-    if (/^[A-Z]{4}[0-9]{6}$/.test(input.toUpperCase())) {
-        return `${input.toUpperCase()}@nkawari.local`;
+    if (/^[A-Z]{4}[0-9]{6}$/.test(identifier)) {
+        return `${identifier}@nkawari.local`;
     }
 
-    // 3. Si c'est un numéro de téléphone (on cherche dans la table profiles)
-    // On nettoie le numéro (suppression espaces pour la recherche si nécessaire, mais on compare tel quel si startsWith +224)
-    const phone = input.replace(/\s/g, '');
-    if (phone.startsWith('+224') || /^\d{9}$/.test(phone)) {
-        const finalPhone = phone.startsWith('+224') ? phone : '+224' + phone;
+    // 3. Si c'est un numéro de téléphone (format +224...)
+    if (identifier.startsWith('+224')) {
         const { data, error } = await window.supabaseClient
             .from('profiles')
             .select('email')
-            .eq('phone', finalPhone)
+            .eq('phone', identifier)
             .maybeSingle();
 
-        if (error) throw new Error("Erreur lors de la recherche du téléphone");
+        if (error) throw new Error("Erreur lors de la recherche");
         if (!data) throw new Error("Aucun compte associé à ce numéro");
         return data.email;
     }
@@ -49,6 +44,8 @@ window.signInWithSupabase = async function(identifier, password) {
     console.log("signInWithSupabase appelé");
     try {
         const email = await findEmailFromIdentifier(identifier);
+        console.log("Tentative de connexion pour:", email);
+        
         const { data, error } = await window.supabaseClient.auth.signInWithPassword({
             email: email,
             password: password
