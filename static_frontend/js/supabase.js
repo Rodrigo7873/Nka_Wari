@@ -17,6 +17,7 @@ async function findEmailFromIdentifier(identifier) {
     
     // Nettoyage des espaces éventuels autour
     const input = identifier.trim();
+    console.log("🔍 Recherche pour identifiant :", input);
 
     // 1. ID professionnel (format XXXX999999)
     if (/^[A-Z]{4}[0-9]{6}$/.test(input.toUpperCase())) {
@@ -27,8 +28,6 @@ async function findEmailFromIdentifier(identifier) {
 
     // 2. Numéro de téléphone (format local 620 ou international +224)
     if (input.startsWith('+224') || /^620[\s\-]*[0-9]{2}[\s\-]*[0-9]{2}[\s\-]*[0-9]{2}$/.test(input)) {
-        console.log("Téléphone saisi :", input);
-        
         // Normalisation : supprimer espaces et tirets
         let normalized = input.replace(/\s|-/g, '');
         
@@ -37,7 +36,7 @@ async function findEmailFromIdentifier(identifier) {
             normalized = '+224' + normalized;
         }
 
-        console.log("Téléphone normalisé :", normalized);
+        console.log("📞 Téléphone normalisé :", normalized);
 
         // Validation du format final
         if (!/^\+224[0-9]{9}$/.test(normalized)) {
@@ -51,7 +50,7 @@ async function findEmailFromIdentifier(identifier) {
             .eq('phone', normalized)
             .maybeSingle();
 
-        console.log("Résultat recherche téléphone :", data);
+        console.log("📧 Résultat recherche :", data, error);
 
         if (error || !data) {
             throw new Error("Aucun compte associé à ce numéro");
