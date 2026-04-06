@@ -17,37 +17,41 @@ async function findEmailFromIdentifier(identifier) {
     
     // Nettoyage des espaces éventuels autour
     const input = identifier.trim();
-    console.log("Recherche pour :", input);
 
     // 1. ID professionnel (format XXXX999999)
     if (/^[A-Z]{4}[0-9]{6}$/.test(input.toUpperCase())) {
         const email = `${input.toUpperCase()}@nkawari.local`;
-        console.log("ID pro converti en email :", email);
+        console.log("ID pro détecté :", email);
         return email;
     }
 
-    // 2. Numéro de téléphone (format 620 XX XX XX ou +224...)
-    let normalized = input.replace(/\s|-/g, '');
-    
-    // 2.1 Cas du numéro commençant par 620 (9 chiffres)
-    if (/^620[0-9]{6}$/.test(normalized)) {
-        normalized = '+224' + normalized;
-    }
-
-    if (normalized.startsWith('+224')) {
-        console.log("Téléphone normalisé :", normalized);
-
-        if (!/^\+224[0-9]{9}$/.test(normalized)) {
-            throw new Error("Format de numéro +224 invalide");
+    // 2. Numéro de téléphone (format local 620 ou international +224)
+    if (input.startsWith('+224') || /^620[\s\-]*[0-9]{2}[\s\-]*[0-9]{2}[\s\-]*[0-9]{2}$/.test(input)) {
+        console.log("Téléphone saisi :", input);
+        
+        // Normalisation : supprimer espaces et tirets
+        let normalized = input.replace(/\s|-/g, '');
+        
+        // Ajouter l'indicatif si nécessaire
+        if (!normalized.startsWith('+224')) {
+            normalized = '+224' + normalized;
         }
 
+        console.log("Téléphone normalisé :", normalized);
+
+        // Validation du format final
+        if (!/^\+224[0-9]{9}$/.test(normalized)) {
+            throw new Error("Numéro invalide (doit être +224 suivi de 9 chiffres)");
+        }
+
+        // Recherche dans profiles
         const { data, error } = await window.supabaseClient
             .from('profiles')
             .select('email')
             .eq('phone', normalized)
             .maybeSingle();
 
-        console.log("Résultat recherche téléphone :", data, error);
+        console.log("Résultat recherche téléphone :", data);
 
         if (error || !data) {
             throw new Error("Aucun compte associé à ce numéro");
