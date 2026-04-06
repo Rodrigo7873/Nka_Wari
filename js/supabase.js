@@ -26,10 +26,15 @@ async function findEmailFromIdentifier(identifier) {
         return email;
     }
 
-    // 2. Numéro de téléphone (format +224...)
-    if (input.startsWith('+224')) {
-        // Normalisation : suppression espaces et tirets
-        const normalized = input.replace(/\s|-/g, '');
+    // 2. Numéro de téléphone (format 620 XX XX XX ou +224...)
+    let normalized = input.replace(/\s|-/g, '');
+    
+    // 2.1 Cas du numéro commençant par 620 (9 chiffres)
+    if (/^620[0-9]{6}$/.test(normalized)) {
+        normalized = '+224' + normalized;
+    }
+
+    if (normalized.startsWith('+224')) {
         console.log("Téléphone normalisé :", normalized);
 
         if (!/^\+224[0-9]{9}$/.test(normalized)) {
@@ -50,7 +55,7 @@ async function findEmailFromIdentifier(identifier) {
         return data.email;
     }
 
-    // Si on arrive ici, le format n'est ni un ID pro ni un téléphone +224
+    // Si on arrive ici, le format n'est ni un ID pro ni un téléphone valide
     throw new Error("Format d'identifiant invalide (ID ou téléphone requis)");
 }
 
