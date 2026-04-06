@@ -19,20 +19,14 @@ async function findEmailFromIdentifier(identifier) {
     const input = identifier.trim();
     console.log("Recherche pour :", input);
 
-    // 1. Email direct
-    if (input.includes('@')) {
-        console.log("Email détecté :", input);
-        return input;
-    }
-
-    // 2. ID professionnel (format XXXX999999)
+    // 1. ID professionnel (format XXXX999999)
     if (/^[A-Z]{4}[0-9]{6}$/.test(input.toUpperCase())) {
         const email = `${input.toUpperCase()}@nkawari.local`;
         console.log("ID pro converti en email :", email);
         return email;
     }
 
-    // 3. Numéro de téléphone (format +224...)
+    // 2. Numéro de téléphone (format +224...)
     if (input.startsWith('+224')) {
         // Normalisation : suppression espaces et tirets
         const normalized = input.replace(/\s|-/g, '');
@@ -56,7 +50,8 @@ async function findEmailFromIdentifier(identifier) {
         return data.email;
     }
 
-    throw new Error("Format d'identifiant invalide");
+    // Si on arrive ici, le format n'est ni un ID pro ni un téléphone +224
+    throw new Error("Format d'identifiant invalide (ID ou téléphone requis)");
 }
 
 // 1️⃣ Connexion
@@ -64,7 +59,6 @@ window.signInWithSupabase = async function(identifier, password) {
     console.log("signInWithSupabase appelé");
     try {
         const email = await findEmailFromIdentifier(identifier);
-        console.log("Tentative de connexion pour :", email);
         
         const { data, error } = await window.supabaseClient.auth.signInWithPassword({
             email: email,
