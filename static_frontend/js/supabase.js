@@ -4,18 +4,19 @@ console.log("supabase.js initializing...");
 const supabaseUrl = 'https://fvrdaulagutwhlrgrcta.supabase.co';
 const supabaseKey = 'sb_publishable_CxLEYNMH7gsv-zpcIJQmKg_fFfQ1NNu';
 
-if (typeof window.supabase === 'undefined') {
+if (typeof window.supabase === 'undefined' || typeof window.supabase.createClient !== 'function') {
     console.error("ERREUR : Le SDK Supabase (via CDN) n'est pas chargé !");
 } else {
-    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-    console.log("Client Supabase initialisé");
+    // Initialisation et exposition globale du client sur window.supabase
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    window.supabase = supabaseClient;
+    console.log("Supabase client initialisé et exposé sur window.supabase :", window.supabase);
 }
 
 // Fonction utilitaire pour trouver l'email à partir d'un identifiant quelconque
 async function findEmailFromIdentifier(identifier) {
     if (!identifier) throw new Error("Identifiant requis");
     
-    // Nettoyage des espaces éventuels autour
     const input = identifier.trim();
     console.log("🔍 Recherche pour identifiant :", input);
 
@@ -28,14 +29,10 @@ async function findEmailFromIdentifier(identifier) {
 
     // 2. Numéro de téléphone (format local 620 ou international +224)
     if (input.startsWith('+224') || /^620[\s\-]*[0-9]{2}[\s\-]*[0-9]{2}[\s\-]*[0-9]{2}$/.test(input)) {
-        // Normalisation : supprimer espaces et tirets
         let normalized = input.replace(/\s|-/g, '');
-        
-        // Ajouter l'indicatif si nécessaire
         if (!normalized.startsWith('+224')) {
             normalized = '+224' + normalized;
         }
-
         console.log("📞 Téléphone normalisé :", normalized);
 
         // Validation du format final
@@ -43,8 +40,8 @@ async function findEmailFromIdentifier(identifier) {
             throw new Error("Numéro invalide (doit être +224 suivi de 9 chiffres)");
         }
 
-        // Recherche dans profiles
-        const { data, error } = await window.supabaseClient
+        // Recherche dans profiles en utilisant window.supabase
+        const { data, error } = await window.supabase
             .from('profiles')
             .select('email')
             .eq('phone', normalized)
@@ -58,7 +55,6 @@ async function findEmailFromIdentifier(identifier) {
         return data.email;
     }
 
-    // Si on arrive ici, le format n'est ni un ID pro ni un téléphone valide
     throw new Error("Format d'identifiant invalide (ID ou téléphone requis)");
 }
 
@@ -68,7 +64,7 @@ window.signInWithSupabase = async function(identifier, password) {
     try {
         const email = await findEmailFromIdentifier(identifier);
         
-        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+        const { data, error } = await window.supabase.auth.signInWithPassword({
             email: email,
             password: password
         });
@@ -91,11 +87,10 @@ window.signInWithSupabase = async function(identifier, password) {
 window.signUpWithSupabase = async function(userData) {
     console.log("signUpWithSupabase appelé");
     
-    // On utilise l'ID généré (ex: RAMO123456) comme base pour l'Email technique
     const idPrefix = userData.display_id || userData.phone.replace(/\s/g, '');
     const emailTech = userData.email.includes('@') ? userData.email : (idPrefix + "@nkawari.local");
 
-    const { data, error } = await window.supabaseClient.auth.signUp({
+    const { data, error } = await window.supabase.auth.signUp({
         email: emailTech,
         password: userData.password,
         options: {
@@ -121,13 +116,13 @@ window.signUpWithSupabase = async function(userData) {
 
 // 3️⃣ Déconnexion
 window.logoutFromSupabase = async function() {
-    await window.supabaseClient.auth.signOut();
+    await window.supabase.auth.signOut();
     window.location.href = 'index.html';
 };
 
 // 4️⃣ Vérification de session
 window.checkSession = async function() {
-    const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+    const { data: { session }, error } = await window.supabase.auth.getSession();
     if (error || !session) {
         const path = window.location.pathname;
         if (!path.includes('login.html') && !path.includes('index.html') && !path.includes('register.html')) {
