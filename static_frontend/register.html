@@ -43,20 +43,26 @@
         .login-card {
             background: #ffffff;
             width: 100%;
-            padding: 35px;
+            padding: 40px;
             box-sizing: border-box;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
+            border-radius: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03);
             border: 1px solid var(--border-soft);
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Mobile Adjustments */
+        /* Desktop specific adjustments */
+        @media (min-width: 768px) {
+            .logo-img { width: 100px !important; height: 100px !important; margin-bottom: 20px !important; }
+            .login-card { box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05); padding: 50px 45px; }
+        }
+
         @media (max-width: 767px) {
             .app-container { padding: 0; align-items: flex-start; background: #ffffff; }
             .login-card { border-radius: 0; border: none; box-shadow: none; padding: 30px 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
             .login-wrapper { max-width: 100%; }
+            .logo-img { width: 80px; height: 80px; }
         }
 
         .register-step { display: none; }
@@ -67,12 +73,12 @@
         .progress-dot.active { background: var(--brand-green); transform: scale(1.3); }
         .progress-dot.completed { background: var(--brand-green); }
         
-        .form-group label { display: block; font-weight: 700; color: var(--text-main); margin-bottom: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .input-box { width: 100%; height: 54px; border-radius: 14px; border: 1.5px solid var(--border-soft); padding: 0 16px; font-size: 16px; color: var(--text-main); background: #f9fafb; transition: all 0.2s; box-sizing: border-box; }
+        .form-group label { display: block; font-weight: 700; color: var(--text-main); margin-bottom: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .input-box { width: 100%; height: 56px; border-radius: 14px; border: 1.5px solid var(--border-soft); padding: 0 16px; font-size: 16px; color: var(--text-main); background: #f9fafb; transition: all 0.2s; box-sizing: border-box; }
         .input-box:focus { border-color: var(--brand-green); outline: none; background: #fff; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08); }
         
-        .btn-primary { width: 100%; height: 54px; background: var(--brand-green); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2); margin-top: 20px; }
-        .btn-secondary { height: 54px; background: #fff; color: var(--text-sub); border: 2.5px solid #f8fafc; border-radius: 14px; font-weight: 600; font-size: 15px; cursor: pointer; }
+        .btn-primary { width: 100%; height: 56px; background: var(--brand-green); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2); margin-top: 25px; }
+        .btn-secondary { height: 56px; background: #fff; color: var(--text-sub); border: 2.5px solid #f8fafc; border-radius: 14px; font-weight: 600; font-size: 15px; cursor: pointer; }
         
         .id-card { background: #f9fafb; border: 2px dashed var(--brand-green); border-radius: 20px; padding: 25px; margin: 25px 0; text-align: center; }
         .id-value { font-size: 32px; font-weight: 850; color: var(--text-main); letter-spacing: 2px; margin: 10px 0; }
@@ -86,9 +92,9 @@
         <div class="login-wrapper">
             <div class="login-card">
                 <div id="registrationHeader" style="text-align: center;">
-                    <img src="images/logo.jpg" alt="Logo" style="width: 75px; height: 75px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: #fff; margin-bottom: 15px;">
-                    <h1 style="font-size: 24px; font-weight: 900; color: var(--text-main); margin: 0;">Inscription</h1>
-                    <p style="color: var(--text-sub); font-size: 14px; margin-top: 5px;">Rejoignez N'Ka Wari</p>
+                    <img src="images/logo.jpg" alt="Logo" class="logo-img" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid #ffffff; box-shadow: 0 8px 20px rgba(0,0,0,0.12); background: #fff; margin-bottom: 15px;">
+                    <h1 style="font-size: 26px; font-weight: 900; color: var(--text-main); margin: 0;">Inscription</h1>
+                    <p style="color: var(--text-sub); font-size: 15px; margin-top: 5px;">Créez votre profil de gestion</p>
                     
                     <div class="wizard-progress">
                         <div class="progress-dot active" id="dot1"></div>
@@ -102,7 +108,7 @@
                     <div class="register-step active" id="step1">
                         <div class="form-group"><label>Prénom</label><input type="text" id="first_name" required placeholder="Ex: Moussa" class="input-box"></div>
                         <div class="form-group" style="margin-top: 15px;"><label>Nom</label><input type="text" id="last_name" required placeholder="Ex: Camara" class="input-box"></div>
-                        <button type="button" onclick="goToNextStep(2)" class="btn-primary">Continuer</button>
+                        <button type="button" onclick="goToNextStep(2)" class="btn-primary">Suivant</button>
                     </div>
 
                     <!-- Étape 2 : Sécurité -->
@@ -116,13 +122,13 @@
                     <div class="register-step" id="step3">
                         <div class="form-group"><label>Numéro de téléphone</label><input type="tel" id="phone" required placeholder="620 00 00 00" class="input-box"></div>
                         <div class="form-group" style="margin-top: 15px;"><label>Mot de passe</label><input type="password" id="password" required placeholder="Min. 8 caractères" class="input-box"></div>
-                        <div style="display: flex; gap: 10px; margin-top: 25px;"><button type="button" onclick="nextStep(2)" class="btn-secondary" style="flex: 1;">Retour</button><button type="submit" id="finishBtn" class="btn-primary" style="flex: 2; margin-top: 0;">Terminer</button></div>
+                        <div style="display: flex; gap: 10px; margin-top: 25px;"><button type="button" onclick="nextStep(2)" class="btn-secondary" style="flex: 1;">Retour</button><button type="submit" id="finishBtn" class="btn-primary" style="flex: 2; margin-top: 0;">Confirmer</button></div>
                     </div>
                 </form>
 
-                <div class="register-step" id="step4"><div style="text-align: center;"><div style="width: 75px; height: 75px; background: #dcfce7; color: var(--brand-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px;">✓</div><h2 style="font-weight: 900; color: var(--text-main); margin: 0;">Bienvenue !</h2><div class="id-card"><p style="text-transform: uppercase; font-size: 11px; font-weight: 700; color: var(--text-sub); letter-spacing: 1px; margin: 0;">Votre Identifiant</p><div class="id-value" id="displayID">------</div><p style="font-size: 13px; color: #ef4444; font-weight: 600; margin: 0;">⚠️ Notez-le soigneusement !</p></div><button onclick="window.location.href='login.html'" class="btn-primary" style="background: var(--text-main); margin-top: 0;">Accéder au compte</button></div></div>
+                <div class="register-step" id="step4"><div style="text-align: center;"><div style="width: 80px; height: 80px; background: #dcfce7; color: var(--brand-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px;">✓</div><h2 style="font-weight: 900; color: var(--text-main); margin: 0;">Bienvenue !</h2><div class="id-card"><p style="text-transform: uppercase; font-size: 11px; font-weight: 700; color: var(--text-sub); letter-spacing: 1px; margin: 0;">Votre Identifiant Unique</p><div class="id-value" id="displayID">------</div></div><button onclick="window.location.href='login.html'" class="btn-primary" style="background: var(--text-main); margin-top: 0;">Vers la connexion</button></div></div>
 
-                <div id="loginLink" style="margin-top: 25px; text-align: center; font-size: 15px; color: var(--text-sub);">Déjà inscrit ? <a href="login.html" style="color: var(--brand-green); font-weight: 700; text-decoration: none; margin-left: 5px;">Se connecter</a></div>
+                <div id="loginLink" style="margin-top: 30px; text-align: center; font-size: 15px; color: var(--text-sub);">Déjà un compte ? <a href="login.html" style="color: var(--brand-green); font-weight: 700; text-decoration: none; margin-left: 5px;">Se connecter</a></div>
             </div>
         </div>
     </div>
@@ -147,11 +153,11 @@
             const inputs = container.querySelectorAll('input[required], select[required]');
             let isValid = true;
             inputs.forEach(i => { if (!i.value.trim()) { i.style.borderColor = '#ef4444'; isValid = false; } else { i.style.borderColor = '#e2e8f0'; } });
-            if (isValid) nextStep(step); else window.showToast("Merci de remplir tous les champs.", "warning");
+            if (isValid) nextStep(step); else window.showToast("Remplissez tous les champs.", "warning");
         }
         document.getElementById('registerWizard').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('finishBtn'); btn.disabled = true; btn.textContent = "Inscription...";
+            const btn = document.getElementById('finishBtn'); btn.disabled = true; btn.textContent = "Traitement...";
             const prenom = document.getElementById('first_name').value;
             const nom = document.getElementById('last_name').value;
             const phoneVal = document.getElementById('phone').value.replace(/\s/g, '');
@@ -166,7 +172,7 @@
                 document.getElementById('loginLink').style.display = 'none';
                 document.getElementById('registerWizard').style.display = 'none';
                 nextStep(4); window.showToast("Compte créé !", "success");
-            } catch(err) { window.showToast(err.message, "error"); btn.disabled = false; btn.textContent = "Terminer"; }
+            } catch(err) { window.showToast(err.message, "error"); btn.disabled = false; btn.textContent = "Confirmer"; }
         });
     </script>
 </body>
