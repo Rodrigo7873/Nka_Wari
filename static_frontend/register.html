@@ -13,14 +13,14 @@
             height: 100%;
             margin: 0;
             overflow: hidden;
-            background: #ffffff; /* Fond blanc par défaut pour mobile */
+            background: #ffffff;
         }
         .app-container {
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f8fafc; /* Fond gris léger pour ordinateur */
+            background: #f8fafc;
         }
         .login-wrapper {
             width: 100%;
@@ -34,11 +34,11 @@
         .login-card {
             background: #ffffff;
             width: 100%;
-            padding: 30px;
+            padding: 25px;
             box-sizing: border-box;
         }
 
-        /* Styles PC : On garde l'effet de carte centrée */
+        /* PC : Carte centrée */
         @media (min-width: 768px) {
             .app-container { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); }
             .login-card {
@@ -49,7 +49,7 @@
             .login-wrapper { height: auto; }
         }
 
-        /* Styles Mobile : Plein écran */
+        /* Mobile : Plein écran */
         @media (max-width: 767px) {
             .app-container { background: #ffffff; padding: 0; }
             .login-card { height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 25px; }
@@ -85,7 +85,8 @@
         <div class="login-wrapper">
             <div class="login-card">
                 <div id="registrationHeader" style="text-align: center;">
-                    <img src="images/logo.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid #10b981; padding: 2px; background: #fff; margin-bottom: 15px;">
+                    <!-- Logo Style Local Restauré -->
+                    <img src="images/logo.jpg" alt="Logo N'Ka Wari" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid white; box-shadow: 0 6px 16px rgba(0,0,0,0.1); object-fit: contain; background: white; margin-bottom: 12px;">
                     <h1 style="font-size: 24px; font-weight: 900; color: #1e293b; margin: 0;">Inscription</h1>
                     <p style="color: #64748b; font-size: 14px; margin-top: 5px;">Créez votre profil N'Ka Wari</p>
                     
@@ -208,7 +209,7 @@
         document.getElementById('registerWizard').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('finishBtn');
-            btn.disabled = true; btn.textContent = "Création...";
+            btn.disabled = true; btn.textContent = "Inscription...";
             const prenom = document.getElementById('first_name').value;
             const nom = document.getElementById('last_name').value;
             const phoneVal = document.getElementById('phone').value.replace(/\s/g, '');
