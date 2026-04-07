@@ -185,10 +185,18 @@
             e.preventDefault();
             const btn = document.getElementById('loginBtn');
             let val = valInput.value;
-            if (currentMode === 'tel') val = "+224" + val.replace(/\s/g, '');
+            let identifier = val;
+            if (currentMode === 'tel') {
+                const phoneDigits = val.replace(/\D/g, '');
+                if (phoneDigits.length !== 9) {
+                    window.showToast("Le numéro doit comporter 9 chiffres.", "error");
+                    return;
+                }
+                identifier = "+224" + phoneDigits;
+            }
             btn.disabled = true; btn.textContent = 'Connexion...';
             try {
-                const email = await findEmailFromIdentifier(val);
+                const email = await findEmailFromIdentifier(identifier);
                 if (!email) {
                     window.showToast("Identifiant ou numéro introuvable !", "error");
                     btn.disabled = false; btn.textContent = "Se connecter";

@@ -244,7 +244,15 @@
             const btn = document.getElementById('finishBtn'); btn.disabled = true; btn.textContent = "Création...";
             const prenom = document.getElementById('first_name').value;
             const nom = document.getElementById('last_name').value;
-            const phone = document.getElementById('getPhone').value.replace(/\s/g, '');
+            const phoneInput = document.getElementById('getPhone');
+            const phoneVal = phoneInput.value.replace(/\D/g, '');
+            if (phoneVal.length !== 9) {
+                const errPhone = document.getElementById('err-getPhone');
+                if (errPhone) errPhone.textContent = "Le numéro doit comporter 9 chiffres.";
+                phoneInput.parentElement.style.borderColor = '#ef4444';
+                return;
+            }
+
             const gid = genererID(nom, prenom);
             const email = gid + "@nkawari.local";
             try {
