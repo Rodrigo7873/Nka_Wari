@@ -205,9 +205,20 @@
                 await window.signInWithSupabase(email, document.getElementById('password').value);
                 window.showToast("Connexion réussie !", "success");
             } catch (err) {
-                let msg = err.message;
-                if (msg.includes("Invalid login credentials")) msg = "Identifiant ou mot de passe incorrect. Veuillez réessayer.";
-                else if (msg.includes("Network error")) msg = "Une erreur réseau est survenue. Vérifiez votre connexion.";
+                let msg = "Une erreur est survenue lors de la connexion. Veuillez réessayer.";
+                const rawMsg = err.message || "";
+                
+                if (rawMsg.toLowerCase().includes("invalid login credentials") || 
+                    rawMsg.toLowerCase().includes("invalid input syntax")) {
+                    msg = "Identifiant ou mot de passe incorrect. Veuillez réessayer.";
+                } else if (rawMsg.toLowerCase().includes("network") || 
+                           rawMsg.toLowerCase().includes("fetch")) {
+                    msg = "Une erreur réseau est survenue. Vérifiez votre connexion.";
+                } else if (rawMsg.toLowerCase().includes("database") || 
+                           rawMsg.toLowerCase().includes("request")) {
+                    msg = "Identifiant ou numéro de téléphone introuvable.";
+                }
+                
                 window.showToast(msg, "error");
                 btn.disabled = false; btn.textContent = "Se connecter";
             }
