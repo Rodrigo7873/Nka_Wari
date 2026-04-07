@@ -128,8 +128,27 @@
                     <!-- Étape 3 : Finalisation -->
                     <div class="register-step" id="step3">
                         <div class="form-group" style="margin-bottom: 20px;"><label>Numéro de téléphone</label><div class="input-wrapper"><div style="display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #f9fafb; border-right: 1.5px solid var(--border-soft); height: 100%; flex-shrink: 0;"><svg width="20" height="14" viewBox="0 0 3 2"><rect width="1" height="2" fill="#ce1126"/><rect x="1" width="1" height="2" fill="#fcd116"/><rect x="2" width="1" height="2" fill="#009460"/></svg><span style="font-weight: 800; color: var(--text-main); font-size: 15px;">+224</span></div><input type="tel" id="getPhone" required placeholder="620 00 00 00" class="input-clean"></div><div class="err-msg" id="err-getPhone"></div></div>
-                        <div class="form-group" style="margin-bottom: 20px;"><label>Mot de passe</label><div class="input-wrapper"><input type="password" id="password" required placeholder="Min. 8 caractères" class="input-clean"></div><div class="err-msg" id="err-password"></div></div>
-                        <div class="form-group" style="margin-bottom: 0;"><label>Confirmer le mot de passe</label><div class="input-wrapper"><input type="password" id="confirm_password" required placeholder="Répétez le mot de passe" class="input-clean"></div><div class="err-msg" id="err-confirm_password"></div></div>
+                        
+                        <div class="form-group" style="margin-bottom: 20px;"><label>Mot de passe</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="password" required placeholder="Min. 8 caractères" class="input-clean">
+                                <button type="button" onclick="togglePass('password', this)" style="border: none; background: transparent; cursor: pointer; padding-right: 18px; color: var(--text-sub); display: flex; align-items: center;">
+                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                </button>
+                            </div>
+                            <div class="err-msg" id="err-password"></div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;"><label>Confirmer le mot de passe</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirm_password" required placeholder="Répétez le mot de passe" class="input-clean">
+                                <button type="button" onclick="togglePass('confirm_password', this)" style="border: none; background: transparent; cursor: pointer; padding-right: 18px; color: var(--text-sub); display: flex; align-items: center;">
+                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                </button>
+                            </div>
+                            <div class="err-msg" id="err-confirm_password"></div>
+                        </div>
+
                         <div style="display: flex; gap: 10px; margin-top: 30px;">
                             <button type="button" onclick="nextStep(2)" class="btn-secondary" style="flex: 1;">Retour</button>
                             <button type="submit" id="finishBtn" class="btn-primary" style="flex: 3; margin-top: 0; white-space: nowrap; font-size: 16px; padding: 0 10px;">Créer mon compte</button>
@@ -145,6 +164,17 @@
     </div>
 
     <script>
+        function togglePass(id, btn) {
+            const input = document.getElementById(id);
+            const icon = btn.querySelector('svg');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
         function nextStep(step) {
             document.querySelectorAll('.register-step').forEach(s => s.classList.remove('active'));
             document.getElementById('step' + step).classList.add('active');
