@@ -35,6 +35,7 @@
         .main-container {
             position: relative;
             height: 100vh;
+            height: 100dvh; /* Force la visibilité au-dessus de la barre d'adresse mobile */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -94,11 +95,11 @@
 
         .footer {
             position: absolute;
-            bottom: 25px;
-            color: rgba(255, 255, 255, 0.6);
+            bottom: 40px; /* Remonté pour éviter d'être caché par les contrôles du téléphone */
+            color: rgba(255, 255, 255, 0.85); /* Plus blanc pour mieux le voir */
             font-size: 11.5px;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 2.2px;
             text-transform: uppercase;
             text-align: center;
             width: 100%;
