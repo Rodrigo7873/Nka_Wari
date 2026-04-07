@@ -205,18 +205,15 @@
                 await window.signInWithSupabase(email, document.getElementById('password').value);
                 window.showToast("Connexion réussie !", "success");
             } catch (err) {
-                let msg = "Une erreur est survenue lors de la connexion. Veuillez réessayer.";
-                const rawMsg = err.message || "";
+                console.error("Login trace:", err);
+                let msg = err.message || "Une erreur est survenue lors de la connexion.";
+                const low = msg.toLowerCase();
                 
-                if (rawMsg.toLowerCase().includes("invalid login credentials") || 
-                    rawMsg.toLowerCase().includes("invalid input syntax")) {
+                // Si c'est une erreur identifiants ou syntaxe, on donne le message pro
+                if (low.includes("invalid") || low.includes("credential") || low.includes("syntax") || low.includes("not found")) {
                     msg = "Identifiant ou mot de passe incorrect. Veuillez réessayer.";
-                } else if (rawMsg.toLowerCase().includes("network") || 
-                           rawMsg.toLowerCase().includes("fetch")) {
-                    msg = "Une erreur réseau est survenue. Vérifiez votre connexion.";
-                } else if (rawMsg.toLowerCase().includes("database") || 
-                           rawMsg.toLowerCase().includes("request")) {
-                    msg = "Identifiant ou numéro de téléphone introuvable.";
+                } else if (low.includes("network") || low.includes("fetch")) {
+                    msg = "Souci de connexion réseau. Vérifiez votre internet.";
                 }
                 
                 window.showToast(msg, "error");
