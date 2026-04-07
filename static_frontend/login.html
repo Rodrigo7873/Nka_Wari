@@ -198,15 +198,18 @@
             try {
                 const email = await findEmailFromIdentifier(identifier);
                 if (!email) {
-                    window.showToast("Identifiant ou numéro introuvable !", "error");
+                    window.showToast("L'identifiant ou le numéro saisi ne correspond à aucun compte.", "error");
                     btn.disabled = false; btn.textContent = "Se connecter";
                     return;
                 }
                 await window.signInWithSupabase(email, document.getElementById('password').value);
-                window.showToast("Succès !", "success");
+                window.showToast("Connexion réussie !", "success");
             } catch (err) {
-                window.showToast(err.message, "error");
-                btn.disabled = false; btn.textContent = 'Se connecter';
+                let msg = err.message;
+                if (msg.includes("Invalid login credentials")) msg = "Identifiant ou mot de passe incorrect. Veuillez réessayer.";
+                else if (msg.includes("Network error")) msg = "Une erreur réseau est survenue. Vérifiez votre connexion.";
+                window.showToast(msg, "error");
+                btn.disabled = false; btn.textContent = "Se connecter";
             }
         });
     </script>
