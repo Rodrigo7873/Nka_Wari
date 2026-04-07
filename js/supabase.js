@@ -77,8 +77,6 @@ window.signInWithSupabase = async function(identifier, password) {
         return data;
     } catch (err) {
         console.error("Erreur de connexion :", err.message);
-        if (window.showToast) window.showToast(err.message, "error");
-        else alert("Erreur : " + err.message);
         throw err;
     }
 };
