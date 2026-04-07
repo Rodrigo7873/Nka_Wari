@@ -86,6 +86,7 @@
         
         .id-card { background: #1e2b3c; border-radius: 24px; padding: 35px; margin: 25px 0; text-align: center; box-shadow: 0 20px 40px rgba(30, 43, 60, 0.2); }
         .id-value { font-size: 38px; font-weight: 800; color: #fff; letter-spacing: 4px; font-family: 'Monaco', monospace; margin: 15px 0; }
+        .err-msg { color: #ef4444; font-size: 13px; margin-top: 5px; height: 18px; font-weight: 500; text-align: left; padding-left: 5px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
@@ -112,23 +113,23 @@
                 <form id="registerWizard">
                     <!-- Étape 1 : Informations -->
                     <div class="register-step active" id="step1">
-                        <div class="form-group" style="margin-bottom: 20px;"><label>Prénom</label><div class="input-wrapper"><input type="text" id="first_name" required placeholder="Ex: Moussa" class="input-clean"></div></div>
-                        <div class="form-group"><label>Nom</label><div class="input-wrapper"><input type="text" id="last_name" required placeholder="Ex: Camara" class="input-clean"></div></div>
+                        <div class="form-group" style="margin-bottom: 20px;"><label>Prénom</label><div class="input-wrapper"><input type="text" id="first_name" required placeholder="Ex: Moussa" class="input-clean"></div><div class="err-msg" id="err-first_name"></div></div>
+                        <div class="form-group" style="margin-bottom: 10px;"><label>Nom</label><div class="input-wrapper"><input type="text" id="last_name" required placeholder="Ex: Camara" class="input-clean"></div><div class="err-msg" id="err-last_name"></div></div>
                         <button type="button" onclick="goToNextStep(2)" class="btn-primary">Suivant</button>
                     </div>
 
                     <!-- Étape 2 : Sécurité -->
                     <div class="register-step" id="step2">
-                        <div class="form-group" style="margin-bottom: 20px;"><label>Question Secrète</label><div class="input-wrapper"><select id="secret_question" class="input-clean" style="width: 100%;"><option value="equipe">Votre équipe préférée ?</option><option value="ecole">Le nom de votre première école ?</option><option value="animal">Le nom de votre premier animal ?</option><option value="ville">Votre ville de naissance ?</option><option value="mere">Le nom de jeune fille de votre mère ?</option></select></div></div>
-                        <div class="form-group"><label>Réponse Secrète</label><div class="input-wrapper"><input type="text" id="secret_answer" required placeholder="Votre réponse" class="input-clean"></div></div>
+                        <div class="form-group" style="margin-bottom: 20px;"><label>Question Secrète</label><div class="input-wrapper"><select id="secret_question" class="input-clean" style="width: 100%;"><option value="equipe">Votre équipe préférée ?</option><option value="ecole">Le nom de votre première école ?</option><option value="animal">Le nom de votre premier animal ?</option><option value="ville">Votre ville de naissance ?</option><option value="mere">Le nom de jeune fille de votre mère ?</option></select></div><div class="err-msg"></div></div>
+                        <div class="form-group" style="margin-bottom: 10px;"><label>Réponse Secrète</label><div class="input-wrapper"><input type="text" id="secret_answer" required placeholder="Votre réponse" class="input-clean"></div><div class="err-msg" id="err-secret_answer"></div></div>
                         <div style="display: flex; gap: 10px; margin-top: 25px;"><button type="button" onclick="nextStep(1)" class="btn-secondary" style="flex: 1;">Retour</button><button type="button" onclick="goToNextStep(3)" class="btn-primary" style="flex: 2; margin-top: 0;">Suivant</button></div>
                     </div>
 
                     <!-- Étape 3 : Finalisation -->
                     <div class="register-step" id="step3">
-                        <div class="form-group" style="margin-bottom: 20px;"><label>Numéro de téléphone</label><div class="input-wrapper"><div style="display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #f9fafb; border-right: 1.5px solid var(--border-soft); height: 100%; flex-shrink: 0;"><svg width="20" height="14" viewBox="0 0 3 2"><rect width="1" height="2" fill="#ce1126"/><rect x="1" width="1" height="2" fill="#fcd116"/><rect x="2" width="1" height="2" fill="#009460"/></svg><span style="font-weight: 800; color: var(--text-main); font-size: 15px;">+224</span></div><input type="tel" id="getPhone" required placeholder="620 00 00 00" class="input-clean"></div></div>
-                        <div class="form-group" style="margin-bottom: 20px;"><label>Mot de passe</label><div class="input-wrapper"><input type="password" id="password" required placeholder="Min. 8 caractères" class="input-clean"></div></div>
-                        <div class="form-group"><label>Confirmer le mot de passe</label><div class="input-wrapper"><input type="password" id="confirm_password" required placeholder="Répétez le mot de passe" class="input-clean"></div></div>
+                        <div class="form-group" style="margin-bottom: 20px;"><label>Numéro de téléphone</label><div class="input-wrapper"><div style="display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #f9fafb; border-right: 1.5px solid var(--border-soft); height: 100%; flex-shrink: 0;"><svg width="20" height="14" viewBox="0 0 3 2"><rect width="1" height="2" fill="#ce1126"/><rect x="1" width="1" height="2" fill="#fcd116"/><rect x="2" width="1" height="2" fill="#009460"/></svg><span style="font-weight: 800; color: var(--text-main); font-size: 15px;">+224</span></div><input type="tel" id="getPhone" required placeholder="620 00 00 00" class="input-clean"></div><div class="err-msg" id="err-getPhone"></div></div>
+                        <div class="form-group" style="margin-bottom: 20px;"><label>Mot de passe</label><div class="input-wrapper"><input type="password" id="password" required placeholder="Min. 8 caractères" class="input-clean"></div><div class="err-msg" id="err-password"></div></div>
+                        <div class="form-group" style="margin-bottom: 0;"><label>Confirmer le mot de passe</label><div class="input-wrapper"><input type="password" id="confirm_password" required placeholder="Répétez le mot de passe" class="input-clean"></div><div class="err-msg" id="err-confirm_password"></div></div>
                         <div style="display: flex; gap: 10px; margin-top: 30px;">
                             <button type="button" onclick="nextStep(2)" class="btn-secondary" style="flex: 1;">Retour</button>
                             <button type="submit" id="finishBtn" class="btn-primary" style="flex: 3; margin-top: 0; white-space: nowrap; font-size: 16px; padding: 0 10px;">Créer mon compte</button>
@@ -161,8 +162,18 @@
             const container = document.getElementById('step' + (step - 1));
             const inputs = container.querySelectorAll('input[required]');
             let ok = true;
-            inputs.forEach(i => { if (!i.value.trim()) { i.parentElement.style.borderColor = '#ef4444'; ok = false; } else { i.parentElement.style.borderColor = '#e2e8f0'; } });
-            if (ok) nextStep(step); else window.showToast("Merci de remplir tous les champs.", "warning");
+            inputs.forEach(i => {
+                const errBox = i.parentElement.parentElement.querySelector('.err-msg');
+                if (!i.value.trim()) { 
+                    i.parentElement.style.borderColor = '#ef4444'; 
+                    if (errBox) errBox.textContent = "Ce champ est obligatoire";
+                    ok = false; 
+                } else { 
+                    i.parentElement.style.borderColor = '#e2e8f0'; 
+                    if (errBox) errBox.textContent = "";
+                } 
+            });
+            if (ok) nextStep(step);
         }
         document.getElementById('getPhone').addEventListener('input', (e) => {
             let v = e.target.value.replace(/\D/g, '').substring(0, 9);
@@ -171,9 +182,35 @@
         });
         document.getElementById('registerWizard').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const step3 = document.getElementById('step3');
+            const inputs = step3.querySelectorAll('input[required]');
+            let ok = true;
+            inputs.forEach(i => {
+                const errBox = i.parentElement.parentElement.querySelector('.err-msg');
+                if (!i.value.trim()) { 
+                    i.parentElement.style.borderColor = '#ef4444'; 
+                    if (errBox) errBox.textContent = "Ce champ est obligatoire";
+                    ok = false; 
+                } else { 
+                    i.parentElement.style.borderColor = '#e2e8f0'; 
+                    if (errBox) errBox.textContent = "";
+                } 
+            });
+            if (!ok) return;
+
             const p = document.getElementById('password').value;
             const cp = document.getElementById('confirm_password').value;
-            if (p !== cp) return window.showToast("Les mots de passe ne correspondent pas.", "error");
+            const errP = document.getElementById('err-confirm_password');
+            if (p !== cp) {
+                if (errP) errP.textContent = "Les mots de passe ne correspondent pas.";
+                return;
+            }
+            if (p.length < 8) {
+                const errPass = document.getElementById('err-password');
+                if (errPass) errPass.textContent = "8 caractères minimum requis.";
+                return;
+            }
+            
             const btn = document.getElementById('finishBtn'); btn.disabled = true; btn.textContent = "Création...";
             const prenom = document.getElementById('first_name').value;
             const nom = document.getElementById('last_name').value;
