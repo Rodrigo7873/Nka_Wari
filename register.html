@@ -11,21 +11,19 @@
     <style>
         :root {
             --brand-green: #27ae60;
-            --text-main: #ffffff;
-            --text-sub: rgba(255, 255, 255, 0.8);
-            --border-soft: rgba(255, 255, 255, 0.2);
+            --page-bg: radial-gradient(circle at top right, #eefcf3, #f8fafc);
+            --text-main: #1e2b3c;
+            --text-sub: #64748b;
+            --border-soft: #e2e8f0;
         }
 
         body, html {
             height: 100%;
             margin: 0;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
-            url("images/welcome-bg.jpg");
-            background-size: cover;
-            background-position: center;
+            background: var(--page-bg);
             background-attachment: fixed;
             font-family: 'Inter', sans-serif;
-            color: #fff;
+            color: var(--text-main);
         }
 
         .app-container {
@@ -44,15 +42,13 @@
         }
 
         .wizard-card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: #ffffff;
             width: 100%;
             padding: 45px 40px;
             box-sizing: border-box;
-            border-radius: 40px;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 1);
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -63,8 +59,8 @@
         }
 
         @media (max-width: 767px) {
-            .app-container { padding: 15px; align-items: center; }
-            .wizard-card { border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.3); padding: 40px 20px; min-height: auto; width: 100%; display: block; }
+            .app-container { padding: 0; align-items: flex-start; }
+            .wizard-card { border-radius: 0; border: none; box-shadow: none; padding: 40px 24px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
             .wizard-wrapper { max-width: 100%; }
             .logo-img { width: 85px; height: 85px; }
         }
@@ -73,15 +69,15 @@
         .register-step.active { display: block; animation: fadeIn 0.3s ease-out; }
         
         .wizard-progress { display: flex; gap: 10px; margin: 30px 0; justify-content: center; }
-        .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s ease; }
+        .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0; transition: all 0.3s ease; }
         .progress-dot.active { background: var(--brand-green); transform: scale(1.3); }
         .progress-dot.completed { background: var(--brand-green); }
         
-        .form-group label { display: block; font-weight: 700; color: #fff; margin-bottom: 12px; font-size: 14px; opacity: 0.9; }
+        .form-group label { display: block; font-weight: 700; color: var(--text-main); margin-bottom: 12px; font-size: 14px; }
         
-        .input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(255, 255, 255, 0.1); border-radius: 16px; height: 58px; transition: all 0.2s ease; box-sizing: border-box; overflow: hidden; }
-        .input-wrapper:focus-within { border-color: var(--brand-green); background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.15); }
-        .input-clean { flex: 1; border: none; outline: none; padding: 0 18px; font-size: 16px; background: transparent; color: #fff; font-weight: 500; height: 100%; }
+        .input-wrapper { display: flex; align-items: center; background: #f9fafb; border: 1.5px solid var(--border-soft); border-radius: 16px; height: 58px; transition: all 0.2s ease; box-sizing: border-box; overflow: hidden; }
+        .input-wrapper:focus-within { border-color: var(--brand-green); background: #fff; box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.08); }
+        .input-clean { flex: 1; border: none; outline: none; padding: 0 18px; font-size: 16px; background: transparent; color: var(--text-main); font-weight: 500; height: 100%; }
         .input-clean::placeholder { color: rgba(255, 255, 255, 0.4); }
         .input-clean option { background: #1e2b3c; color: #fff; }
         
