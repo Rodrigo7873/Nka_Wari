@@ -188,7 +188,13 @@
             if (currentMode === 'tel') val = "+224" + val.replace(/\s/g, '');
             btn.disabled = true; btn.textContent = 'Connexion...';
             try {
-                await window.signInWithSupabase(val, document.getElementById('password').value);
+                const email = await findEmailFromIdentifier(val);
+                if (!email) {
+                    window.showToast("Identifiant ou numéro introuvable !", "error");
+                    btn.disabled = false; btn.textContent = "Se connecter";
+                    return;
+                }
+                await window.signInWithSupabase(email, document.getElementById('password').value);
                 window.showToast("Succès !", "success");
             } catch (err) {
                 window.showToast(err.message, "error");
