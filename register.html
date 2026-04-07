@@ -130,10 +130,13 @@
 
                     <!-- Étape 3 : Finalisation -->
                     <div class="register-step" id="step3">
-                        <div class="form-group" style="margin-bottom: 20px;"><label>Numéro de téléphone</label><div class="input-wrapper"><div style="display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #f9fafb; border-right: 1.5px solid var(--border-soft); height: 100%;"><svg width="20" height="14" viewBox="0 0 3 2"><rect width="1" height="2" fill="#ce1126"/><rect x="1" width="1" height="2" fill="#fcd116"/><rect x="2" width="1" height="2" fill="#009460"/></svg><span style="font-weight: 800; color: var(--text-main); font-size: 15px;">+224</span></div><input type="tel" id="getPhone" required placeholder="620 00 00 00" class="input-clean"></div></div>
+                        <div class="form-group" style="margin-bottom: 20px;"><label>Numéro de téléphone</label><div class="input-wrapper"><div style="display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #f9fafb; border-right: 1.5px solid var(--border-soft); height: 100%; flex-shrink: 0;"><svg width="20" height="14" viewBox="0 0 3 2"><rect width="1" height="2" fill="#ce1126"/><rect x="1" width="1" height="2" fill="#fcd116"/><rect x="2" width="1" height="2" fill="#009460"/></svg><span style="font-weight: 800; color: var(--text-main); font-size: 15px;">+224</span></div><input type="tel" id="getPhone" required placeholder="620 00 00 00" class="input-clean"></div></div>
                         <div class="form-group" style="margin-bottom: 20px;"><label>Mot de passe</label><div class="input-wrapper"><input type="password" id="password" required placeholder="Min. 8 caractères" class="input-clean"></div></div>
                         <div class="form-group"><label>Confirmer le mot de passe</label><div class="input-wrapper"><input type="password" id="confirm_password" required placeholder="Répétez le mot de passe" class="input-clean"></div></div>
-                        <div style="display: flex; gap: 10px; margin-top: 30px;"><button type="button" onclick="nextStep(2)" class="btn-secondary" style="flex: 1;">Retour</button><button type="submit" id="finishBtn" class="btn-primary" style="flex: 2; margin-top: 0;">Créer mon compte</button></div>
+                        <div style="display: flex; gap: 10px; margin-top: 30px;">
+                            <button type="button" onclick="nextStep(2)" class="btn-secondary" style="flex: 1;">Retour</button>
+                            <button type="submit" id="finishBtn" class="btn-primary" style="flex: 3; margin-top: 0; white-space: nowrap; font-size: 16px; padding: 0 10px;">Créer mon compte</button>
+                        </div>
                     </div>
                 </form>
 
