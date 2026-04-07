@@ -241,9 +241,6 @@
                 return;
             }
             
-            const btn = document.getElementById('finishBtn'); btn.disabled = true; btn.textContent = "Patientez...";
-            const prenom = document.getElementById('first_name').value;
-            const nom = document.getElementById('last_name').value;
             const phoneInput = document.getElementById('getPhone');
             const phoneVal = phoneInput.value.replace(/\D/g, '');
             if (phoneVal.length !== 9) {
@@ -253,6 +250,7 @@
                 return;
             }
 
+            const btn = document.getElementById('finishBtn'); btn.disabled = true; btn.textContent = "Patientez...";
             const gid = genererID(nom, prenom);
             const email = gid + "@nkawari.local";
             try {
