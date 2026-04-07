@@ -107,6 +107,10 @@
                 <form id="registerWizard">
                     <!-- Étape 1 : Identité -->
                     <div class="register-step active" id="step1">
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <h2 style="font-weight: 800; color: var(--text-main); margin: 0; font-size: 22px;">Bienvenue !</h2>
+                            <p style="color: var(--text-sub); font-size: 14px; margin-top: 4px;">Commençons par faire connaissance</p>
+                        </div>
                         <div class="form-group"><label>Prénom</label><input type="text" id="first_name" required placeholder="Ex: Moussa" class="input-box"></div>
                         <div class="form-group" style="margin-top: 15px;"><label>Nom</label><input type="text" id="last_name" required placeholder="Ex: Camara" class="input-box"></div>
                         <button type="button" onclick="goToNextStep(2)" class="btn-primary">Suivant</button>
@@ -153,7 +157,7 @@
                     </div>
                 </form>
 
-                <div class="register-step" id="step4"><div style="text-align: center;"><div style="width: 80px; height: 80px; background: #dcfce7; color: var(--brand-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px;">✓</div><h2 style="font-weight: 900; color: var(--text-main); margin: 0;">Félicitations !</h2><div class="id-card"><p style="font-size: 13px; font-weight: 700; color: var(--text-sub); margin: 0;">Votre Identifiant Unique</p><div class="id-value" id="displayID">------</div></div><button onclick="window.location.href='login.html'" class="btn-primary" style="background: var(--text-main); margin-top: 0;">Vers la connexion</button></div></div>
+                <div class="register-step" id="step4"><div style="text-align: center;"><div style="width: 80px; height: 80px; background: #dcfce7; color: var(--brand-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px;">✓</div><h2 style="font-weight: 900; color: var(--text-main); margin: 0;">Bienvenue !</h2><div class="id-card"><p style="font-size: 13px; font-weight: 700; color: var(--text-sub); margin: 0;">Votre Identifiant Unique</p><div class="id-value" id="displayID">------</div></div><button onclick="window.location.href='login.html'" class="btn-primary" style="background: var(--text-main); margin-top: 0;">Vers la connexion</button></div></div>
 
                 <div id="loginLink" style="margin-top: 30px; text-align: center; font-size: 15px; color: var(--text-sub);">Déjà un compte ? <a href="login.html" style="color: var(--brand-green); font-weight: 700; text-decoration: none; margin-left: 5px;">Se connecter</a></div>
             </div>
