@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>Bienvenue | N'Ka Wari</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/core.css">
@@ -112,9 +112,9 @@
                 <form id="registerWizard">
                     <!-- Étape 1 : Bienvenue -->
                     <div class="register-step active" id="step1">
-                        <div style="text-align: center; margin-bottom: 30px;">
-                            <h2 style="font-weight: 850; color: var(--text-main); margin: 0; font-size: 30px; letter-spacing: -1px;">Bienvenue !</h2>
-                            <p style="color: var(--text-sub); font-size: 16px; margin-top: 8px;">Commençons par faire connaissance</p>
+                        <div style="text-align: center; margin-bottom: 35px;">
+                            <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; font-size: 30px; letter-spacing: -0.5px;">Bienvenue !</h2>
+                            <p style="color: var(--text-sub); font-size: 16px; margin: 0;">Commençons par faire connaissance</p>
                         </div>
                         <div class="form-group" style="margin-bottom: 20px;"><label>Prénom</label><div class="input-wrapper"><input type="text" id="first_name" required placeholder="Ex: Moussa" class="input-clean"></div></div>
                         <div class="form-group"><label>Nom</label><div class="input-wrapper"><input type="text" id="last_name" required placeholder="Ex: Camara" class="input-clean"></div></div>
@@ -123,6 +123,10 @@
 
                     <!-- Étape 2 : Sécurité -->
                     <div class="register-step" id="step2">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; font-size: 26px;">Sécurité</h2>
+                            <p style="color: var(--text-sub); font-size: 15px; margin: 0;">Protégez l'accès à votre compte</p>
+                        </div>
                         <div class="form-group" style="margin-bottom: 20px;"><label>Question Secrète</label><div class="input-wrapper"><select id="secret_question" class="input-clean" style="width: 100%;"><option value="equipe">Votre équipe préférée ?</option><option value="ecole">Le nom de votre première école ?</option><option value="animal">Le nom de votre premier animal ?</option><option value="ville">Votre ville de naissance ?</option><option value="mere">Le nom de jeune fille de votre mère ?</option></select></div></div>
                         <div class="form-group"><label>Réponse Secrète</label><div class="input-wrapper"><input type="text" id="secret_answer" required placeholder="Votre réponse" class="input-clean"></div></div>
                         <div style="display: flex; gap: 10px; margin-top: 25px;"><button type="button" onclick="nextStep(1)" class="btn-secondary" style="flex: 1;">Retour</button><button type="button" onclick="goToNextStep(3)" class="btn-primary" style="flex: 2; margin-top: 0;">Suivant</button></div>
@@ -130,6 +134,10 @@
 
                     <!-- Étape 3 : Finalisation -->
                     <div class="register-step" id="step3">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; font-size: 26px;">Finalisation</h2>
+                            <p style="color: var(--text-sub); font-size: 15px; margin: 0;">Sécurisez votre identité</p>
+                        </div>
                         <div class="form-group" style="margin-bottom: 20px;"><label>Numéro de téléphone</label><div class="input-wrapper"><div style="display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #f9fafb; border-right: 1.5px solid var(--border-soft); height: 100%; flex-shrink: 0;"><svg width="20" height="14" viewBox="0 0 3 2"><rect width="1" height="2" fill="#ce1126"/><rect x="1" width="1" height="2" fill="#fcd116"/><rect x="2" width="1" height="2" fill="#009460"/></svg><span style="font-weight: 800; color: var(--text-main); font-size: 15px;">+224</span></div><input type="tel" id="getPhone" required placeholder="620 00 00 00" class="input-clean"></div></div>
                         <div class="form-group" style="margin-bottom: 20px;"><label>Mot de passe</label><div class="input-wrapper"><input type="password" id="password" required placeholder="Min. 8 caractères" class="input-clean"></div></div>
                         <div class="form-group"><label>Confirmer le mot de passe</label><div class="input-wrapper"><input type="password" id="confirm_password" required placeholder="Répétez le mot de passe" class="input-clean"></div></div>
