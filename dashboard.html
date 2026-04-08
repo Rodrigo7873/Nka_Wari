@@ -248,30 +248,20 @@
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
 
-                    <div style="display: flex; height: 100%;">
-                        <!-- Colonne 1 : Patrimoine Net Total -->
-                        <div class="finance-col">
-                            <div class="f-title">Patrimoine Net Total</div>
-                            <div class="f-amount-wrapper">
-                                <button class="eye-btn" onclick="toggleBlur('patrimoine')">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
-                                </button>
-                                <div class="f-amount blurred" id="patrimoine">15 000 000 <span class="f-currency">GNF</span></div>
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; padding-top: 10px;">
+                        <div style="font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.8); text-transform: uppercase; margin-bottom: 5px;">
+                            Patrimoine Net Total
+                        </div>
+                        <div class="f-amount-wrapper" style="margin-top: 5px;">
+                            <button class="eye-btn" onclick="toggleBlur('patrimoine')">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+                            </button>
+                            <div class="f-amount blurred" id="patrimoine" style="font-size: 32px; font-weight: 900; letter-spacing: -1px;">
+                                15 000 000 <span style="font-size: 16px; opacity: 0.8;">GNF</span>
                             </div>
                         </div>
-
-                        <!-- Séparateur Vertical -->
-                        <div class="finance-divider"></div>
-
-                        <!-- Colonne 2 : Total des comptes -->
-                        <div class="finance-col">
-                            <div class="f-title">Total des comptes</div>
-                            <div class="f-amount-wrapper">
-                                <button class="eye-btn" onclick="toggleBlur('comptes')">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
-                                </button>
-                                <div class="f-amount blurred" id="comptes">5 000 000 <span class="f-currency">GNF</span></div>
-                            </div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.6; font-weight: 600;">
+                            Comptes + Créances - Dettes
                         </div>
                     </div>
                 </div>
