@@ -193,6 +193,8 @@
             const container = document.getElementById('step' + (step - 1));
             const inputs = container.querySelectorAll('input[required]');
             let ok = true;
+            
+            // 1. Check Required
             inputs.forEach(i => {
                 const errBox = i.parentElement.parentElement.querySelector('.err-msg');
                 if (!i.value.trim()) { 
@@ -204,6 +206,22 @@
                     if (errBox) errBox.textContent = "";
                 } 
             });
+
+            // 2. Check Optional Email Format (if filled)
+            const emailInput = document.getElementById('user_email');
+            if (emailInput && emailInput.value.trim() !== "") {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const errEmail = document.getElementById('err-user_email');
+                if (!emailRegex.test(emailInput.value.trim())) {
+                    emailInput.parentElement.style.borderColor = '#ef4444';
+                    if (errEmail) errEmail.textContent = "Veuillez saisir une adresse email valide.";
+                    ok = false;
+                } else {
+                    emailInput.parentElement.style.borderColor = '#e2e8f0';
+                    if (errEmail) errEmail.textContent = "";
+                }
+            }
+
             if (ok) nextStep(step);
         }
         document.getElementById('getPhone').addEventListener('input', (e) => {
