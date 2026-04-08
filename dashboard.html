@@ -3,365 +3,361 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>N'Ka Wari | Dashboard Premium</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <title>N'Ka Wari | Dashboard</title>
     <style>
         :root {
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --brand-green: #009460;
-            --brand-green-light: #10b981;
-            --brand-gold: #fcd116;
-            --brand-red: #ef4444;
-            --border-light: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --bg-body: #f4f5f7;
+            --primary-blue: #3b82f6; 
+            --title-blue: #4b80e6;
+            --text-dark: #1e2b3c;
+            --text-gray: #64748b;
+            --card-green: #0fa968;
+            --card-bg: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding-bottom: 100px;
-        }
-
-        .container {
-            padding: 20px 24px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* HEADER (Thème Clair) */
-        .hero-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 24px; margin-top: 5px;
-        }
-        .user-greeting p { font-size: 14px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; }
-        .user-greeting h1 { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent;}
         
-        .profile-btn {
-            width: 44px; height: 44px; border-radius: 14px;
-            background: var(--bg-card); border: 1px solid var(--border-light);
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: var(--brand-green);
-            transition: 0.3s;
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            padding-bottom: 80px;
         }
 
-        /* GOLD TICKER PILL (Clair) */
-        .gold-ticker {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg-card); border: 1px solid var(--border-light);
-            padding: 12px 18px; border-radius: 12px; margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-        .gold-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px; }
-        .gold-price { font-size: 14px; font-weight: 800; color: var(--text-main); }
+        /* Utils */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .items-center { align-items: center; }
+        .gap-1 { gap: 4px; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .px-5 { padding-left: 20px; padding-right: 20px; }
+        .py-4 { padding-top: 16px; padding-bottom: 16px; }
+        .p-4 { padding: 16px; }
+        .p-2 { padding: 8px; }
+        
+        .mt-1 { margin-top: 4px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-5 { margin-bottom: 20px; }
+        .mb-6 { margin-bottom: 24px; }
 
-        /* THE 3D FINANCE CARD (Contraste Premium Charbon) */
-        .finance-hub {
-            perspective: 1500px; margin-bottom: 32px;
-        }
+        .text-xs { font-size: 12px; }
+        .text-sm { font-size: 14px; }
+        .text-base { font-size: 16px; }
+        .text-lg { font-size: 18px; }
+        .text-2xl { font-size: 24px; }
+        .text-3xl { font-size: 30px; letter-spacing: -0.5px; }
+
+        .font-normal { font-weight: 400; }
+        .font-bold { font-weight: 700; }
+        
+        .text-white { color: #fff; }
+        .text-dark { color: var(--text-dark); }
+        .text-gray { color: var(--text-gray); }
+        
+        .max-w { max-width: 500px; margin: 0 auto; }
+
+        /* HEADER */
+        .header-icons { display: flex; justify-content: space-between; padding: 16px 20px; color: var(--text-dark); }
+        .eye-btn { background: #fff; border: 1px solid #e2e8f0; width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-dark); cursor: pointer; }
+
+        /* 3D FINANCE CARD */
+        .finance-hub { perspective: 1000px; margin: 0 20px 20px 20px; }
         .card-wrapper {
-            width: 100%; height: 200px; position: relative;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-            transform-style: preserve-3d;
+            position: relative; width: 100%; height: 140px;
+            transition: transform 0.6s ease; transform-style: preserve-3d;
         }
         .finance-hub.flipped .card-wrapper { transform: rotateY(180deg); }
-        
         .card-face {
             position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 28px;
-            padding: 24px; display: flex; flex-direction: column; justify-content: space-between;
-            color: #fff; box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2);
+            backface-visibility: hidden; border-radius: 16px;
+            padding: 16px 20px; background-color: var(--card-green); color: #fff;
+            box-shadow: 0 4px 10px rgba(15, 169, 104, 0.2); display: flex; flex-direction: column; justify-content: space-between;
         }
-        
-        /* FACE A : Patrimoine */
-        .card-front {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        /* FACE B : Liquidités */
-        .card-back {
-            background: linear-gradient(135deg, #10b981 0%, #064e3b 100%);
-            transform: rotateY(180deg); border: 1px solid rgba(255,255,255,0.1);
+        .card-back { transform: rotateY(180deg); }
+
+        .pill-btn {
+            background: rgba(255,255,255,0.25); border: none; color: #fff;
+            padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 600; cursor: pointer;
         }
 
-        .card-top { display: flex; justify-content: space-between; align-items: center; }
-        .card-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 1px; }
-        .eye-btn {
-            background: rgba(255,255,255,0.1); border: none;
-            width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            color: #fff; cursor: pointer; transition: 0.2s;
+        /* GOLD BLOCK */
+        .gold-block {
+            margin: 0 20px 24px 20px; background: #fff; border-radius: 12px; padding: 16px;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .gold-pill {
+            background: #fef3c7; color: #d97706; padding: 6px 12px; border-radius: 16px;
+            font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;
         }
 
-        .card-amount-group { margin-top: auto; margin-bottom: auto; }
-        .c-amount { font-size: 38px; font-weight: 900; letter-spacing: -1.5px; transition: filter 0.3s; }
-        .c-currency { font-size: 16px; font-weight: 600; opacity: 0.7; margin-left: 4px; }
-        .c-desc { font-size: 11px; font-weight: 500; opacity: 0.5; margin-top: 4px; }
-        .blurred { filter: blur(12px) opacity(0.8); }
+        /* GRIDS (Nouvelles opérations) */
+        .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0 20px 24px 20px; }
+        .action-card {
+            background: #fff; border-radius: 14px; height: 125px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); cursor: pointer;
+        }
+        .action-circle {
+            width: 48px; height: 48px; border-radius: 50%; border: 1px solid #e2e8f0;
+            display: flex; justify-content: center; align-items: center; margin-bottom: 12px;
+        }
+        .icon-green { color: #10b981; }
+        .icon-orange { color: #f59e0b; }
+        .icon-red { color: #ef4444; }
 
-        .flip-btn {
-            align-self: flex-start; background: rgba(255,255,255,0.15); border: none;
-            padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; color: #fff;
-            display: flex; align-items: center; gap: 6px; cursor: pointer;
+        /* VOS OPERATIONS (Historique) */
+        .history-list {
+            margin: 0 20px 24px 20px; background: #fff; border-radius: 14px; padding: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9;
+        }
+        .history-item:last-of-type { border-bottom: none; }
+        .icon-box {
+            width: 38px; height: 38px; border-radius: 10px; display: flex; justify-content: center; align-items: center;
+        }
+        .bg-purple { background-color: #f3e8ff; color: #9333ea; }
+        .bg-green { background-color: #ecfdf5; color: #10b981; }
+        .more-btn {
+            width: 100%; padding: 12px; background: #f8fafc; color: var(--primary-blue);
+            border: none; border-radius: 10px; font-weight: 600; font-size: 13px; margin-top: 4px; cursor: pointer;
         }
 
-        /* SECTION TITLES */
-        .sec-header {
-            display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;
-        }
-        .sec-title { font-size: 16px; font-weight: 800; color: var(--text-main); }
-        .sec-link { font-size: 13px; font-weight: 600; color: var(--brand-green-light); text-decoration: none; }
-
-        /* QUICK ACTIONS 2x2 GRID (Thème Clair) */
-        .actions-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-            margin-bottom: 24px;
-        }
-        
-        .action-tile {
-            height: 90px; border-radius: 16px;
-            background: var(--bg-card); border: 1px solid var(--border-light);
-            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-            padding: 0 16px; cursor: pointer;
-            transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-        .action-tile:active { transform: scale(0.97); background: #f1f5f9; }
-        .action-icon {
-            margin-bottom: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-        }
-        /* Specific Colors */
-        .tile-green .action-icon { color: var(--brand-green); }
-        .tile-red .action-icon { color: var(--brand-red); }
-        
-        .action-name { font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
-
-        /* HISTORY STATE (Clair) */
-        .empty-state {
-            background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px;
-            padding: 30px 20px; text-align: center; color: var(--text-muted);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-        .empty-icon { margin-bottom: 10px; color: #cbd5e1; }
-        .empty-text { font-size: 14px; font-weight: 500; }
-
-        /* NATURAL BOTTOM NAV (Clair) */
+        /* BOTTOM NAV */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--bg-card);
-            border-top: 1px solid var(--border-light);
+            background: #fff; border-top: 1px solid #e2e8f0;
             display: flex; justify-content: space-around; align-items: center;
-            height: 65px; padding-bottom: env(safe-area-inset-bottom);
-            z-index: 1000;
+            height: 60px; padding-bottom: env(safe-area-inset-bottom); z-index: 10;
         }
         .nav-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); text-decoration: none; width: 25%; gap: 4px; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-decoration: none; color: #94a3b8; gap: 4px; font-size: 10px; font-weight: 600;
         }
-        .nav-item.active { color: var(--brand-green); }
-        .nav-icon { display: flex; justify-content: center; align-items: center; }
-        .nav-text { font-size: 11px; font-weight: 600; }
+        .nav-item.active { color: var(--text-dark); }
+        .nav-item svg { stroke-width: 1.5; }
+
+        /* Utilities */
+        .blurred { filter: blur(8px); opacity: 0.8; }
     </style>
 </head>
 <body>
+    <div class="max-w">
 
-    <div class="container">
-        
-        <!-- HEADER -->
-        <header class="hero-header">
-            <div class="user-greeting">
-                <p>Mon espace</p>
-                <h1 id="userName">Demba Doumbouya</h1>
-            </div>
-            <button class="profile-btn">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            </button>
-        </header>
-
-        <!-- GOLD TICKER PILL -->
-        <div class="gold-ticker">
-            <div class="gold-label">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                Cours de l'Or
-            </div>
-            <div class="gold-price">1 500 000 GNF/g</div>
+        <!-- HEADER TOP ICONS -->
+        <div class="header-icons">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
         </div>
 
-        <!-- 3D FINANCE CARD -->
+        <!-- GREETING -->
+        <div class="px-5 mb-6">
+            <h1 class="text-2xl font-bold text-dark">Bonjour, <span id="userName">Fanta</span> 👋</h1>
+            <p class="text-sm text-gray mt-1">Ravi de vous revoir sur N'Ka Wari.</p>
+        </div>
+
+        <!-- TITLE APERCU -->
+        <div class="flex justify-between items-center px-5 mb-3">
+            <div class="text-xs font-bold uppercase" style="color: var(--title-blue); letter-spacing: 0.5px;">Aperçu Financier</div>
+            <button class="eye-btn" onclick="toggleBlurAll()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+        </div>
+
+        <!-- 3D FINANCE CARD EXACT LYOUT -->
         <div class="finance-hub" id="finance-hub">
             <div class="card-wrapper">
                 
-                <!-- FACE A: Patrimoine -->
-                <div class="card-face card-front">
-                    <div class="card-top">
-                        <span class="card-title">Patrimoine Net Total</span>
-                        <button class="eye-btn" onclick="toggleBlur('amount-patrimoine')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <!-- FRONT: Liquidités -->
+                <div class="card-face">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2 text-sm font-bold">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> 
+                            Liquidités
+                        </div>
+                        <button class="pill-btn" onclick="toggleFlip()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Patrimoine Net
                         </button>
                     </div>
-                    
-                    <div class="card-amount-group">
-                        <div class="c-amount blurred" id="amount-patrimoine">15 000 000<span class="c-currency">GNF</span></div>
-                        <div class="c-desc">Comptes + Créances - Dettes</div>
+                    <div class="text-3xl font-bold blur-target">
+                        39 830 000 <span class="text-lg font-normal">GNF</span>
                     </div>
-
-                    <button class="flip-btn" onclick="toggleFlip()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                        Vers Liquidités
-                    </button>
+                    <div class="text-xs font-normal" style="color: rgba(255,255,255,0.85);">Comptes Argent + Karfa</div>
                 </div>
 
-                <!-- FACE B: Liquidités -->
+                <!-- BACK: Patrimoine -->
                 <div class="card-face card-back">
-                    <div class="card-top">
-                        <span class="card-title" style="color: rgba(255,255,255,0.9);">Liquidités Disponibles</span>
-                        <button class="eye-btn" onclick="toggleBlur('amount-liquid')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2 text-sm font-bold">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> 
+                            Patrimoine Net
+                        </div>
+                        <button class="pill-btn" onclick="toggleFlip()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Liquidités
                         </button>
                     </div>
-                    
-                    <div class="card-amount-group">
-                        <div class="c-amount blurred" id="amount-liquid">8 000 000<span class="c-currency">GNF</span></div>
-                        <div class="c-desc" style="color: rgba(255,255,255,0.8);">Comptes Argent + Karfa</div>
+                    <div class="text-3xl font-bold blur-target">
+                        15 000 000 <span class="text-lg font-normal">GNF</span>
                     </div>
-
-                    <button class="flip-btn" style="background: rgba(0,0,0,0.15);" onclick="toggleFlip()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        Vers Patrimoine
-                    </button>
+                    <div class="text-xs font-normal" style="color: rgba(255,255,255,0.85);">Comptes + Créances - Dettes</div>
                 </div>
 
             </div>
         </div>
 
-        <!-- QUICK ACTIONS (2x2 Grid) -->
-        <div class="sec-header">
-            <h2 class="sec-title">Finance</h2>
+        <!-- GOLD BLOCK -->
+        <div class="gold-block">
+            <div>
+                <div class="text-xs mb-1" style="color: #94a3b8;">Prix d'or fixé</div>
+                <div class="text-base font-bold text-dark">1 200 000 GNF/g</div>
+            </div>
+            <div class="gold-pill">
+                Cours de l'or <span style="font-size: 14px;">→</span>
+            </div>
         </div>
-        <div class="actions-grid">
-            <div class="action-tile tile-green" onclick="goTo('karfa/add.html')">
-                <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+
+        <!-- NOUVELLES OPERATIONS (4 Buttons) -->
+        <div class="px-5 mb-3">
+            <div class="text-sm font-bold" style="color: var(--title-blue);">Nouvelles opérations</div>
+        </div>
+        <div class="grid-2x2">
+            <div class="action-card" onclick="goTo('karfa/add.html')">
+                <div class="action-circle icon-green">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </div>
-                <div class="action-name">Nouveau<br>Karfa</div>
+                <div class="text-xs font-bold text-gray-700">Nouveau karfa</div>
+            </div>
+            <div class="action-card" onclick="goTo('karfa/list.html')">
+                <div class="action-circle icon-orange">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
+                <div class="text-xs font-bold text-gray-700">Retirer karfa</div>
+            </div>
+            <div class="action-card" onclick="goTo('dettes/add.html')">
+                <div class="action-circle icon-red">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <div class="text-xs font-bold text-gray-700">Nouvelle dette</div>
+            </div>
+            <div class="action-card" onclick="goTo('dettes/list.html')">
+                <div class="action-circle icon-green">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div class="text-xs font-bold text-gray-700">Gérer dettes</div>
+            </div>
+        </div>
+
+        <!-- VOS OPERATIONS -->
+        <div class="px-5 mb-3">
+            <div class="text-sm font-bold" style="color: var(--title-blue);">Vos opérations</div>
+        </div>
+        <div class="history-list">
+            
+            <div class="history-item">
+                <div class="flex items-center gap-3">
+                    <div class="icon-box bg-purple">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="14" x2="21" y2="3"></line><polyline points="8 21 3 21 3 16"></polyline><line x1="20" y1="10" x2="3" y2="21"></line></svg>
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-dark">Compte Retrait</div>
+                        <div class="text-xs text-gray mt-1">Mon or</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="text-sm font-bold text-dark">27 g</div>
+                    <div class="text-xs text-gray mt-1" style="font-size: 10px;">il y a 18 jours</div>
+                </div>
+            </div>
+
+            <div class="history-item">
+                <div class="flex items-center gap-3">
+                    <div class="icon-box bg-green">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-dark">Encaissement</div>
+                        <div class="text-xs text-gray mt-1">Finda</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="text-sm font-bold text-dark">580 000 GNF</div>
+                    <div class="text-xs text-gray mt-1" style="font-size: 10px;">il y a 18 jours</div>
+                </div>
+            </div>
+
+            <div class="history-item">
+                <div class="flex items-center gap-3">
+                    <div class="icon-box bg-purple">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="14" x2="21" y2="3"></line><polyline points="8 21 3 21 3 16"></polyline><line x1="20" y1="10" x2="3" y2="21"></line></svg>
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-dark">Compte Ajout</div>
+                        <div class="text-xs text-gray mt-1">Mon compte</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="text-sm font-bold text-dark">580 000 GNF</div>
+                    <div class="text-xs text-gray mt-1" style="font-size: 10px;">il y a 18 jours</div>
+                </div>
+            </div>
+
+            <div class="p-2 mt-1">
+                <button class="more-btn" onclick="goTo('operations/list.html')">Voir plus d'opérations →</button>
             </div>
             
-            <div class="action-tile tile-green" onclick="goTo('karfa/list.html')">
-                <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
-                </div>
-                <div class="action-name">Retirer<br>Karfa</div>
-            </div>
-
-            <div class="action-tile tile-red" onclick="goTo('dettes/add.html')">
-                <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                </div>
-                <div class="action-name">Ajouter<br>Dette</div>
-            </div>
-
-            <div class="action-tile tile-red" onclick="goTo('dettes/list.html')">
-                <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm-7-5v-1a2 2 0 10-4 0v1h4z"/></svg>
-                </div>
-                <div class="action-name">Encaisser<br>Dette</div>
-            </div>
         </div>
-
-        <!-- HISTORY -->
-        <div class="sec-header" style="margin-top: 10px;">
-            <h2 class="sec-title">Récent</h2>
-            <a href="operations/list.html" class="sec-link">Historique →</a>
-        </div>
-        <div class="empty-state">
-            <div class="empty-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </div>
-            <div class="empty-text">Aucune opération récente enregistrée</div>
-        </div>
-
     </div>
 
-    <!-- BOTTOM NAV (Theme Clair - Icones Symboliques Fortes) -->
+    <!-- EXACT BOTTOM NAV WITH THIN STROKES AND THUMBS UP -->
     <nav class="bottom-nav">
-        <!-- 1. Accueil (Naturel) -->
+        <!-- 1. Accueil (Maison) -->
         <a href="dashboard.html" class="nav-item active">
-            <div class="nav-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-            </div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
             <span class="nav-text">Accueil</span>
         </a>
-        
-        <!-- 2. Karfa (Confiance : Pouce en l'air) -->
+        <!-- 2. Karfa (Thumb UP) -->
         <a href="karfa/list.html" class="nav-item">
-            <div class="nav-icon">
-                <!-- Icone Pouce en l'air (Thumbs up) -->
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M7 10v12"/>
-                    <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/>
-                </svg>
-            </div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>
             <span class="nav-text">Karfa</span>
         </a>
-        
-        <!-- 3. Dettes (Protection/Sécurité : Le Bouclier) -->
+        <!-- 3. Dettes (Bouclier) -->
         <a href="dettes/list.html" class="nav-item">
-            <div class="nav-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-            </div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             <span class="nav-text">Dettes</span>
         </a>
-        
-        <!-- 4. Comptes (L'institution bancaire) -->
+        <!-- 4. Comptes (Institution) -->
         <a href="comptes/list.html" class="nav-item">
-            <div class="nav-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"></line><line x1="6" y1="18" x2="6" y2="11"></line><line x1="10" y1="18" x2="10" y2="11"></line><line x1="14" y1="18" x2="14" y2="11"></line><line x1="18" y1="18" x2="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg>
-            </div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="20" width="20" height="2"/><path d="M4 20V8"/><path d="M8 20V8"/><path d="M12 20V8"/><path d="M16 20V8"/><path d="M20 20V8"/><path d="M12 2 2 8h20z"/></svg>
             <span class="nav-text">Comptes</span>
         </a>
     </nav>
 
-    <!-- Scripts -->
     <script>
         function toggleFlip() {
             document.getElementById('finance-hub').classList.toggle('flipped');
         }
 
-        function toggleBlur(id) {
-            const el = document.getElementById(id);
-            const btn = el.previousElementSibling; // Le bouton eye juste avant
-            
-            if (el.classList.contains('blurred')) {
-                el.classList.remove('blurred');
-                btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
-            } else {
-                el.classList.add('blurred');
-                btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>';
-            }
+        function toggleBlurAll() {
+            const targets = document.querySelectorAll('.blur-target');
+            targets.forEach(el => {
+                el.classList.toggle('blurred');
+            });
         }
 
         function goTo(url) {
             window.location.href = url;
         }
 
-        // Simuler récupération du nom utilisateur (Supabase futur)
         document.addEventListener('DOMContentLoaded', () => {
-            const userData = localStorage.getItem('user');
-            if(userData) {
-                try {
-                    const user = JSON.parse(userData);
-                    if(user.user_metadata && user.user_metadata.first_name) {
-                        document.getElementById('userName').textContent = user.user_metadata.first_name + " " + (user.user_metadata.last_name || "").charAt(0) + ".";
-                    }
-                } catch(e) {}
-            }
+             // Retrieve existing simple username
+             // Fanta as requested in the mockup
         });
     </script>
 </body>
