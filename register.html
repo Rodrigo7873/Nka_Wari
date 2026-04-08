@@ -114,7 +114,8 @@
                     <!-- Étape 1 : Informations -->
                     <div class="register-step active" id="step1">
                         <div class="form-group" style="margin-bottom: 20px;"><label>Prénom</label><div class="input-wrapper"><input type="text" id="first_name" required placeholder="Ex: Moussa" class="input-clean"></div><div class="err-msg" id="err-first_name"></div></div>
-                        <div class="form-group" style="margin-bottom: 10px;"><label>Nom</label><div class="input-wrapper"><input type="text" id="last_name" required placeholder="Ex: Camara" class="input-clean"></div><div class="err-msg" id="err-last_name"></div></div>
+                        <div class="form-group" style="margin-bottom: 20px;"><label>Nom</label><div class="input-wrapper"><input type="text" id="last_name" required placeholder="Ex: Camara" class="input-clean"></div><div class="err-msg" id="err-last_name"></div></div>
+                        <div class="form-group" style="margin-bottom: 10px;"><label>Email (Optionnel)</label><div class="input-wrapper"><input type="email" id="user_email" placeholder="Ex: moussa@gmail.com" class="input-clean"></div><div class="err-msg" id="err-user_email"></div></div>
                         <button type="button" onclick="goToNextStep(2)" class="btn-primary">Suivant</button>
                     </div>
 
@@ -251,12 +252,30 @@
             }
 
             const btn = document.getElementById('finishBtn'); btn.disabled = true; btn.textContent = "Patientez...";
+            const prenom = document.getElementById('first_name').value;
+            const nom = document.getElementById('last_name').value;
+            const uEmail = document.getElementById('user_email').value;
+            const phone = document.getElementById('getPhone').value.replace(/\s/g, '');
+
             const gid = genererID(nom, prenom);
-            const email = gid + "@nkawari.local";
+            const techEmail = gid + "@nkawari.local";
             try {
-                const { data, error } = await window.supabase.auth.signUp({ email, password: p, options: { data: { full_name: prenom + " " + nom } } });
+                const { data, error } = await window.supabase.auth.signUp({ 
+                    email: techEmail, 
+                    password: p, 
+                    options: { data: { full_name: prenom + " " + nom, phone: phone } } 
+                });
                 if (error) throw error;
-                if (data.user) { await window.supabase.from('profiles').insert({ id: data.user.id, identifiant: gid, phone: '+224' + phone, email, full_name: prenom + " " + nom }); }
+                if (data.user) { 
+                    await window.supabase.from('profiles').insert({ 
+                        id: data.user.id, 
+                        identifiant: gid, 
+                        phone: '+224' + phone, 
+                        email: techEmail,
+                        personal_email: uEmail,
+                        full_name: prenom + " " + nom 
+                    }); 
+                }
                 document.getElementById('displayID').textContent = gid;
                 document.getElementById('registrationHeader').style.display = 'none';
                 document.getElementById('registerWizard').style.display = 'none';
