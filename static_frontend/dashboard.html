@@ -260,7 +260,9 @@
         <div class="flex justify-between items-center px-5 mb-3">
             <div class="text-xs font-bold uppercase" style="color: var(--title-blue); letter-spacing: 0.5px;">Aperçu Financier</div>
             <button class="eye-btn" onclick="toggleBlurAll()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                <span id="eye-icon" style="display: flex;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                </span>
             </button>
         </div>
 
@@ -456,11 +458,29 @@
             document.getElementById('finance-hub').classList.toggle('flipped');
         }
 
-        function toggleBlurAll() {
+        // Logique de masquage sécurisé (Flou)
+        const svgOpen = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>`;
+        const svgClosed = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`;
+
+        function applyVisibility(hidden) {
             const targets = document.querySelectorAll('.blur-target');
+            const icon = document.getElementById('eye-icon');
             targets.forEach(el => {
-                el.classList.toggle('blurred');
+                if (hidden) {
+                    el.classList.add('blurred');
+                } else {
+                    el.classList.remove('blurred');
+                }
             });
+            if(icon) {
+                icon.innerHTML = hidden ? svgClosed : svgOpen;
+            }
+        }
+
+        function toggleBlurAll() {
+            const firstTarget = document.querySelector('.blur-target');
+            const isCurrentlyHidden = firstTarget && firstTarget.classList.contains('blurred');
+            applyVisibility(!isCurrentlyHidden);
         }
 
         function goTo(url) {
@@ -468,8 +488,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-             // Retrieve existing simple username
-             // Fanta as requested in the mockup
+             // Masquer TOUJOURS par défaut au chargement
+             applyVisibility(true);
         });
     </script>
 </body>
