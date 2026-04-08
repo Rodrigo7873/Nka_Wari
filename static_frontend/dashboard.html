@@ -124,30 +124,28 @@
         .sec-title { font-size: 16px; font-weight: 800; color: #fff; }
         .sec-link { font-size: 13px; font-weight: 600; color: var(--brand-green-light); text-decoration: none; }
 
-        /* HORIZONTAL ACTIONS */
-        .actions-scroll {
-            display: flex; gap: 16px; overflow-x: auto; padding-bottom: 15px;
-            scroll-snap-type: x mandatory; scrollbar-width: none;
+        /* ACTIONS 2x2 GRID */
+        .actions-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+            margin-bottom: 24px;
         }
-        .actions-scroll::-webkit-scrollbar { display: none; }
         
         .action-tile {
-            flex: 0 0 110px; height: 120px; border-radius: 24px;
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; scroll-snap-align: start; cursor: pointer;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: 0.3s;
+            height: 90px; border-radius: 18px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+            padding: 0 16px; cursor: pointer;
+            transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .action-tile:active { transform: scale(0.95); }
+        .action-tile:active { transform: scale(0.97); background: rgba(255,255,255,0.08); }
         .action-icon {
-            width: 48px; height: 48px; border-radius: 16px; display: flex; justify-content: center; align-items: center;
-            margin-bottom: 12px; background: rgba(255,255,255,0.05);
+            margin-bottom: 8px; flex-shrink: 0;
         }
         /* Specific Colors */
-        .tile-green .action-icon { color: var(--brand-green-light); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
-        .tile-red .action-icon { color: var(--brand-red); background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .tile-green .action-icon { color: var(--brand-green-light); }
+        .tile-red .action-icon { color: var(--brand-red); }
         
-        .action-name { font-size: 12px; font-weight: 600; color: var(--text-muted); line-height: 1.3; }
+        .action-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
 
         /* HISTORY STATE */
         .empty-state {
@@ -157,29 +155,22 @@
         .empty-icon { margin-bottom: 10px; opacity: 0.5; }
         .empty-text { font-size: 14px; font-weight: 500; }
 
-        /* FLOATING PILL NAVBAR */
-        .float-nav-wrapper {
-            position: fixed; bottom: 24px; left: 0; width: 100%;
-            display: flex; justify-content: center; z-index: 1000;
-            padding: 0 24px; pointer-events: none;
-        }
-        .float-nav {
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 100px;
-            display: flex; justify-content: space-between; align-items: center;
-            width: 100%; max-width: 400px; height: 68px; padding: 0 10px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5); pointer-events: auto;
+        /* NATURAL BOTTOM NAV */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; align-items: center;
+            height: 70px; padding-bottom: env(safe-area-inset-bottom);
+            z-index: 1000;
         }
         .nav-item {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); text-decoration: none; gap: 4px; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; width: 25%; gap: 4px;
         }
-        .nav-icon { transition: 0.3s; }
-        .nav-item.active { color: #fff; }
-        .nav-item.active .nav-icon { color: var(--brand-green-light); transform: translateY(-2px); filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.4)); }
-        .nav-text { font-size: 10px; font-weight: 700; opacity: 0; transform: translateY(10px); transition: 0.3s; position: absolute; bottom: 8px; }
-        .nav-item.active .nav-text { opacity: 1; transform: translateY(0); }
-        .nav-item.active .nav-icon { transform: translateY(-8px); } /* Levitation icon */
+        .nav-item.active { color: var(--brand-green-light); }
+        .nav-icon { display: flex; justify-content: center; align-items: center; }
+        .nav-text { font-size: 11px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -253,35 +244,35 @@
             </div>
         </div>
 
-        <!-- QUICK ACTIONS (Horizontal) -->
+        <!-- QUICK ACTIONS (2x2 Grid) -->
         <div class="sec-header">
             <h2 class="sec-title">Finance</h2>
         </div>
-        <div class="actions-scroll">
+        <div class="actions-grid">
             <div class="action-tile tile-green" onclick="goTo('karfa/add.html')">
                 <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                 </div>
                 <div class="action-name">Nouveau<br>Karfa</div>
             </div>
             
             <div class="action-tile tile-green" onclick="goTo('karfa/list.html')">
                 <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
                 </div>
                 <div class="action-name">Retirer<br>Karfa</div>
             </div>
 
             <div class="action-tile tile-red" onclick="goTo('dettes/add.html')">
                 <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 </div>
                 <div class="action-name">Ajouter<br>Dette</div>
             </div>
 
             <div class="action-tile tile-red" onclick="goTo('dettes/list.html')">
                 <div class="action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm-7-5v-1a2 2 0 10-4 0v1h4z"/></svg>
                 </div>
                 <div class="action-name">Encaisser<br>Dette</div>
             </div>
@@ -301,27 +292,25 @@
 
     </div>
 
-    <!-- FLOATING BOTTOM NAV (Sleek iOS Style Pill) -->
-    <div class="float-nav-wrapper">
-        <nav class="float-nav">
-            <a href="dashboard.html" class="nav-item active">
-                <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
-                <span class="nav-text">Accueil</span>
-            </a>
-            <a href="karfa/list.html" class="nav-item">
-                <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
-                <span class="nav-text">Karfa</span>
-            </a>
-            <a href="dettes/list.html" class="nav-item">
-                <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
-                <span class="nav-text">Dettes</span>
-            </a>
-            <a href="comptes/list.html" class="nav-item">
-                <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-                <span class="nav-text">Comptes</span>
-            </a>
-        </nav>
-    </div>
+    <!-- NATURAL BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item active">
+            <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+            <span class="nav-text">Accueil</span>
+        </a>
+        <a href="karfa/list.html" class="nav-item">
+            <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
+            <span class="nav-text">Karfa</span>
+        </a>
+        <a href="dettes/list.html" class="nav-item">
+            <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
+            <span class="nav-text">Dettes</span>
+        </a>
+        <a href="comptes/list.html" class="nav-item">
+            <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+            <span class="nav-text">Comptes</span>
+        </a>
+    </nav>
 
     <!-- Scripts -->
     <script>
