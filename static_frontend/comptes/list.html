@@ -6,91 +6,105 @@
     <title>N'Ka Wari | Mes Comptes</title>
     <style>
         :root {
-            --bg-body: #f8fafc;
-            --primary-blue: #3b82f6; 
-            --title-blue: #4b80e6;
-            --text-dark: #1e293b;
+            --bg-body: #f1f5f9;
+            --primary-blue: #2563eb; 
+            --title-blue: #3b82f6;
+            --text-dark: #0f172a;
             --text-gray: #64748b;
             --success-green: #10b981;
             --warning-gold: #f59e0b;
-            --danger-red: #ef4444;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent;}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent;}
         
-        body { background-color: var(--bg-body); color: var(--text-dark); padding-bottom: 80px; }
+        body { background-color: var(--bg-body); color: var(--text-dark); padding-bottom: 90px; }
 
-        /* Utils */
+        .max-w { max-width: 500px; margin: 0 auto; }
         .flex { display: flex; }
-        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
         .justify-between { justify-content: space-between; }
         .justify-center { justify-content: center; }
-        .items-center { align-items: center; }
-        .gap-2 { gap: 8px; }
-        .gap-3 { gap: 12px; }
-        .px-5 { padding-left: 20px; padding-right: 20px; }
+        .px-5 { padding: 0 20px; }
+        .mt-1 { margin-top: 4px; }
         .mb-3 { margin-bottom: 12px; }
         .mb-4 { margin-bottom: 16px; }
         .mb-5 { margin-bottom: 20px; }
         .mb-6 { margin-bottom: 24px; }
-        .text-xs { font-size: 11px; }
-        .text-sm { font-size: 13px; }
-        .text-2xl { font-size: 24px; }
-        .font-bold { font-weight: 700; }
-        .max-w { max-width: 500px; margin: 0 auto; }
         .blurred { filter: blur(8px); opacity: 0.8; }
 
         /* HEADER */
-        .header-icons { display: flex; justify-content: space-between; padding: 16px 20px; color: var(--text-dark); margin-bottom: 8px;}
-        .icon-btn { background: transparent; border: none; outline: none; padding: 4px; color: var(--text-dark); cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .header-icons { display: flex; justify-content: space-between; padding: 18px 20px; }
+        .icon-btn { background: transparent; border: none; padding: 6px; color: #1e293b; cursor: pointer; }
 
-        /* ACTIONS */
-        .comptes-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 20px; margin-bottom: 12px; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 24px; font-weight: 600; font-size: 14px; text-decoration: none; transition: 0.2s; cursor: pointer; border: none; }
-        .btn-green-solid { background-color: #10b981; color: white; flex: 1; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);}
-        .btn-blue-solid { background-color: #3b82f6; color: white; flex: 1; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2); }
-        .btn-dark-solid { background-color: #475569; color: white; width: auto; padding: 10px 20px; border-radius: 24px; }
+        /* HEADER BUTTONS */
+        .page-title { font-size: 26px; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 20px; }
+        
+        .comptes-header-actions { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0 20px; margin-bottom: 30px; }
+        .row-actions { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 20px; border-radius: 20px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; text-decoration: none; }
+        .btn-green-solid { background: #10b981; color: white; }
+        .btn-blue-solid { background: #3b82f6; color: white; }
+        .btn-white { background: #fff; color: #475569; border: 1px solid #e2e8f0; }
 
-        /* SECTION HEADERS */
-        .section-header { display: flex; align-items: center; gap: 8px; padding: 0 20px; margin-bottom: 16px; margin-top: 24px; }
-        .section-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
-        .section-title { font-weight: 700; font-size: 16px; color: var(--text-dark); }
-        .section-badge { font-size: 10px; background: #e2e8f0; color: #475569; padding: 2px 10px; border-radius: 12px; font-weight: 700; }
+        /* SECTION LABEL */
+        .section-label-group { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 15px; }
+        .section-label { color: #3b82f6; font-weight: 800; font-size: 16px; text-transform: capitalize; }
+        .eye-btn { background: #fff; border: 1px solid #f1f5f9; padding: 8px; border-radius: 12px; display: flex; color: #475569; }
 
-        /* LIST ITEMS */
-        .account-item {
-            background: #fff; border-radius: 20px; margin: 0 20px 12px 20px; padding: 16px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #f8fafc;
+        /* DARK CARD (PATRIMOINE) */
+        .card-dark {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 28px; margin: 0 20px 24px 20px; padding: 24px; color: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        .acc-left { display: flex; align-items: center; gap: 14px; }
-        .acc-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; }
-        .bg-argent-soft { background: #f0fdf4; color: #16a34a; }
-        .bg-or-soft { background: #fffbeb; color: #d97706; }
-        .bg-dette-soft { background: #fef2f2; color: #dc2626; }
+        .card-dark-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; opacity: 0.9; }
+        .pill-badge { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .card-dark-amount { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
+        .card-dark-subtitle { font-size: 12px; opacity: 0.7; font-weight: 500; }
 
-        .acc-info { display: flex; flex-direction: column; gap: 2px; }
-        .acc-name { font-weight: 700; color: var(--text-dark); font-size: 15px; }
-        .acc-sub { font-size: 12px; color: var(--text-gray); }
-
-        .acc-right { text-align: right; }
-        .acc-amount { font-weight: 800; font-size: 15px; color: var(--text-dark); letter-spacing: -0.5px; }
-        .acc-hint { font-size: 11px; color: var(--text-gray); display: block; margin-top: 2px; }
-
-        .toggle-btn {
-            background: #fef2f2; border: 1px solid #fee2e2; padding: 12px 24px; border-radius: 30px;
-            color: var(--danger-red); font-size: 13px; font-weight: 700; cursor: pointer;
-            margin: 20px auto; display: flex; align-items: center; gap: 10px; transition: 0.2s;
+        /* WHITE CARD (TOTAL COMPTES) */
+        .card-white {
+            background: #fff; border-radius: 28px; margin: 0 20px 24px 20px; padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
+        .total-item { margin-bottom: 24px; }
+        .total-header { display: flex; align-items: center; gap: 10px; color: #64748b; font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+        .total-amount { font-size: 32px; font-weight: 900; color: #2563eb; }
+        .currency { font-size: 14px; margin-left: 4px; }
 
-        /* BOTTOM NAV, SIDEBAR, etc remains same as list pages */
-        .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; background: #fff; z-index: 50; transform: translateX(-100%); transition: 0.3s ease; box-shadow: 2px 0 12px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .sub-active-section { position: relative; padding-left: 20px; margin-bottom: 24px; }
+        .sub-active-section::before { content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%; border-radius: 2px; }
+        .line-blue::before { background: #e2e8f0; } /* Matches photo's subtle gray/blue line */
+        .line-orange::before { background: #f59e0b; }
+
+        .sub-label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #94a3b8; margin-bottom: 12px; }
+        .sub-amount { font-size: 24px; font-weight: 900; color: #1e293b; }
+
+        /* GOLD PRICE CARD */
+        .gold-price-card { background: #fff; border-radius: 28px; margin: 0 20px 24px 20px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .gold-header-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .gold-icon-circle { width: 44px; height: 44px; background: #fffbeb; color: #f59e0b; border-radius: 12px; display: flex; justify-content: center; align-items: center; }
+        .gold-title { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 2px; }
+        .gold-price { font-size: 20px; font-weight: 900; color: #1e293b; }
+        .gold-date { font-size: 11px; color: #94a3b8; margin-top: 5px; font-weight: 600; }
+
+        .gold-form { background: #fff; border: 1px solid #f1f5f9; border-radius: 24px; padding: 6px 6px 6px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
+        .gold-input { border: none; outline: none; font-size: 14px; font-weight: 700; color: #1e293b; width: 100%; }
+        .gold-unit { font-size: 12px; font-weight: 800; color: #94a3b8; margin-right: 12px; }
+        .btn-pill-green { background: #10b981; color: white; padding: 8px 18px; border-radius: 18px; font-size: 12px; font-weight: 800; border: none; }
+
+        .btn-pill-blue { background: #2563eb; color: white; padding: 12px 24px; border-radius: 22px; font-size: 13px; font-weight: 800; border: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2); }
+
+        /* SIDEBAR, NAV, etc */
+        .sidebar { position: fixed; top: 0; left: 0; width: 80%; max-width: 300px; height: 100%; background: #fff; z-index: 50; transform: translateX(-100%); transition: 0.3s ease; }
         .sidebar.active { transform: translateX(0); }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 40; opacity: 0; pointer-events: none; transition: 0.3s ease; }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; align-items: center; height: 60px; padding-bottom: env(safe-area-inset-bottom); z-index: 10; }
-        .nav-item { display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; color: #94a3b8; gap: 4px; font-size: 10px; font-weight: 600; }
-        .nav-item.active { color: var(--primary-blue); }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; align-items: center; height: 70px; padding-bottom: env(safe-area-inset-bottom); z-index: 10; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #94a3b8; gap: 6px; font-size: 10px; font-weight: 700; }
+        .nav-item.active { color: #2563eb; }
 
         .acc-info { display: flex; flex-direction: column; gap: 2px; }
         .acc-name { font-weight: 800; font-size: 15px; color: var(--text-dark); letter-spacing: -0.2px; }
@@ -182,147 +196,106 @@
         <!-- HEADER TOP -->
         <div class="header-icons">
             <button class="icon-btn" onclick="openMenu()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
             </button>
             <button class="icon-btn" onclick="openNotifications()">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
             </button>
         </div>
 
-        <!-- PAGE TITLE -->
-        <div class="px-5 mb-5 text-center">
-            <h1 class="text-2xl font-bold text-dark" style="color: #0f172a;">Mes Comptes</h1>
-            <p class="text-xs font-bold text-gray uppercase mt-1">Argent & Or</p>
-        </div>
+        <h1 class="page-title">Gestion des Comptes</h1>
 
         <!-- ACTIONS -->
-        <div class="comptes-actions justify-center">
-            <a href="form.html" class="btn btn-green-solid">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Nouveau Compte
-            </a>
-            <a href="archives.html" class="btn btn-blue-solid">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                Voir Archives
-            </a>
-        </div>
-        
-        <div style="padding: 0 20px; margin-bottom: 24px;">
-            <button class="btn btn-dark-solid">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> 
-                Exporter
+        <div class="comptes-header-actions">
+            <button class="btn btn-green-solid">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nouveau compte
             </button>
+            <div class="row-actions">
+                <button class="btn btn-blue-solid">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" x2="21" y1="22" y2="22"></line><line x1="6" x1="6" y1="18" y2="11"></line><line x1="10" x2="10" y1="18" y2="11"></line><line x1="14" x2="14" y1="18" y2="11"></line><line x1="18" x2="18" y1="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg>
+                    Liste des comptes
+                </button>
+                <button class="btn btn-white">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> 
+                    Exporter
+                </button>
+            </div>
         </div>
 
-        <!-- VISIBILITY TOGGLE (DROITE EN BAS) -->
-        <div class="flex justify-between items-center px-5 mb-3">
-            <div class="text-xs font-bold uppercase" style="color: var(--title-blue); letter-spacing: 0.5px;">Résumé Financier</div>
-            <button class="icon-btn" onclick="toggleBlurAll()" id="eye-btn">
-                <span id="eye-icon" style="display:flex;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+        <!-- SECTION APERÇU -->
+        <div class="section-label-group">
+            <div class="section-label">Aperçu des mouvements</div>
+            <button class="eye-btn" onclick="toggleBlurAll()">
+                <span id="eye-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
                 </span>
             </button>
         </div>
 
-        <!-- COMPTES ARGENT -->
-        <div class="section-header">
-            <div class="section-icon" style="background: #e3f7e3; color: #16a34a;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M12 12h.01"></path></svg>
+        <!-- PATRIMOINE CARD (DARK) -->
+        <div class="card-dark">
+            <div class="card-dark-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                <span style="font-weight: 700;">Patrimoine Net</span>
+                <div style="flex:1;"></div>
+                <div class="pill-badge">Total Cash <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
             </div>
-            <div class="section-title">Comptes Argent</div>
-            <span class="section-badge blur-target">45 000 000 GNF</span>
+            <div class="card-dark-amount blur-target">42 600 000 <span style="font-size: 16px;">GNF</span></div>
+            <div class="card-dark-subtitle">Comptes + Créances - Dettes (Exclut Karfa)</div>
         </div>
 
-        <div class="account-item">
-            <div class="acc-left">
-                <div class="acc-icon bg-argent-soft">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle></svg>
+        <!-- SUMMARY CARD (WHITE) -->
+        <div class="card-white">
+            <div class="total-item">
+                <div class="total-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Total Comptes
                 </div>
-                <div class="acc-info">
-                    <span class="acc-name">Orange Money</span>
-                    <span class="acc-sub">Mobile Money</span>
-                </div>
+                <div class="total-amount blur-target">45 230 000 <span class="currency">GNF</span></div>
             </div>
-            <div class="acc-right">
-                <div class="acc-amount blur-target">12 450 000 GNF</div>
-                <span class="acc-hint">Disponible</span>
-            </div>
-        </div>
 
-        <div class="account-item">
-            <div class="acc-left">
-                <div class="acc-icon bg-argent-soft">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><rect x="4" y="8" width="16" height="13"></rect></svg>
+            <div class="sub-active-section line-blue">
+                <div class="sub-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Liquidités
                 </div>
-                <div class="acc-info">
-                    <span class="acc-name">Société Générale</span>
-                    <span class="acc-sub">Compte Bancaire</span>
-                </div>
+                <div class="sub-amount blur-target">39 830 000 <span style="font-size: 14px;">GNF</span></div>
             </div>
-            <div class="acc-right">
-                <div class="acc-amount blur-target">32 550 000 GNF</div>
-                <span class="acc-hint">Disponible</span>
-            </div>
-        </div>
 
-        <!-- COMPTES OR -->
-        <div class="section-header">
-            <div class="section-icon" style="background: #fff9eb; color: #d97706;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v8M8 12h8"></path></svg>
-            </div>
-            <div class="section-title">Comptes Or</div>
-            <span class="section-badge blur-target">145.50 g</span>
-        </div>
-
-        <div class="account-item">
-            <div class="acc-left">
-                <div class="acc-icon bg-or-soft">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"></path></svg>
+            <div class="sub-active-section line-orange">
+                <div class="sub-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    Or
                 </div>
-                <div class="acc-info">
-                    <span class="acc-name">Coffre Saran</span>
-                    <span class="acc-sub">Pureté: 22K</span>
-                </div>
-            </div>
-            <div class="acc-right">
-                <div class="acc-amount blur-target">145.50 g</div>
-                <span class="acc-hint">± 116,400,000 GNF</span>
+                <div class="sub-amount blur-target">23 <span style="font-size: 14px; color: #f59e0b;">g</span></div>
+                <div class="gold-date mt-1" style="font-size: 13px; color: #64748b;">(valorisation : 27 600 000 GNF)</div>
             </div>
         </div>
 
-        <!-- TOGGLE PASSIFS -->
-        <div class="flex justify-center mb-6">
-            <button class="toggle-btn" onclick="togglePassifs()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                <span id="passif-btn-text">Afficher mes comptes dettes</span>
+        <!-- GOLD PRICE CARD -->
+        <div class="gold-price-card">
+            <div class="gold-header-row">
+                <div class="gold-icon-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                </div>
+                <div>
+                    <div class="gold-title">Cours de l'Or (24K)</div>
+                    <div class="gold-price">1 200 000 <span style="font-size: 14px; color: #94a3b8;">GNF/g</span></div>
+                    <div class="gold-date">Maj : 20/03/2026 23:08</div>
+                </div>
+            </div>
+
+            <div class="gold-form">
+                <input type="number" class="gold-input" placeholder="Nouveau prix...">
+                <span class="gold-unit">GNF</span>
+                <button class="btn-pill-green">Fixer</button>
+            </div>
+
+            <button class="btn-pill-blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                Via le web
             </button>
-        </div>
-
-        <!-- COMPTES DETTE (HIDDEN) -->
-        <div id="section-passifs" style="display: none;">
-            <div class="section-header">
-                <div class="section-icon" style="background: #fef2f2; color: #dc2626;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                </div>
-                <div class="section-title">Passifs (Dettes)</div>
-                <span class="section-badge blur-target">5 000 000 GNF</span>
-            </div>
-
-            <div class="account-item">
-                <div class="acc-left">
-                    <div class="acc-icon bg-dette-soft">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 15h2m-2-3h2m-2-3h2m-2-3h2M7 9h2m-2 3h2"></path></svg>
-                    </div>
-                    <div class="acc-info">
-                        <span class="acc-name">Dette Marchande</span>
-                        <span class="acc-sub">Engagement Passif</span>
-                    </div>
-                </div>
-                <div class="acc-right">
-                    <div class="acc-amount blur-target" style="color: var(--danger-red);">5 000 000 GNF</div>
-                    <span class="acc-hint">A rembourser</span>
-                </div>
-            </div>
         </div>
     </div>
 
