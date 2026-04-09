@@ -62,11 +62,11 @@
         .icon-btn { background: transparent; border: none; outline: none; box-shadow: none; padding: 4px; color: var(--text-dark); cursor: pointer; appearance: none; -webkit-appearance: none; -webkit-tap-highlight-color: transparent; display: flex; justify-content: center; align-items: center; }
 
         /* ACTION BUTTONS */
-        .karfa-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px; margin-bottom: 24px; }
-        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 20px; font-weight: 600; font-size: 13px; text-decoration: none; transition: 0.2s; cursor: pointer; border: none; }
-        .btn-green-text { color: #10b981; background: transparent; padding-left: 0;}
-        .btn-blue { background-color: #3b82f6; color: white; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); }
-        .btn-outline { background-color: transparent; border: 1px solid #e2e8f0; color: #475569; }
+        .karfa-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 20px; margin-bottom: 12px; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 24px; font-weight: 600; font-size: 14px; text-decoration: none; transition: 0.2s; cursor: pointer; border: none; }
+        .btn-green-solid { background-color: #10b981; color: white; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3); flex: 1;}
+        .btn-blue-solid { background-color: #3b82f6; color: white; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); flex: 1;}
+        .btn-dark-solid { background-color: #475569; color: white; box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.3); width: auto; padding: 10px 20px; border-radius: 24px;}
 
         /* BALANCE CARD */
         .balance-card {
@@ -263,16 +263,19 @@
 
         <!-- ACTIONS -->
         <div class="karfa-actions justify-center">
-            <a href="add.html" class="btn btn-green-text">
+            <a href="add.html" class="btn btn-green-solid">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Nouveau Karfa
             </a>
-            <a href="list.html" class="btn btn-blue" style="border-radius: 8px;">
+            <a href="list.html" class="btn btn-blue-solid">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                 Liste Karfa
             </a>
-            <button class="btn btn-outline" style="border-radius: 20px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> 
+        </div>
+        
+        <div style="padding: 0 20px; margin-bottom: 24px;">
+            <button class="btn btn-dark-solid">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> 
                 Exporter
             </button>
         </div>
