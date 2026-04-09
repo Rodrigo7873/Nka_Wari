@@ -259,8 +259,13 @@
         </div>
 
         <!-- TITLE DASHBOARD KARFA -->
-        <div class="px-5 mb-5 text-center">
-            <h1 class="text-2xl font-bold text-dark" style="color: #64748b;">Mon Dashboard Karfa</h1>
+        <div class="flex justify-between items-center px-5 mb-5 w-100">
+            <h1 class="text-2xl font-bold text-dark" style="color: #64748b; text-align: left;">Mon Dashboard Karfa</h1>
+            <button class="icon-btn" onclick="toggleBlurAll()" id="eye-btn" style="color: #1e293b; cursor: pointer;">
+                <span id="eye-icon" style="display:flex;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                </span>
+            </button>
         </div>
 
         <!-- ACTIONS -->
@@ -279,15 +284,6 @@
             <button class="btn btn-dark-solid">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> 
                 Exporter
-            </button>
-        </div>
-
-        <!-- CONTROLE VISUALISATION -->
-        <div class="flex justify-end px-5 mb-3" style="display: flex; justify-content: flex-end; padding: 0 20px; margin-bottom: 12px;">
-            <button class="icon-btn" onclick="toggleBlurAll()" id="eye-btn" style="background: #fff; border: 1px solid #e2e8f0; width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #1e293b; cursor: pointer;">
-                <span id="eye-icon" style="display:flex;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
-                </span>
             </button>
         </div>
 
