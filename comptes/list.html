@@ -46,18 +46,24 @@
         .section-label { color: #3b82f6; font-weight: 800; font-size: 15px; }
         .eye-btn { background: #fff; border: 1px solid #f1f5f9; padding: 10px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; }
 
-        /* DARK CARD */
-        .card-dark {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 28px; margin: 0 16px 24px 16px; padding: 24px; color: white;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-        }
-        .card-dark-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-        .card-title-row { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 15px; }
-        .pill-cash { background: rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-        .card-dark-amount { font-size: 38px; font-weight: 900; margin-bottom: 10px; letter-spacing: -0.5px; }
-        .card-dark-amount span { font-size: 18px; font-weight: 600; opacity: 0.9; margin-left: 6px; }
-        .card-dark-subtitle { font-size: 12px; color: #94a3b8; font-weight: 500; }
+        /* DARK CARD (Flip Base) */
+        .flip-card { background-color: transparent; width: 100%; height: 180px; perspective: 1000px; margin-bottom: 24px; padding: 0 16px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 28px; padding: 24px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .card-back { transform: rotateY(180deg); }
+
+        .card-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .card-dark { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; }
+
+        .card-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .card-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+        .card-pill { background: rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        
+        .card-main-amount { font-size: 36px; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .card-main-amount span { font-size: 16px; opacity: 0.8; font-weight: 600; margin-left: 6px; }
+        .card-bottom-text { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 500; line-height: 1.4; }
 
         /* WHITE CARD */
         .card-white { background: #fff; border-radius: 28px; margin: 0 16px 24px 16px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.02); }
@@ -186,20 +192,41 @@
             </button>
         </div>
 
-        <!-- CARD PATRIMOINE -->
-        <div class="card-dark">
-            <div class="card-dark-header">
-                <div class="card-title-row">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    Patrimoine Net
+        <!-- CARD FLIP -->
+        <div class="flip-card" id="flipCard" onclick="toggleFlip()">
+            <div class="flip-card-inner">
+                <!-- FRONT: TOTAL CASH (GREEN) -->
+                <div class="card-front card-green">
+                    <div class="card-top-row">
+                        <div class="card-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                            Total Cash
+                        </div>
+                        <div class="card-pill">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Patrimoine Net
+                        </div>
+                    </div>
+                    <div class="card-main-amount blur-target">64 800 000 <span>GNF</span></div>
+                    <div class="card-bottom-text">Comptes + Karfa + Créances - Dettes (Inclut Karfa)</div>
                 </div>
-                <div class="pill-cash">
-                    Total Cash
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+
+                <!-- BACK: PATRIMOINE NET (DARK) -->
+                <div class="card-back card-dark">
+                    <div class="card-top-row">
+                        <div class="card-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                            Patrimoine Net
+                        </div>
+                        <div class="card-pill">
+                            Total Cash
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="card-main-amount blur-target">42 600 000 <span>GNF</span></div>
+                    <div class="card-bottom-text">Comptes + Créances - Dettes (Exclut Karfa)</div>
                 </div>
             </div>
-            <div class="card-dark-amount blur-target">42 600 000 <span>GNF</span></div>
-            <div class="card-dark-subtitle">Comptes + Créances - Dettes (Exclut Karfa)</div>
         </div>
 
         <!-- WHITE CARD -->
@@ -278,6 +305,7 @@
         function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active'); }
         function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
         
+        function toggleFlip() { document.getElementById('flipCard').classList.toggle('flipped'); }
         function openNotifications() { document.getElementById('notification-panel').style.transform = 'translateX(0)'; document.getElementById('notif-overlay').classList.add('active'); }
         function closeNotifications() { document.getElementById('notification-panel').style.transform = 'translateX(100%)'; document.getElementById('notif-overlay').classList.remove('active'); }
         function logout() { window.location.replace('../login.html'); }
