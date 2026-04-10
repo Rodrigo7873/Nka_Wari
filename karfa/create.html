@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>N'Ka Wari | Nouveau Karfa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --primary-blue: #2563eb;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border-gray: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--bg-body); color: var(--text-dark); padding-bottom: 40px; }
+
+        .max-w { max-width: 500px; margin: 0 auto; }
+
+        /* HEADER */
+        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 24px; position: sticky; top: 0; background: var(--bg-body); z-index: 100; }
+        .icon-btn { background: transparent; border: none; padding: 8px; color: #334155; cursor: pointer; display: flex; align-items: center; }
+
+        /* PAGE TITLE SECTION */
+        .page-header { display: flex; align-items: center; gap: 20px; padding: 0 24px; margin-bottom: 32px; }
+        .icon-box-blue { 
+            width: 54px; height: 54px; background: #2563eb; border-radius: 16px; 
+            display: flex; align-items: center; justify-content: center; color: white;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+        }
+        .page-info { display: flex; flex-direction: column; gap: 4px; }
+        .page-title { font-size: 22px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; }
+        .page-subtitle { font-size: 13px; color: #64748b; font-weight: 500; line-height: 1.4; }
+
+        /* FORM CARD */
+        .form-card { 
+            background: #fff; border-radius: 32px; margin: 0 20px; padding: 32px 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            display: flex; flex-direction: column; gap: 28px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 10px; }
+        .form-label { font-size: 14px; font-weight: 700; color: #1e293b; }
+        .required-star { color: #ef4444; margin-left: 2px; }
+        .optional-text { font-size: 11px; color: #94a3b8; font-weight: 500; margin-left: 4px; }
+
+        .input-wrapper {
+            background: #f8fafc; border-radius: 16px; padding: 14px 18px;
+            display: flex; align-items: center; border: 1.5px solid #f1f5f9;
+            transition: 0.2s border-color;
+        }
+        .input-wrapper:focus-within { border-color: #3b82f6; }
+        
+        input, textarea {
+            background: transparent; border: none; outline: none; width: 100%;
+            font-size: 15px; font-weight: 600; color: #1e293b;
+        }
+        input::placeholder, textarea::placeholder { color: #cbd5e1; font-weight: 500; }
+        
+        .currency-prefix { font-size: 14px; font-weight: 800; color: #64748b; margin-right: 12px; }
+
+        textarea { resize: none; min-height: 100px; line-height: 1.6; }
+
+        /* BUTTONS */
+        .button-row { display: flex; gap: 12px; margin-top: 10px; }
+        .btn { 
+            height: 54px; border-radius: 20px; font-size: 15px; font-weight: 800; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; 
+            cursor: pointer; transition: 0.2s; flex: 1; border: none;
+        }
+        .btn:active { transform: scale(0.97); }
+
+        .btn-ghost { background: #fff; color: #475569; border: 1.5px solid #f1f5f9; }
+        .btn-primary { background: #2563eb; color: #fff; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25); }
+
+        /* OVERLAY for Menu/Notif */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 150; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .overlay.active { opacity: 1; pointer-events: auto; }
+        .sidebar { position: fixed; top: 0; left: 0; width: 85%; max-width: 310px; height: 100%; background: #fff; z-index: 200; transform: translateX(-100%); transition: 0.3s; }
+        .sidebar.active { transform: translateX(0); }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+    <div class="sidebar" id="sidebar"></div> 
+
+    <div class="max-w">
+        <!-- HEADER -->
+        <div class="header-top">
+            <button class="icon-btn" onclick="openMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <button class="icon-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+        </div>
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="icon-box-blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="page-info">
+                <h2 class="page-title">Nouveau Karfa</h2>
+                <p class="page-subtitle">Enregistrez un nouvel engagement financier</p>
+            </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="form-card">
+            <div class="form-group">
+                <label class="form-label">Bénéficiaire <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                    <input type="text" placeholder="Nom de la personne">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Montant <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                    <span class="currency-prefix">GNF</span>
+                    <input type="number" placeholder="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Motif <span class="optional-text">— optionnel</span></label>
+                <div class="input-wrapper" style="align-items: flex-start; padding: 18px;">
+                    <textarea placeholder="Raison de cet engagement..."></textarea>
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button class="btn btn-ghost" onclick="history.back()">Annuler</button>
+                <button class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Créer le Karfa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active'); }
+        function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+    </script>
+</body>
+</html>
