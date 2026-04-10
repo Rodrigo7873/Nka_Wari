@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>N'Ka Wari | Tous les Karfa</title>
+    <title>N'Ka Wari | Dashboard Karfa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,43 +21,49 @@
         .max-w { max-width: 500px; margin: 0 auto; }
 
         /* HEADER */
-        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 24px; }
+        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 16px; }
         .icon-btn { background: transparent; border: none; padding: 8px; color: #334155; cursor: pointer; display: flex; align-items: center; }
 
-        /* PAGE HEADER */
-        .page-header { text-align: center; padding: 0 24px; margin-bottom: 30px; }
-        .page-title { font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 8px; letter-spacing: -0.8px; }
-        .page-subtitle { font-size: 14px; color: #64748b; font-weight: 500; }
+        /* SECTION TITLE */
+        .section-header { text-align: center; margin-bottom: 24px; padding: 0 20px; }
+        .section-title { font-size: 24px; font-weight: 800; color: #64748b; letter-spacing: -0.5px; }
 
-        /* NAV BUTTONS */
-        .nav-buttons { display: flex; justify-content: center; gap: 12px; margin-bottom: 30px; }
-        .pill-btn {
-            background: #fff; border: 1.5px solid #f1f5f9; border-radius: 25px;
-            padding: 10px 24px; font-size: 14px; font-weight: 700; color: #64748b;
-            display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none;
-        }
+        /* ACTIONS */
+        .action-container { display: flex; flex-direction: column; gap: 10px; padding: 0 16px; margin-bottom: 24px; align-items: flex-start; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 25px; font-weight: 800; font-size: 13px; border: none; cursor: pointer; transition: 0.15s; height: 44px; padding: 0 16px; width: fit-content; white-space: nowrap; text-decoration: none; }
+        .btn:active { transform: scale(0.96); opacity: 0.9; }
+        
+        .btn-green { background: #10b981; color: white; gap: 8px; }
+        .row-actions { display: flex; gap: 8px; align-items: center; width: 100%; }
+        .btn-blue { background: #3b82f6; color: white; gap: 8px; }
+        .btn-dark-export { background: #334155; color: white; gap: 8px; padding: 0 16px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 42px; }
 
-        /* KARFA LIST */
-        .karfa-list { padding: 0 20px; }
-        .karfa-card {
-            background: #fff; border-radius: 22px; padding: 20px; margin-bottom: 16px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0,0,0,0.01);
+        /* BALANCE CARD (Dépôts) */
+        .balance-card {
+            background: #2c3e50; border-radius: 24px; padding: 32px 20px; color: white;
+            margin: 0 20px 24px 20px; box-shadow: 0 10px 25px -5px rgba(44, 62, 80, 0.4);
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px;
         }
-        .karfa-left { display: flex; align-items: center; gap: 16px; }
-        .user-avatar {
-            width: 48px; height: 48px; border-radius: 50%; background: #eff6ff;
-            display: flex; align-items: center; justify-content: center; color: #3b82f6;
-        }
-        .karfa-info { display: flex; flex-direction: column; gap: 4px; }
-        .karfa-name { font-size: 15px; font-weight: 800; color: #1e293b; }
-        .karfa-meta { font-size: 12px; color: #94a3b8; font-weight: 500; }
+        .balance-label { font-size: 11px; letter-spacing: 0.5px; opacity: 0.7; text-transform: uppercase; font-weight: 700; }
+        .balance-amount { font-size: 32px; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+        .balance-currency { font-size: 14px; opacity: 0.8; font-weight: 700; }
 
-        .karfa-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-        .karfa-amount { font-size: 14px; font-weight: 800; color: #4f46e5; }
-        .status-badge { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 8px; }
-        .status-actif { background: #eff6ff; color: #3b82f6; }
-        .status-partiel { background: #fffbeb; color: #d97706; }
+        /* OPERATIONS */
+        .operations-section { background: #fff; border-radius: 24px; margin: 0 20px 24px 20px; padding: 24px 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .operations-title { font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 20px; }
+        .op-list { display: flex; flex-direction: column; gap: 4px; }
+        .op-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f8fafc; }
+        .op-item:last-child { border-bottom: none; }
+        .op-left { display: flex; align-items: center; gap: 12px; }
+        .op-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .op-icon-ajout { background: #ebf5ff; color: #27ae60; }
+        .op-icon-retrait { background: #fff5f5; color: #e74c3c; }
+        .op-info { display: flex; flex-direction: column; gap: 2px; }
+        .op-name { font-size: 14px; font-weight: 700; color: #1e293b; }
+        .op-meta { font-size: 11px; color: #94a3b8; font-weight: 500; }
+        .op-amount { font-size: 14px; font-weight: 800; }
+        .amount-pos { color: #27ae60; }
+        .amount-neg { color: #e74c3c; }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; height: 75px; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
@@ -74,7 +80,7 @@
 <body>
     <div class="overlay" id="overlay" onclick="closeMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <!-- Sidebar content same as dashboard -->
+        <!-- Sidebar content -->
         <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 24px 20px 16px 20px; border-bottom: 1px solid #f1f5f9;">
             <div class="sidebar-logo-group" style="display: flex; align-items: center; gap: 12px;">
                 <div class="sidebar-logo" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: white;">
@@ -110,108 +116,64 @@
             </button>
         </div>
 
-        <!-- PAGE TITLE -->
-        <div class="page-header">
-            <h1 class="page-title">Tous les Karfa (Dépôts)</h1>
-            <p class="page-subtitle">Liste complète de l'argent qui vous est confié.</p>
+        <!-- SECTION HEADER -->
+        <div class="section-header">
+            <h1 class="section-title">Dashboard Karfa</h1>
         </div>
 
-        <!-- NAV BUTTONS -->
-        <div class="nav-buttons">
-            <a href="../dashboard.html" class="pill-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                Accueil
-            </a>
-            <a href="#" class="pill-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
-                Archives
-            </a>
+        <!-- ACTIONS -->
+        <div class="action-container">
+            <div class="row-actions">
+                <a href="add.html" class="btn btn-green">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Nouveau
+                </a>
+                <a href="liste.html" class="btn btn-blue">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 10v11"/><path d="M9 10v11"/><path d="M15 10v11"/><path d="M19 10v11"/><path d="M12 2 4 10h16Z"/></svg>
+                    Liste Karfa
+                </a>
+            </div>
+            <button class="btn btn-dark-export">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exporter
+            </button>
         </div>
 
-        <!-- KARFA LIST -->
-        <div class="karfa-list">
-            <!-- Card 1 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Gonet</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">2 000 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
+        <!-- BALANCE CARD -->
+        <div class="balance-card">
+            <span class="balance-label">Total Engagé (Karfa Actifs)</span>
+            <div class="balance-amount blur-target">24 500 000 <span class="balance-currency">GNF</span></div>
+        </div>
 
-            <!-- Card 2 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <!-- OPERATIONS SECTION -->
+        <div class="operations-section">
+            <h3 class="operations-title">Dernières opérations</h3>
+            <div class="op-list">
+                <!-- Op 1 -->
+                <div class="op-item">
+                    <div class="op-left">
+                        <div class="op-icon op-icon-ajout">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </div>
+                        <div class="op-info">
+                            <span class="op-name">Saran <span style="opacity: 0.3; margin: 0 4px;">•</span> Ajout</span>
+                            <span class="op-meta">21/03/2026 15:07</span>
+                        </div>
                     </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Saran</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
+                    <div class="op-amount amount-pos">+ 2 500 000 GNF</div>
                 </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">4 700 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <!-- Op 2 -->
+                <div class="op-item">
+                    <div class="op-left">
+                        <div class="op-icon op-icon-retrait">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="1 13 1 6 8 6"/></svg>
+                        </div>
+                        <div class="op-info">
+                            <span class="op-name">Moussa <span style="opacity: 0.3; margin: 0 4px;">•</span> Retrait</span>
+                            <span class="op-meta">21/03/2026 14:30</span>
+                        </div>
                     </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Sacko</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">5 000 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Binta</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">500 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
-
-            <!-- Card 5 (PARTIEL) -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Moussa</div>
-                        <div class="karfa-meta">Gnetais • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount" style="color: #6366f1;">10 000 000 GNF</div>
-                    <span class="status-badge status-partiel">PARTIEL</span>
+                    <div class="op-amount amount-neg">- 500 000 GNF</div>
                 </div>
             </div>
         </div>
