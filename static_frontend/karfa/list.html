@@ -29,14 +29,17 @@
         .section-title { font-size: 24px; font-weight: 800; color: #64748b; letter-spacing: -0.5px; }
 
         /* ACTIONS */
-        .action-container { display: flex; flex-direction: column; gap: 10px; padding: 0 16px; margin-bottom: 24px; align-items: flex-start; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 25px; font-weight: 700; font-size: 13.5px; border: none; cursor: pointer; transition: 0.15s; height: 46px; padding: 0 20px; width: fit-content; white-space: nowrap; text-decoration: none; }
+        .action-container { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; margin-bottom: 24px; align-items: flex-start; }
+        .row-actions { display: flex; gap: 10px; align-items: center; width: 100%; }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 25px; font-weight: 700; font-size: 13.5px; border: none; cursor: pointer; transition: 0.15s; height: 46px; padding: 0 20px; text-decoration: none; }
         .btn:active { transform: scale(0.96); opacity: 0.9; }
         
-        .btn-green { background: #10b981; color: white; gap: 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2); }
-        .row-actions { display: flex; gap: 10px; align-items: center; width: 100%; }
-        .btn-blue { background: #3b82f6; color: white; gap: 8px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2); }
-        .btn-dark-export { background: #334155; color: white; gap: 8px; padding: 0 18px; border-radius: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); height: 42px; font-size: 13px; }
+        .row-actions .btn { flex: 1; }
+        
+        .btn-green { background: #10b981; color: white; gap: 8px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3); }
+        .btn-blue { background: #3b82f6; color: white; gap: 8px; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); }
+        .btn-dark-export { background: #334155; color: white; gap: 8px; padding: 0 18px; border-radius: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); height: 42px; font-size: 13px; width: auto; }
 
         /* BALANCE CARD (Dépôts) */
         .balance-card {
