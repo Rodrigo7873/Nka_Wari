@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>N'Ka Wari | Nouveau Karfa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -75,6 +78,7 @@
 
         .btn-ghost { background: #fff; color: #475569; border: 1.5px solid #f1f5f9; }
         .btn-primary { background: #2563eb; color: #fff; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* OVERLAY for Menu/Notif */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 150; opacity: 0; pointer-events: none; transition: 0.3s; }
@@ -90,8 +94,8 @@
     <div class="max-w">
         <!-- HEADER -->
         <div class="header-top">
-            <button class="icon-btn" onclick="openMenu()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <button class="icon-btn" onclick="history.back()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             </button>
             <button class="icon-btn">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -104,8 +108,8 @@
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
             <div class="page-info">
-                <h2 class="page-title">Nouveau Karfa</h2>
-                <p class="page-subtitle">Enregistrez un nouvel engagement financier</p>
+                <h2 class="page-title" id="form-title">Nouveau Karfa</h2>
+                <p class="page-subtitle" id="form-subtitle">Enregistrez un nouvel engagement financier</p>
             </div>
         </div>
 
@@ -114,7 +118,7 @@
             <div class="form-group">
                 <label class="form-label">Bénéficiaire <span class="required-star">*</span></label>
                 <div class="input-wrapper">
-                    <input type="text" placeholder="Nom de la personne">
+                    <input type="text" id="beneficiaire" placeholder="Nom de la personne">
                 </div>
             </div>
 
@@ -122,22 +126,22 @@
                 <label class="form-label">Montant <span class="required-star">*</span></label>
                 <div class="input-wrapper">
                     <span class="currency-prefix">GNF</span>
-                    <input type="number" placeholder="0">
+                    <input type="number" id="montant" placeholder="0">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Motif <span class="optional-text">— optionnel</span></label>
                 <div class="input-wrapper" style="align-items: flex-start; padding: 18px;">
-                    <textarea placeholder="Raison de cet engagement..."></textarea>
+                    <textarea id="motif" placeholder="Raison de cet engagement..."></textarea>
                 </div>
             </div>
 
             <div class="button-row">
                 <button class="btn btn-ghost" onclick="history.back()">Annuler</button>
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" id="btn-submit" onclick="handleSubmit()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    Créer le Karfa
+                    <span id="submit-text">Créer le Karfa</span>
                 </button>
             </div>
         </div>
@@ -146,6 +150,95 @@
     <script>
         function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active'); }
         function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+
+        let currentUserId = null;
+        let editId = null;
+
+        async function checkConnection() {
+            const { data: { user } } = await window.supabase.auth.getUser();
+            if (!user) {
+                window.location.replace('../login.html');
+                return;
+            }
+            currentUserId = user.id;
+
+            // Mode édition
+            const params = new URLSearchParams(window.location.search);
+            editId = params.get('id');
+            if (editId) {
+                setupEditMode();
+            }
+        }
+
+        async function setupEditMode() {
+            document.getElementById('form-title').innerText = "Modifier le Karfa";
+            document.getElementById('form-subtitle').innerText = "Mettez à jour les informations de cet engagement";
+            document.getElementById('submit-text').innerText = "Mettre à jour";
+            
+            try {
+                const { data: karfa, error } = await window.supabase
+                    .from('karfa')
+                    .select('*')
+                    .eq('id', editId)
+                    .single();
+                
+                if(error) throw error;
+                if(karfa) {
+                    document.getElementById('beneficiaire').value = karfa.beneficiaire;
+                    document.getElementById('montant').value = karfa.montant;
+                    document.getElementById('motif').value = karfa.motif || "";
+                }
+            } catch(e) {
+                console.error("Erreur chargement Karfa:", e);
+                alert("Impossible de charger les données du Karfa.");
+            }
+        }
+
+        async function handleSubmit() {
+            const benef = document.getElementById('beneficiaire').value;
+            const mont = document.getElementById('montant').value;
+            const mot = document.getElementById('motif').value;
+
+            if(!benef || !mont) {
+                alert("Veuillez remplir les champs obligatoires (*)");
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.innerText = "Traitement...";
+
+            const payload = {
+                beneficiaire: benef,
+                montant: parseFloat(mont),
+                motif: mot,
+                user_id: currentUserId
+            };
+
+            try {
+                let result;
+                if(editId) {
+                    result = await window.supabase
+                        .from('karfa')
+                        .update(payload)
+                        .eq('id', editId);
+                } else {
+                    result = await window.supabase
+                        .from('karfa')
+                        .insert([payload]);
+                }
+
+                if(result.error) throw result.error;
+
+                window.location.href = 'list.html';
+            } catch(e) {
+                alert("Erreur lors de l'enregistrement : " + e.message);
+                btn.disabled = false;
+                btn.innerText = editId ? "Mettre à jour" : "Créer le Karfa";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkConnection);
     </script>
 </body>
 </html>

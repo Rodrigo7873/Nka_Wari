@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>N'Ka Wari | Comptes</title>
+    <title>N'Ka Wari | Mes Comptes</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <style>
         :root {
             --bg-body: #f8fafc;
             --primary-blue: #3b82f6; 
             --text-dark: #1e293b;
             --text-gray: #64748b;
-            --border-gray: #f1f5f9;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -21,8 +23,8 @@
         .max-w { max-width: 500px; margin: 0 auto; }
 
         /* HEADER */
-        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 8px; }
-        .icon-btn { background: transparent; border: none; padding: 8px; color: #334155; cursor: pointer; }
+        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 24px; position: sticky; top: 0; background: var(--bg-body); z-index: 100; }
+        .icon-btn { background: transparent; border: none; padding: 8px; color: #334155; cursor: pointer; display: flex; align-items: center; }
 
         /* DASHBOARD TITLE */
         .dashboard-header { text-align: center; margin-bottom: 24px; padding: 0 20px; }
@@ -39,132 +41,81 @@
         
         .btn-green { background: #10b981; color: white; gap: 8px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3); }
         .btn-blue { background: #3b82f6; color: white; gap: 8px; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); }
-        .btn-dark-export { background: #334155; color: white; gap: 8px; padding: 0 18px; border-radius: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); height: 42px; font-size: 13px; width: auto; }
-        .btn-dark-export svg { color: white; }
 
-        /* SECTION HEADER (SOLDE) */
-        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 16px; }
-        .section-label { color: #3b82f6; font-weight: 800; font-size: 15px; }
-        .eye-btn { background: #fff; border: 1px solid #f1f5f9; padding: 10px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; }
+        /* SUMMARY CARDS (Top) */
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0 20px 32px 20px; }
+        .category-card { 
+            background: #fff; border-radius: 20px; padding: 18px; 
+            display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.02);
+            border: 1px solid #f1f5f9;
+        }
+        .cat-header { display: flex; align-items: center; gap: 8px; }
+        .cat-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .bg-blue { background: #eff6ff; color: #3b82f6; }
+        .bg-gold { background: #fffbeb; color: #d97706; }
+        .cat-label { font-size: 12px; font-weight: 700; color: #64748b; }
+        .cat-value { font-size: 18px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; }
+        .cat-unit { font-size: 12px; font-weight: 600; opacity: 0.6; margin-left: 2px; }
 
-        /* DARK CARD (Flip Base) */
-        .flip-card { background-color: transparent; width: 100%; height: 180px; perspective: 1000px; margin-bottom: 24px; padding: 0 16px; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        /* ACCOUNT CARDS (List) */
+        .accounts-grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 0 20px; }
+        .flip-card { height: 160px; perspective: 1000px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: left; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
-        .card-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
-        .card-dark { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; }
-
-        .card-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .card-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
-        .card-pill { background: rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .card-main-amount { font-size: 36px; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .card-main-amount span { font-size: 16px; opacity: 0.8; font-weight: 600; margin-left: 6px; }
-        .card-bottom-text { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 500; line-height: 1.4; }
+        .flip-card-front { background: white; border: 1.5px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .flip-card-back { background: #1e293b; color: white; transform: rotateY(180deg); box-shadow: 0 10px 25px rgba(30, 41, 59, 0.2); }
 
-        /* WHITE CARD */
-        .card-white { background: #fff; border-radius: 28px; margin: 0 16px 24px 16px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.02); }
-        .total-comptes-row { margin-bottom: 30px; }
-        .total-header { display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: 14px; font-weight: 700; margin-bottom: 12px; }
-        .total-val { font-size: 38px; font-weight: 900; color: #3b82f6; letter-spacing: -1px; }
-        .total-val span { font-size: 16px; margin-left: 4px; }
+        .acc-type { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; }
+        .acc-name { font-size: 17px; font-weight: 800; color: #1e293b; }
+        .acc-balance { font-size: 26px; font-weight: 900; color: #1e293b; letter-spacing: -1px; }
+        .acc-balance span { font-size: 14px; font-weight: 700; opacity: 0.5; margin-left: 4px; }
 
-        .sub-item { position: relative; padding-left: 20px; margin-bottom: 24px; border-left: 4px solid #f1f5f9; margin-left: 2px; }
-        .sub-item-orange { border-left-color: #f59e0b; }
-        .sub-label { display: flex; align-items: center; gap: 8px; color: #94a3b8; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
-        .sub-val { font-size: 28px; font-weight: 900; color: #1e293b; letter-spacing: -0.5px; }
-        .sub-val span { font-size: 14px; margin-left: 4px; }
-        .valorisation { font-size: 13px; color: #94a3b8; font-weight: 600; margin-top: 6px; }
-
-        /* GOLD PRICE */
-        .gold-card { background: #fff; border-radius: 28px; margin: 0 16px 24px 16px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.02); }
-        .gold-top { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
-        .gold-icon { width: 48px; height: 48px; background: #fffbeb; color: #f59e0b; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-        .gold-info h4 { font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 2px; }
-        .gold-info .price { font-size: 20px; font-weight: 800; color: #1e293b; }
-        .gold-info .maj { font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 4px; }
-
-        .gold-input-box { border: 1px solid #f1f5f9; border-radius: 20px; padding: 6px 6px 6px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .gold-input-box input { border: none; outline: none; font-size: 14px; font-weight: 700; color: #1e293b; width: 100%; transition: 0.3s; }
-        .gold-input-box span { font-size: 12px; font-weight: 800; color: #cbd5e1; margin-right: 12px; }
-        .btn-fix { background: #10b981; color: white; padding: 10px 22px; border-radius: 16px; font-size: 13px; font-weight: 800; border: none; }
-        .btn-web { background: #3b82f6; color: white; padding: 0 20px; height: 44px; border-radius: 22px; font-size: 13px; font-weight: 800; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: fit-content; }
-        .btn-web:active { transform: scale(0.96); }
-
-        /* OPERATIONS SECTION */
-        .operations-section { background: #fff; border-radius: 28px; margin: 0 16px 24px 16px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.02); }
-        .op-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .op-header h3 { font-size: 17px; font-weight: 800; color: #1e293b; }
-        .op-list { display: flex; flex-direction: column; gap: 0; }
-        .op-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid #f8fafc; }
-        .op-item:last-child { border-bottom: none; }
-        .op-left { display: flex; gap: 14px; align-items: flex-start; }
-        .op-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .op-icon-green { background: #f0fdf4; color: #10b981; }
-        .op-icon-red { background: #fef2f2; color: #ef4444; }
-        .op-info h4 { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 4px; line-height: 1.2; }
-        .op-info h4 span { color: #94a3b8; font-weight: 500; margin: 0 4px; }
-        .op-info .type-ajout { color: #10b981; }
-        .op-info .type-retrait { color: #ef4444; }
-        .op-date { font-size: 12px; color: #94a3b8; font-weight: 500; line-height: 1.4; }
-        .op-amount { font-size: 16px; font-weight: 800; white-space: nowrap; margin-top: 2px; }
-        .text-green { color: #10b981; }
-        .text-red { color: #ef4444; }
-        .voir-plus { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 700; margin-top: 15px; }
+        .acc-actions { display: flex; gap: 10px; }
+        .btn-action-small { padding: 10px; border-radius: 12px; background: rgba(255,255,255,0.1); color: white; border: none; flex: 1; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+        .btn-delete-small { background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; height: 75px; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
         .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #94a3b8; gap: 6px; font-size: 10px; font-weight: 700; transition: 0.2s; }
         .nav-item.active { color: #3b82f6; }
 
-        /* BLUR */
-        .blur-target { transition: filter 0.3s ease; }
-        .blur-target.blurred { filter: blur(8px); pointer-events: none; user-select: none; }
-
         /* OVERLAYS & SIDEBAR */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 150; opacity: 0; pointer-events: none; transition: 0.3s; }
         .overlay.active { opacity: 1; pointer-events: auto; }
-        .sidebar { position: fixed; top: 0; left: 0; width: 85%; max-width: 310px; height: 100%; background: #fff; z-index: 200; transform: translateX(-100%); transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.05); }
+        .sidebar { position: fixed; top: 0; left: 0; width: 85%; max-width: 310px; height: 100%; background: #fff; z-index: 200; transform: translateX(-100%); transition: 0.3s; }
         .sidebar.active { transform: translateX(0); }
-
-        .notif-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 70%; background: #fff; z-index: 250; border-radius: 30px 30px 0 0; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
-        .notif-panel.active { transform: translateY(0); }
+        
+        .blur-target.blurred { filter: blur(8px); }
     </style>
 </head>
 <body>
-    <!-- SIDEBAR -->
     <div class="overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo-group">
-                <div class="sidebar-logo"><img src="../../src/frontend/static/images/logo.jpg" alt="Logo" style="width:100%; height:100%; object-fit:contain;"></div>
-                <div class="sidebar-title">N'Ka Menu</div>
+        <!-- Sidebar content -->
+        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 24px 20px 16px 20px; border-bottom: 1px solid #f1f5f9;">
+            <div class="sidebar-logo-group" style="display: flex; align-items: center; gap: 12px;">
+                <div class="sidebar-logo" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: white;">
+                    <img src="../images/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <div class="sidebar-title" style="font-size: 17px; font-weight: 800; color: #1e293b;">N'Ka Menu</div>
             </div>
             <button class="icon-btn" onclick="closeMenu()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
         </div>
-        <div class="sidebar-nav" style="padding: 10px 20px;">
-            <a href="#" style="display:flex; align-items:center; gap:16px; padding:16px 0; text-decoration:none; color:#1e293b; font-size:15px; font-weight:600;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profil</a>
-            <a href="#" style="display:flex; align-items:center; gap:16px; padding:16px 0; text-decoration:none; color:#1e293b; font-size:15px; font-weight:600;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Paramètres</a>
-            <button onclick="logout()" style="display:flex; align-items:center; gap:12px; margin-top:20px; padding:14px 20px; background:#fef2f2; border-radius:12px; color:#ef4444; font-size:14px; font-weight:700; border:none; width:100%;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Déconnexion</button>
-        </div>
-    </div>
-
-    <!-- NOTIFICATIONS -->
-    <div class="overlay" id="notif-overlay" onclick="closeNotifications()"></div>
-    <div class="notif-panel" id="notification-panel">
-        <div style="padding: 24px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="font-weight: 800; font-size: 17px;">Notifications</h3>
-            <button class="icon-btn" onclick="closeNotifications()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <div class="sidebar-nav" style="padding: 10px 20px; display: flex; flex-direction: column; gap: 5px;">
+            <a href="../dashboard.html" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Accueil
+            </a>
+            <a href="list.html" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #3b82f6; font-size: 15px; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" x2="21" y1="22" y2="22" /><line x1="6" x2="6" y1="18" y2="11" /><line x1="10" x2="10" y1="18" y2="11" /><line x1="14" x2="14" y1="18" y2="11" /><line x1="18" x2="18" y1="18" y2="11" /><polygon points="12 2 20 7 4 7" /></svg> Comptes
+            </a>
+            <button class="logout-btn" onclick="logout()" style="display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 14px 20px; background: #fef2f2; border-radius: 12px; color: #ef4444; font-size: 14px; font-weight: 700; border: none; width: 100%; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Déconnexion
             </button>
-        </div>
-        <div class="notif-content" style="padding: 40px 20px; text-align: center; color: #64748b; font-size: 13px; font-weight: 500;">
-            Aucune nouvelle notification
         </div>
     </div>
 
@@ -174,184 +125,52 @@
             <button class="icon-btn" onclick="openMenu()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
-            <button class="icon-btn" onclick="openNotifications()">
+            <button class="icon-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             </button>
         </div>
 
         <!-- DASHBOARD TITLE -->
         <div class="dashboard-header">
-            <h1 class="dashboard-title">Dashboard Comptes</h1>
+            <h1 class="dashboard-title">Mes Comptes</h1>
         </div>
 
         <!-- ACTIONS -->
         <div class="action-container">
             <div class="row-actions">
-                <a href="add.html" class="btn btn-green">
+                <a href="javascript:void(0)" onclick="ajouterCompte()" class="btn btn-green">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Nouveau Compte
                 </a>
-                <a href="liste.html" class="btn btn-blue">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="4" cy="18" r="1.5"/></svg>
-                    Liste Comptes
-                </a>
-            </div>
-            <button class="btn btn-dark-export">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exporter
-            </button>
-        </div>
-
-        <!-- SECTION SOLDE HEADER -->
-        <div class="section-header">
-            <div class="section-label">SOLDE ACTUEL</div>
-            <button class="eye-btn" onclick="toggleBlurAll()">
-                <div id="eye-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg></div>
-            </button>
-        </div>
-
-        <!-- 3D FLIP CARD -->
-        <div class="flip-card" id="flipCard" onclick="toggleFlip()">
-            <div class="flip-card-inner">
-                <!-- FRONT: TOTAL CASH (BLUE) -->
-                <div class="card-front card-blue">
-                    <div class="card-top-row">
-                        <div class="card-title">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            Total Cash
-                        </div>
-                        <div class="card-pill">
-                            Patrimoine Net
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </div>
-                    <div class="card-main-amount blur-target">64 800 000 <span>GNF</span></div>
-                    <div class="card-bottom-text">Comptes + Karfa + Créances - Dettes (Inclut Karfa)</div>
-                </div>
-
-                <!-- BACK: PATRIMOINE NET (DARK) -->
-                <div class="card-back card-dark">
-                    <div class="card-top-row">
-                        <div class="card-title">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                            Patrimoine Net
-                        </div>
-                        <div class="card-pill">
-                            Total Cash
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </div>
-                    <div class="card-main-amount blur-target">42 600 000 <span>GNF</span></div>
-                    <div class="card-bottom-text">Comptes + Créances - Dettes (Exclut Karfa)</div>
-                </div>
             </div>
         </div>
 
-        <!-- TOTAL COMPTES CARD -->
-        <div class="card-white" style="margin-bottom: 24px;">
-            <div class="total-comptes-row">
-                <div class="total-header">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                    Total Comptes
+        <!-- SUMMARY TILES -->
+        <div class="summary-grid">
+            <div class="category-card">
+                <div class="cat-header">
+                    <div class="cat-icon bg-blue">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <span class="cat-label">Total Argent</span>
                 </div>
-                <div class="total-val blur-target">45 230 000 <span>GNF</span></div>
+                <div class="cat-value blur-target"><span id="sum-argent">0</span> <span class="cat-unit">GNF</span></div>
             </div>
-
-            <div class="sub-item">
-                <div class="sub-label">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    Liquidités
+            <div class="category-card">
+                <div class="cat-header">
+                    <div class="cat-icon bg-gold">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
+                    </div>
+                    <span class="cat-label">Total Or (24k)</span>
                 </div>
-                <div class="sub-val blur-target">39 830 000 <span>GNF</span></div>
-            </div>
-
-            <div class="sub-item sub-item-orange" style="margin-bottom: 0;">
-                <div class="sub-label">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-                    Or en possession
-                </div>
-                <div class="sub-val blur-target">5 400 000 <span>GNF</span></div>
-                <div class="valorisation">Estimé sur 22.5g (Cours: 240,000 GNF/g)</div>
+                <div class="cat-value blur-target"><span id="sum-or">0</span> <span class="cat-unit">g</span></div>
             </div>
         </div>
 
-        <!-- OPERATIONS SECTION -->
-        <div class="operations-section">
-            <div class="op-header">
-                <h3>Dernières opérations</h3>
-            </div>
-            <div class="op-list">
-                <!-- Saran - Ajout -->
-                <div class="op-item">
-                    <div class="op-left">
-                        <div class="op-icon op-icon-green">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </div>
-                        <div class="op-info">
-                            <h4>Saran <span>•</span> <span class="type-ajout">Ajout de fonds</span></h4>
-                            <div class="op-date">21/03/2026 15:07 -<br>Ajout de 2500000 GNF</div>
-                        </div>
-                    </div>
-                    <div class="op-amount text-green">+ 2 500 000 GNF</div>
-                </div>
-
-                <!-- Saran - Retrait -->
-                <div class="op-item">
-                    <div class="op-left">
-                        <div class="op-icon op-icon-red">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 18l-9.5-9.5-5 5L1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-                        </div>
-                        <div class="op-info">
-                            <h4>Saran <span>•</span> <span class="type-retrait">Retrait/Restitution</span></h4>
-                            <div class="op-date">21/03/2026 15:06 -<br>Retrait de 500000 GNF</div>
-                        </div>
-                    </div>
-                    <div class="op-amount text-red">- 500 000 GNF</div>
-                </div>
-
-                <!-- Moussa - Retrait -->
-                <div class="op-item">
-                    <div class="op-left">
-                        <div class="op-icon op-icon-red">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 18l-9.5-9.5-5 5L1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-                        </div>
-                        <div class="op-info">
-                            <h4>Moussa <span>•</span> <span class="type-retrait">Retrait/Restitution</span></h4>
-                            <div class="op-date">21/03/2026 15:05 - Pour les affaires</div>
-                        </div>
-                    </div>
-                    <div class="op-amount text-red">- 5 000 000 GNF</div>
-                </div>
-            </div>
-            <a href="liste.html" class="voir-plus">
-                Voir plus
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-        </div>
-
-        <!-- GOLD PRICE CARD -->
-        <div class="gold-card">
-            <div class="gold-top">
-                <div class="gold-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                </div>
-                <div class="gold-info">
-                    <h4>Cours de l'Or</h4>
-                    <div class="price">240 000 GNF <span style="font-size: 13px; color: #94a3b8; font-weight: 500;">/ gramme</span></div>
-                    <div class="maj">Mis à jour le 10/04/2026</div>
-                </div>
-            </div>
-            
-            <div class="gold-input-box">
-                <input type="number" placeholder="Fixer nouveau cours">
-                <span>GNF/g</span>
-                <button class="btn-fix">Fixer</button>
-            </div>
-
-            <button class="btn-web">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                Via le web
-            </button>
+        <!-- ACCOUNTS GRID -->
+        <div class="accounts-grid" id="accounts-container">
+            <!-- Chargement... -->
+            <div style="text-align: center; color: #94a3b8; font-size: 14px;">Chargement des comptes...</div>
         </div>
     </div>
 
@@ -370,7 +189,7 @@
             <span>Dettes</span>
         </a>
         <a href="list.html" class="nav-item active">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 10v11"/><path d="M9 10v11"/><path d="M15 10v11"/><path d="M19 10v11"/><path d="M12 2 4 10h16Z"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22" /><line x1="6" x2="6" y1="18" y2="11" /><line x1="10" x2="10" y1="18" y2="11" /><line x1="14" x2="14" y1="18" y2="11" /><line x1="18" x2="18" y1="18" y2="11" /><polygon points="12 2 20 7 4 7" /></svg>
             <span>Comptes</span>
         </a>
     </nav>
@@ -378,23 +197,100 @@
     <script>
         function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('sidebarOverlay').classList.add('active'); }
         function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebarOverlay').classList.remove('active'); }
-        function openNotifications() { document.getElementById('notification-panel').classList.add('active'); document.getElementById('notif-overlay').classList.add('active'); }
-        function closeNotifications() { document.getElementById('notification-panel').classList.remove('active'); document.getElementById('notif-overlay').classList.remove('active'); }
-        function toggleFlip() { document.getElementById('flipCard').classList.toggle('flipped'); }
-        
-        function applyVisibility(hidden) {
-            const targets = document.querySelectorAll('.blur-target');
-            targets.forEach(el => hidden ? el.classList.add('blurred') : el.classList.remove('blurred'));
-            const icon = document.getElementById('eye-icon');
-            if(icon) icon.innerHTML = hidden ? 
-                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>` :
-                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>`;
-        }
-        function toggleBlurAll() {
-            const first = document.querySelector('.blur-target');
-            applyVisibility(!(first && first.classList.contains('blurred')));
-        }
         function logout() { window.location.replace('../login.html'); }
+        function flipCard(el) { el.classList.toggle('flipped'); }
+
+        // CRUD
+        window.ajouterCompte = function() { window.location.href = 'add.html'; };
+        window.modifierCompte = function(id) { window.location.href = 'add.html?id=' + id; };
+        
+        window.supprimerCompte = async function(e, id) {
+            e.stopPropagation();
+            if(!confirm("Supprimer ce compte définitivement ?")) return;
+            try {
+                const { error } = await window.supabase.from('comptes').delete().eq('id', id);
+                if(error) throw error;
+                loadComptes();
+            } catch(e) { alert("Erreur: " + e.message); }
+        };
+
+        async function loadComptes() {
+            try {
+                // 1. Session
+                const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+                if (userError || !user) {
+                    window.location.replace('../login.html');
+                    return;
+                }
+
+                // 2. Fetch
+                const { data: comptes, error } = await window.supabase
+                    .from('comptes')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('type', { ascending: true });
+
+                if (error) throw error;
+
+                const container = document.getElementById('accounts-container');
+                let html = '';
+                let totalArgent = 0;
+                let totalOr = 0;
+
+                const fmt = (v) => new Intl.NumberFormat('fr-FR').format(Math.round(v));
+
+                if (!comptes || comptes.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 14px;">Aucun compte enregistré.</div>';
+                    return;
+                }
+
+                comptes.forEach(c => {
+                    const solde = parseFloat(c.solde) || 0;
+                    const isOr = (c.type === 'or');
+                    if (isOr) totalOr += solde;
+                    else totalArgent += solde;
+
+                    html += `
+                    <div class="flip-card" onclick="flipCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="acc-type">${isOr ? 'Compte Or 24k' : 'Liquidités'}</div>
+                                <div class="acc-name">${c.nom}</div>
+                                <div class="acc-balance blur-target">${fmt(solde)} <span>${isOr ? 'g' : 'GNF'}</span></div>
+                                <div style="font-size: 11px; color: #94a3b8; font-weight: 500;">Toucher pour gérer</div>
+                            </div>
+                            <div class="flip-card-back">
+                                <div>
+                                    <div style="font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase;">Actions</div>
+                                    <div style="font-size: 18px; font-weight: 800; margin-top: 4px;">Gérer ce compte</div>
+                                </div>
+                                <div class="acc-actions">
+                                    <button class="btn-action-small" onclick="modifierCompte('${c.id}')">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        Modifier
+                                    </button>
+                                    <button class="btn-action-small btn-delete-small" onclick="supprimerCompte(event, '${c.id}')">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                document.getElementById('sum-argent').textContent = fmt(totalArgent);
+                document.getElementById('sum-or').textContent = totalOr.toFixed(2).replace('.', ',');
+
+            } catch(err) {
+                console.error(err);
+                document.getElementById('accounts-container').innerHTML = '<div style="color:red">Erreur.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadComptes);
     </script>
 </body>
 </html>

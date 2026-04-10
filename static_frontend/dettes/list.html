@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>N'Ka Wari | Dettes & Créances</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -44,7 +47,7 @@
         /* SECTION HEADER (SUMMARY) */
         .section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 16px; }
         .section-label { color: #4b80e6; font-weight: 800; font-size: 15px; }
-        .eye-btn { background: #fff; border: 1px solid #f1f5f9; padding: 10px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; }
+        .eye-btn { background: #fff; border: 1px solid #f1f5f9; padding: 10px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; cursor: pointer; }
 
         /* 3D FINANCE CARD */
         .finance-hub { perspective: 1000px; margin: 0 20px 24px 20px; height: 140px; }
@@ -71,12 +74,19 @@
         .op-left { display: flex; gap: 14px; align-items: flex-start; }
         .op-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .op-icon-blue { background: #ecfeff; color: #0ea5e9; }
+        .op-icon-red { background: #fee2e2; color: #ef4444; }
         .op-info h4 { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 4px; line-height: 1.2; }
         .op-info h4 span { color: #cbd5e1; font-weight: 500; margin: 0 6px; }
-        .op-type { color: #3b82f6; font-size: 14px; font-weight: 600; }
+        .type-creance { color: #10b981; }
+        .type-dette { color: #ef4444; }
         .op-date { font-size: 12px; color: #94a3b8; font-weight: 500; line-height: 1.4; }
-        .op-amount { font-size: 16px; font-weight: 800; color: #3b82f6; white-space: nowrap; margin-top: 2px; }
-        .voir-plus { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 700; margin-top: 15px; }
+        .op-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .op-amount { font-size: 16px; font-weight: 800; white-space: nowrap; }
+        
+        .item-actions { display: flex; gap: 6px; }
+        .small-action-btn { background: #f8fafc; border: none; padding: 6px; border-radius: 8px; color: #94a3b8; cursor: pointer; display: flex; }
+        .small-action-btn:hover { background: #f1f5f9; color: #1e293b; }
+        .btn-delete:hover { background: #fef2f2; color: #ef4444; }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; height: 75px; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
@@ -96,7 +106,34 @@
 </head>
 <body>
     <div class="overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+        <!-- Sidebar content mapping to other modules -->
+        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 24px 20px 16px 20px; border-bottom: 1px solid #f1f5f9;">
+            <div class="sidebar-logo-group" style="display: flex; align-items: center; gap: 12px;">
+                <div class="sidebar-logo" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: white;">
+                    <img src="../images/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <div class="sidebar-title" style="font-size: 17px; font-weight: 800; color: #1e293b;">N'Ka Menu</div>
+            </div>
+            <button class="icon-btn" onclick="closeMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="sidebar-nav" style="padding: 10px 20px; display: flex; flex-direction: column; gap: 5px;">
+            <a href="../dashboard.html" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Accueil
+            </a>
+            <a href="../karfa/list.html" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg> Karfa
+            </a>
+            <a href="list.html" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #3b82f6; font-size: 15px; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Dettes
+            </a>
+            <button class="logout-btn" onclick="logout()" style="display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 14px 20px; background: #fef2f2; border-radius: 12px; color: #ef4444; font-size: 14px; font-weight: 700; border: none; width: 100%; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Déconnexion
+            </button>
+        </div>
+    </div>
 
     <div class="max-w">
         <!-- HEADER TOP -->
@@ -117,7 +154,7 @@
         <!-- ACTIONS -->
         <div class="action-container">
             <div class="row-actions">
-                <a href="add.html" class="btn btn-green">
+                <a href="javascript:void(0)" onclick="ajouterDette()" class="btn btn-green">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Nouvelle Dette
                 </a>
@@ -126,10 +163,6 @@
                     Liste Dettes
                 </a>
             </div>
-            <button class="btn btn-dark-export">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exporter
-            </button>
         </div>
 
         <!-- SECTION HEADER (SUMMARY) -->
@@ -152,7 +185,7 @@
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
                     </div>
-                    <div class="card-amount blur-target">5 000 000 <span>GNF</span></div>
+                    <div class="card-amount blur-target"><span id="total-dois">0</span> <span>GNF</span></div>
                 </div>
 
                 <!-- BACK: On Me Doit (GREEN) -->
@@ -164,7 +197,7 @@
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
                     </div>
-                    <div class="card-amount blur-target">2 370 000 <span>GNF</span></div>
+                    <div class="card-amount blur-target"><span id="total-on-me-doit">0</span> <span>GNF</span></div>
                 </div>
             </div>
         </div>
@@ -174,24 +207,9 @@
             <div class="op-header">
                 <h3>Dernières opérations</h3>
             </div>
-            <div class="op-list">
-                <div class="op-item">
-                    <div class="op-left">
-                        <div class="op-icon op-icon-blue">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </div>
-                        <div class="op-info">
-                            <h4>Finda <span>•</span> <span class="op-type">Encaissement</span></h4>
-                            <div class="op-date">21/03/2026 15:47 - <br>Encaissement partiel/total</div>
-                        </div>
-                    </div>
-                    <div class="op-amount">- 580 000 GNF</div>
-                </div>
+            <div class="op-list" id="dette-list-container">
+                <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 14px;">Chargement...</div>
             </div>
-            <a href="liste.html" class="voir-plus">
-                Voir plus
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
         </div>
     </div>
 
@@ -218,6 +236,7 @@
     <script>
         function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('sidebarOverlay').classList.add('active'); }
         function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebarOverlay').classList.remove('active'); }
+        function logout() { window.location.replace('../login.html'); }
         function toggleFlip(e) { if(e) e.stopPropagation(); document.getElementById('financeCard').classList.toggle('flipped'); }
         
         function applyVisibility(hidden) {
@@ -225,13 +244,108 @@
             targets.forEach(el => hidden ? el.classList.add('blurred') : el.classList.remove('blurred'));
             const icon = document.getElementById('eye-icon');
             if(icon) icon.innerHTML = hidden ? 
-                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>` :
+                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>` :
                 `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>`;
         }
         function toggleBlurAll() {
             const first = document.querySelector('.blur-target');
             applyVisibility(!(first && first.classList.contains('blurred')));
         }
+
+        // Fonctions CRUD
+        window.ajouterDette = function() { window.location.href = 'add.html'; };
+        window.modifierDette = function(id) { window.location.href = 'add.html?id=' + id; };
+        
+        window.supprimerDette = async function(id) {
+            if(!confirm("Supprimer cet engagement ?")) return;
+            try {
+                const { error } = await window.supabase.from('dettes').delete().eq('id', id);
+                if(error) throw error;
+                loadDettes();
+            } catch(e) { alert("Erreur: " + e.message); }
+        };
+
+        async function loadDettes() {
+            try {
+                // 1. Vérifie la session
+                const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+                if (userError || !user) {
+                    window.location.replace('../login.html');
+                    return;
+                }
+
+                // 2. Fetch données
+                const { data: dettes, error } = await window.supabase
+                    .from('dettes')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('dette-list-container');
+                let html = '';
+                let totalJeDois = 0;
+                let totalOnMeDoit = 0;
+
+                if (!dettes || dettes.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 14px;">Aucun engagement enregistré.</div>';
+                    document.getElementById('total-dois').textContent = '0';
+                    document.getElementById('total-on-me-doit').textContent = '0';
+                    return;
+                }
+
+                const fmt = (v) => new Intl.NumberFormat('fr-FR').format(Math.round(v));
+
+                dettes.forEach(d => {
+                    const montant = parseFloat(d.montant) || 0;
+                    const isDette = d.type === 'dette';
+                    
+                    if (isDette) totalJeDois += montant;
+                    else totalOnMeDoit += montant;
+
+                    const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString() : 'Date inconnue';
+                    const iconColor = isDette ? 'op-icon-red' : 'op-icon-blue';
+                    const iconSvg = isDette ? 
+                        `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 18l-9.5-9.5-5 5L1 6"/><polyline points="17 18 23 18 23 12"/></svg>` :
+                        `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+                    html += `
+                    <div class="op-item">
+                        <div class="op-left">
+                            <div class="op-icon ${iconColor}">${iconSvg}</div>
+                            <div class="op-info">
+                                <h4>${d.nom || 'Inconnu'} <span>•</span> <span class="op-type" style="color: ${isDette?'#ef4444':'#10b981'}">${isDette?'Dette':'Créance'}</span></h4>
+                                <div class="op-date">${dateStr} - <br>${d.description || 'Pas de description'}</div>
+                            </div>
+                        </div>
+                        <div class="op-right">
+                            <div class="op-amount" style="color: ${isDette?'#ef4444':'#10b981'}">${isDette ? '-' : '+'} ${fmt(montant)} GNF</div>
+                            <div class="item-actions">
+                                <button class="small-action-btn" onclick="modifierDette('${d.id}')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </button>
+                                <button class="small-action-btn btn-delete" onclick="supprimerDette('${d.id}')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                document.getElementById('total-dois').textContent = fmt(totalJeDois);
+                document.getElementById('total-on-me-doit').textContent = fmt(totalOnMeDoit);
+                applyVisibility(true); // Masquer par défaut
+
+            } catch(err) {
+                console.error(err);
+                document.getElementById('dette-list-container').innerHTML = '<div style="color:red">Erreur.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDettes);
     </script>
 </body>
 </html>

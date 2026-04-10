@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>N'Ka Wari | Dashboard</title>
+    <!-- Supabase SDK & Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
     <style>
         :root {
             --bg-body: #f4f5f7;
@@ -233,7 +236,7 @@
         <div class="sidebar-header">
             <div class="sidebar-logo-group">
                 <div class="sidebar-logo" style="border: none;">
-                    <img src="../src/frontend/static/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: contain; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <img src="images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: contain; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                 </div>
                 <div class="sidebar-title">N'Ka Menu</div>
             </div>
@@ -244,17 +247,26 @@
         
         <!-- Liens du Menu -->
         <div class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Accueil
+            </a>
+            <a href="javascript:void(0)" onclick="createKarfa()" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                Karfa
+            </a>
+            <a href="javascript:void(0)" onclick="createDette()" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Dettes
+            </a>
+            <a href="javascript:void(0)" onclick="createCompte()" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 10v11"/><path d="M9 10v11"/><path d="M15 10v11"/><path d="M19 10v11"/><path d="M12 2 4 10h16Z"/></svg>
+                Comptes
+            </a>
+            <div style="height: 1px; background: #f1f5f9; margin: 10px 0;"></div>
             <a href="#" class="sidebar-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 Profil
-            </a>
-            <a href="#" class="sidebar-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                Paramètres
-            </a>
-            <a href="#" class="sidebar-link">
-                <img src="../src/frontend/static/images/don_icon.png" alt="Don" style="width: 18px; height: 18px; object-fit: contain;">
-                Faire un don
             </a>
             
             <button class="logout-btn" onclick="logout()">
@@ -292,7 +304,7 @@
 
         <!-- GREETING -->
         <div class="px-5 mb-6">
-            <h1 class="text-2xl font-bold text-dark">Bonjour, <span id="userName">Fanta</span> 👋</h1>
+            <h1 class="text-2xl font-bold text-dark">Bonjour, <span id="userName">...</span> 👋</h1>
             <p class="text-sm text-gray mt-1">Ravi de vous revoir sur N'Ka Wari.</p>
         </div>
 
@@ -323,7 +335,7 @@
                         </button>
                     </div>
                     <div class="text-3xl font-bold blur-target" style="letter-spacing: -0.5px;">
-                        39 830 000 <span class="text-lg font-normal">GNF</span>
+                        <span id="balance-liquidites">---</span> <span class="text-lg font-normal">GNF</span>
                     </div>
                     <div class="text-xs font-normal" style="color: rgba(255,255,255,0.85); font-size: 0.9em;">Comptes Argent + Karfa</div>
                 </div>
@@ -341,7 +353,7 @@
                         </button>
                     </div>
                     <div class="text-3xl font-bold blur-target" style="letter-spacing: -0.5px;">
-                        15 000 000 <span class="text-lg font-normal">GNF</span>
+                        <span id="balance-patrimoine">---</span> <span class="text-lg font-normal">GNF</span>
                     </div>
                     <div class="text-xs font-normal" style="color: rgba(255,255,255,0.85); font-size: 0.9em;">Comptes + Créances - Dettes</div>
                 </div>
@@ -365,7 +377,7 @@
             <div class="text-sm font-bold" style="color: var(--title-blue);">Nouvelles opérations</div>
         </div>
         <div class="grid-2x2">
-            <div class="action-card" onclick="goTo('karfa/add.html')">
+            <div class="action-card" onclick="createKarfa()">
                 <div class="action-circle icon-green">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
                 </div>
@@ -377,17 +389,17 @@
                 </div>
                 <div class="text-xs font-bold text-gray-700">Retirer karfa</div>
             </div>
-            <div class="action-card" onclick="goTo('dettes/add.html')">
+            <div class="action-card" onclick="createDette()">
                 <div class="action-circle icon-red">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg>
                 </div>
                 <div class="text-xs font-bold text-gray-700">Nouvelle dette</div>
             </div>
-            <div class="action-card" onclick="goTo('dettes/list.html')">
+            <div class="action-card" onclick="createCompte()">
                 <div class="action-circle icon-green">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
                 </div>
-                <div class="text-xs font-bold text-gray-700">Gérer dettes</div>
+                <div class="text-xs font-bold text-gray-700">Gérer comptes</div>
             </div>
         </div>
 
@@ -429,22 +441,6 @@
                 </div>
             </div>
 
-            <div class="history-item">
-                <div class="flex items-center gap-3">
-                    <div class="icon-box bg-purple">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="14" x2="21" y2="3"></line><polyline points="8 21 3 21 3 16"></polyline><line x1="20" y1="10" x2="3" y2="21"></line></svg>
-                    </div>
-                    <div>
-                        <div class="text-sm font-bold text-dark">Compte Ajout</div>
-                        <div class="text-xs text-gray mt-1">Mon compte</div>
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <div class="text-sm font-bold text-dark">580 000 GNF</div>
-                    <div class="text-xs text-gray mt-1" style="font-size: 10px;">il y a 18 jours</div>
-                </div>
-            </div>
-
             <div class="p-2 mt-1">
                 <button class="more-btn" onclick="goTo('operations/list.html')">Voir plus d'opérations →</button>
             </div>
@@ -471,76 +467,128 @@
         </a>
         <!-- 4. Comptes (Institution) -->
         <a href="comptes/list.html" class="nav-item">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22" /><line x1="6" x2="6" y1="18" y2="11" /><line x1="10" x2="10" y1="18" y2="11" /><line x1="14" x2="14" y1="18" y2="11" /><line x1="18" x2="18" y1="18" y2="11" /><polygon points="12 2 20 7 4 7" /></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y2="22" y1="22" /><line x1="6" x2="6" y1="18" y2="11" /><line x1="10" x2="10" y1="18" y2="11" /><line x1="14" x2="14" y1="18" y2="11" /><line x1="18" x2="18" y1="18" y2="11" /><polygon points="12 2 20 7 4 7" /></svg>
             <span class="nav-text">Comptes</span>
         </a>
     </nav>
 
     <script>
         // Gestion du Menu latéral (Sidebar)
-        function openMenu() {
+        window.openMenu = function() {
             document.getElementById('sidebar').classList.add('active');
             document.getElementById('sidebarOverlay').classList.add('active');
         }
 
-        function closeMenu() {
+        window.closeMenu = function() {
             document.getElementById('sidebar').classList.remove('active');
             document.getElementById('sidebarOverlay').classList.remove('active');
         }
 
         // Gestion du Panneau de Notifications
-        function openNotifications() {
+        window.openNotifications = function() {
             document.getElementById('notification-panel').classList.add('active');
             document.getElementById('notif-overlay').classList.add('active');
         }
 
-        function closeNotifications() {
+        window.closeNotifications = function() {
             document.getElementById('notification-panel').classList.remove('active');
             document.getElementById('notif-overlay').classList.remove('active');
         }
 
-        function logout() {
-            // Logique de déconnexion (redirection vers login)
-            window.location.replace('login.html');
+        window.logout = async function() {
+            try {
+                if(window.logoutFromSupabase) await window.logoutFromSupabase();
+                window.location.replace('login.html');
+            } catch(e) { window.location.replace('login.html'); }
         }
 
-        // Animation 3D de la carte Financière
-        function toggleFlip() {
+        window.toggleFlip = function() {
             document.getElementById('finance-hub').classList.toggle('flipped');
         }
+
+        // Fonctions de redirection demandées
+        window.createKarfa = function() { window.location.href = 'karfa/list.html'; };
+        window.createDette = function() { window.location.href = 'dettes/list.html'; };
+        window.createCompte = function() { window.location.href = 'comptes/list.html'; };
 
         // Logique de masquage sécurisé (Flou)
         const svgOpen = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>`;
         const svgClosed = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`;
 
-        function applyVisibility(hidden) {
+        window.applyVisibility = function(hidden) {
             const targets = document.querySelectorAll('.blur-target');
             const icon = document.getElementById('eye-icon');
             targets.forEach(el => {
-                if (hidden) {
-                    el.classList.add('blurred');
-                } else {
-                    el.classList.remove('blurred');
-                }
+                if (hidden) el.classList.add('blurred');
+                else el.classList.remove('blurred');
             });
-            if(icon) {
-                icon.innerHTML = hidden ? svgClosed : svgOpen;
-            }
+            if(icon) icon.innerHTML = hidden ? svgClosed : svgOpen;
         }
 
-        function toggleBlurAll() {
+        window.toggleBlurAll = function() {
             const firstTarget = document.querySelector('.blur-target');
             const isCurrentlyHidden = firstTarget && firstTarget.classList.contains('blurred');
             applyVisibility(!isCurrentlyHidden);
         }
 
-        function goTo(url) {
+        window.goTo = function(url) {
             window.location.href = url;
+        }
+
+        // Chargement des données réelles depuis Supabase
+        async function loadDashboardData() {
+            try {
+                // Utilise la fonction globale de vérification de session ou getUser direct
+                const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+                
+                if (userError || !user) {
+                    window.location.replace('login.html');
+                    return;
+                }
+
+                // Mise à jour du nom d'utilisateur
+                const displayName = user.user_metadata?.first_name || "Utilisateur";
+                document.getElementById('userName').textContent = displayName;
+
+                // Récupération des comptes pour les soldes
+                const { data: comptes, error } = await window.supabase
+                    .from('comptes')
+                    .select('*')
+                    .eq('user_id', user.id);
+
+                if (error) throw error;
+
+                let liquidites = 0;
+                let patrimoine = 0;
+
+                if (comptes) {
+                    comptes.forEach(c => {
+                        const solde = parseFloat(c.solde) || 0;
+                        // Logique simplifiée : tout compte de type argent/karfa est liquidité
+                        if (c.type === 'argent' || c.type === 'karfa') {
+                            liquidites += solde;
+                        }
+                        // Patrimoine inclut tout (certaines logiques peuvent soustraire dettes)
+                        patrimoine += solde;
+                    });
+                }
+
+                // Formatage des montants
+                const fmt = (val) => new Intl.NumberFormat('fr-FR').format(Math.round(val));
+                
+                document.getElementById('balance-liquidites').textContent = fmt(liquidites);
+                document.getElementById('balance-patrimoine').textContent = fmt(patrimoine);
+
+            } catch (err) {
+                console.error("Erreur lors du chargement des données :", err);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
              // Masquer TOUJOURS par défaut au chargement
              applyVisibility(true);
+             // Charger les données
+             loadDashboardData();
         });
     </script>
 </body>

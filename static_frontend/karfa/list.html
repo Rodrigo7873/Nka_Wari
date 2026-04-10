@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>N'Ka Wari | Dashboard Karfa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -58,15 +61,22 @@
         .op-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f8fafc; }
         .op-item:last-child { border-bottom: none; }
         .op-left { display: flex; align-items: center; gap: 12px; }
-        .op-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .op-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .op-icon-ajout { background: #ebf5ff; color: #27ae60; }
         .op-icon-retrait { background: #fff5f5; color: #e74c3c; }
         .op-info { display: flex; flex-direction: column; gap: 2px; }
         .op-name { font-size: 14px; font-weight: 700; color: #1e293b; }
         .op-meta { font-size: 11px; color: #94a3b8; font-weight: 500; }
+        .op-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
         .op-amount { font-size: 14px; font-weight: 800; }
         .amount-pos { color: #27ae60; }
         .amount-neg { color: #e74c3c; }
+
+        /* ACTIONS BUTTONS IN LIST */
+        .item-actions { display: flex; gap: 8px; }
+        .small-action-btn { background: #f1f5f9; border: none; padding: 6px; border-radius: 8px; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .small-action-btn:hover { background: #e2e8f0; color: #1e293b; }
+        .btn-delete:hover { background: #fef2f2; color: #ef4444; }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; height: 75px; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
@@ -78,6 +88,8 @@
         .overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar { position: fixed; top: 0; left: 0; width: 85%; max-width: 310px; height: 100%; background: #fff; z-index: 200; transform: translateX(-100%); transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.05); }
         .sidebar.active { transform: translateX(0); }
+
+        .blur-target.blurred { filter: blur(6px); }
     </style>
 </head>
 <body>
@@ -87,7 +99,7 @@
         <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 24px 20px 16px 20px; border-bottom: 1px solid #f1f5f9;">
             <div class="sidebar-logo-group" style="display: flex; align-items: center; gap: 12px;">
                 <div class="sidebar-logo" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: white;">
-                    <img src="../../src/frontend/static/images/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                    <img src="../images/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
                 <div class="sidebar-title" style="font-size: 17px; font-weight: 800; color: #1e293b;">N'Ka Menu</div>
             </div>
@@ -96,13 +108,13 @@
             </button>
         </div>
         <div class="sidebar-nav" style="padding: 10px 20px; display: flex; flex-direction: column; gap: 5px;">
-            <a href="#" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profil
+            <a href="../dashboard.html" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Accueil
             </a>
-            <a href="#" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Paramètres
+            <a href="list.html" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #3b82f6; font-size: 15px; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg> Karfa
             </a>
-            <button class="logout-btn" onclick="logout()" style="display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 14px 20px; background: #fef2f2; border-radius: 12px; color: #ef4444; font-size: 14px; font-weight: 700; border: none; width: 100%;">
+            <button class="logout-btn" onclick="logout()" style="display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 14px 20px; background: #fef2f2; border-radius: 12px; color: #ef4444; font-size: 14px; font-weight: 700; border: none; width: 100%; cursor: pointer;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Déconnexion
             </button>
         </div>
@@ -127,7 +139,7 @@
         <!-- ACTIONS -->
         <div class="action-container">
             <div class="row-actions">
-                <a href="add.html" class="btn btn-green">
+                <a href="javascript:void(0)" onclick="ajouterKarfa()" class="btn btn-green">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Nouveau Karfa
                 </a>
@@ -136,48 +148,20 @@
                     Liste Karfa
                 </a>
             </div>
-            <button class="btn btn-dark-export">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exporter
-            </button>
         </div>
 
         <!-- BALANCE CARD -->
         <div class="balance-card">
             <span class="balance-label">Total Engagé (Karfa Actifs)</span>
-            <div class="balance-amount blur-target">24 500 000 <span class="balance-currency">GNF</span></div>
+            <div class="balance-amount blur-target"><span id="total-engage">0</span> <span class="balance-currency">GNF</span></div>
         </div>
 
         <!-- OPERATIONS SECTION -->
         <div class="operations-section">
-            <h3 class="operations-title">Dernières opérations</h3>
-            <div class="op-list">
-                <!-- Op 1 -->
-                <div class="op-item">
-                    <div class="op-left">
-                        <div class="op-icon op-icon-ajout">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </div>
-                        <div class="op-info">
-                            <span class="op-name">Saran <span style="opacity: 0.3; margin: 0 4px;">•</span> Ajout</span>
-                            <span class="op-meta">21/03/2026 15:07</span>
-                        </div>
-                    </div>
-                    <div class="op-amount amount-pos">+ 2 500 000 GNF</div>
-                </div>
-                <!-- Op 2 -->
-                <div class="op-item">
-                    <div class="op-left">
-                        <div class="op-icon op-icon-retrait">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="1 13 1 6 8 6"/></svg>
-                        </div>
-                        <div class="op-info">
-                            <span class="op-name">Moussa <span style="opacity: 0.3; margin: 0 4px;">•</span> Retrait</span>
-                            <span class="op-meta">21/03/2026 14:30</span>
-                        </div>
-                    </div>
-                    <div class="op-amount amount-neg">- 500 000 GNF</div>
-                </div>
+            <h3 class="operations-title">Vos engagements</h3>
+            <div class="op-list" id="karfa-list-container">
+                <!-- Chargement... -->
+                <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 14px;">Chargement des données...</div>
             </div>
         </div>
     </div>
@@ -206,6 +190,106 @@
         function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active'); }
         function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
         function logout() { window.location.replace('../login.html'); }
+
+        // Fonctions CRUD demandées
+        window.ajouterKarfa = function() { window.location.href = 'add.html'; };
+        
+        window.modifierKarfa = function(id) { 
+            // Redirection vers une future page d'édition ou add avec param
+            window.location.href = 'add.html?id=' + id; 
+        };
+
+        window.supprimerKarfa = async function(id) {
+            if(!confirm("Êtes-vous sûr de vouloir supprimer ce Karfa ?")) return;
+            try {
+                const { error } = await window.supabase
+                    .from('karfa')
+                    .delete()
+                    .eq('id', id);
+                
+                if(error) throw error;
+                loadKarfas(); // Recharger la liste
+            } catch(e) {
+                alert("Erreur lors de la suppression : " + e.message);
+            }
+        };
+
+        async function loadKarfas() {
+            try {
+                // 1. Vérifie l'utilisateur
+                const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+                if (userError || !user) {
+                    window.location.replace('../login.html');
+                    return;
+                }
+
+                // 2. Récupère les Karfa
+                const { data: karfas, error } = await window.supabase
+                    .from('karfa')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                // 3. Génère le HTML dynamiquement
+                const container = document.getElementById('karfa-list-container');
+                let html = '';
+                let total = 0;
+
+                if (!karfas || karfas.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 14px;">Aucun Karfa enregistré.</div>';
+                    document.getElementById('total-engage').textContent = '0';
+                    return;
+                }
+
+                const fmt = (v) => new Intl.NumberFormat('fr-FR').format(Math.round(v));
+
+                karfas.forEach(k => {
+                    const montant = parseFloat(k.montant) || 0;
+                    total += montant;
+                    
+                    const dateStr = k.created_at ? new Date(k.created_at).toLocaleDateString('fr-FR', {
+                        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    }) : 'Date inconnue';
+
+                    html += `
+                    <div class="op-item">
+                        <div class="op-left">
+                            <div class="op-icon op-icon-ajout">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </div>
+                            <div class="op-info">
+                                <span class="op-name">${k.beneficiaire || 'Sans nom'}</span>
+                                <span class="op-meta">${dateStr}</span>
+                            </div>
+                        </div>
+                        <div class="op-right">
+                            <div class="op-amount amount-pos">+ ${fmt(montant)} GNF</div>
+                            <div class="item-actions">
+                                <button class="small-action-btn" onclick="modifierKarfa('${k.id}')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </button>
+                                <button class="small-action-btn btn-delete" onclick="supprimerKarfa('${k.id}')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                document.getElementById('total-engage').textContent = fmt(total);
+
+            } catch (err) {
+                console.error("Erreur de chargement :", err);
+                document.getElementById('karfa-list-container').innerHTML = 
+                    '<div style="text-align: center; padding: 20px; color: #ef4444; font-size: 14px;">Erreur lors de la récupération des données.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadKarfas);
     </script>
 </body>
 </html>
