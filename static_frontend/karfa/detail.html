@@ -5,177 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>N'Ka Wari | Détails Karfa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- SDK Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase.js"></script>
     <style>
-        :root { --bg-body: #f8fafc; --primary-blue: #3b82f6; --text-dark: #1e293b; --text-gray: #64748b; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-dark); padding-bottom: 40px; }
+        :root {
+            --bg-body: #f8fafc;
+            --primary-blue: #3b82f6; 
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --card-dark: #1e293b; /* Bleu très sombre comme sur l'image */
+            --green-btn: #10b981;
+            --red-btn: #f87171;
+            --gray-light: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--bg-body); color: var(--text-dark); padding-bottom: 90px; }
+
         .max-w { max-width: 500px; margin: 0 auto; }
-        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; position: sticky; top: 0; background: var(--bg-body); z-index: 100; }
-        .icon-btn { background: transparent; border: none; padding: 8px; color: #334155; cursor: pointer; }
-        .details-hero { padding: 0 20px; margin-bottom: 32px; text-align: center; }
-        .hero-amount { font-size: 36px; font-weight: 900; color: #1e293b; letter-spacing: -1px; margin-bottom: 4px; }
-        .hero-label { font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; }
-        .info-card { background: #fff; border-radius: 28px; margin: 0 20px 24px 20px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; gap: 20px; }
-        .info-row { display: flex; justify-content: space-between; align-items: center; }
-        .info-label { font-size: 13px; color: #94a3b8; font-weight: 600; }
-        .info-value { font-size: 14px; font-weight: 700; color: #1e293b; text-align: right; }
-        .section-title { font-size: 16px; font-weight: 800; color: #1e293b; margin: 0 20px 16px 20px; }
-        .movement-list { background: #fff; border-radius: 24px; margin: 0 20px 24px 20px; padding: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .move-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #f8fafc; }
+
+        /* HEADER */
+        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 10px; }
+        .icon-btn { background: transparent; border: none; padding: 8px; color: #334155; cursor: pointer; display: flex; align-items: center; }
+
+        /* NAME & BACK BUTTON */
+        .person-header { display: flex; align-items: center; gap: 16px; padding: 0 20px; margin-bottom: 24px; }
+        .back-circle { 
+            width: 40px; height: 40px; border-radius: 50%; border: 1px solid #e2e8f0; 
+            display: flex; align-items: center; justify-content: center; background: white;
+            text-decoration: none; color: #64748b; cursor: pointer;
+        }
+        .person-name { font-size: 28px; font-weight: 900; color: #1e293b; letter-spacing: -0.5px; }
+
+        /* MAIN CARD */
+        .main-card {
+            background: var(--card-dark); border-radius: 28px; margin: 0 20px 24px 20px; padding: 32px 24px;
+            color: white; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+            position: relative; overflow: hidden;
+        }
+        .card-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .card-amount { font-size: 32px; font-weight: 900; margin-bottom: 16px; word-break: break-all; }
+        .card-amount span { font-size: 18px; color: #94a3b8; font-weight: 700; margin-left: 4px; }
+        .badge-status { 
+            display: inline-block; background: rgba(255,255,255,0.1); padding: 6px 16px; 
+            border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; 
+            border: 1px solid rgba(255,255,255,0.2); margin-bottom: 24px;
+        }
+
+        /* INNER INFO BOX */
+        .inner-box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .inner-item-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+        .inner-item-value { font-size: 14px; font-weight: 700; color: white; }
+
+        /* ACTION BUTTONS */
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; margin-bottom: 12px; }
+        .btn-action { 
+            height: 56px; border-radius: 28px; border: none; font-weight: 800; font-size: 15px; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; color: white; cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .btn-green { background: #10b981; }
+        .btn-red { background: #f87171; }
+        .btn-full { width: calc(100% - 40px); margin: 0 20px; background: #e5e7eb; color: #4b5563; font-weight: 800; height: 56px; border-radius: 28px; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+
+        /* MOVEMENTS SECTION */
+        .movements-section { background: white; border-radius: 32px 32px 0 0; margin-top: 24px; padding: 32px 20px; min-height: 200px; box-shadow: 0 -4px 15px rgba(0,0,0,0.03); }
+        .section-title { font-size: 19px; font-weight: 900; color: #1e293b; margin-bottom: 24px; text-align: center; }
+        .move-list { display: flex; flex-direction: column; gap: 16px; }
+        /* Style item mouvement standard déjà utilisé dans list.html mais adapté */
+        .move-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
         .move-item:last-child { border-bottom: none; }
-        .move-left { display: flex; align-items: center; gap: 12px; }
-        .move-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .bg-green { background: #f0fdf4; color: #16a34a; }
-        .bg-red { background: #fef2f2; color: #dc2626; }
-        .move-info { display: flex; flex-direction: column; gap: 2px; }
-        .move-type { font-size: 13px; font-weight: 700; color: #1e293b; }
-        .move-date { font-size: 11px; color: #94a3b8; font-weight: 500; }
-        .move-amount { font-size: 14px; font-weight: 800; }
-        .btn-back { width: 100%; height: 54px; background: #334155; color: #fff; border-radius: 18px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-weight: 800; }
-        .loading-state { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
-        .debug-msg { font-family: monospace; font-size: 10px; color: #ef4444; padding: 10px; word-break: break-all; }
+        
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: white; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #94a3b8; gap: 6px; font-size: 10px; font-weight: 700; }
+        .nav-item.active { color: #3b82f6; }
+
+        .loading-state { text-align: center; padding: 50px; color: #94a3b8; }
     </style>
 </head>
 <body>
+
     <div class="max-w">
+        <!-- TOP HEADER -->
         <div class="header-top">
-            <button class="icon-btn" onclick="window.location.href='list.html'">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-            </button>
-            <div style="font-weight: 800; font-size: 16px;">Détails Karfa</div>
-            <div style="width: 40px;"></div>
+            <button class="icon-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <button class="icon-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
         </div>
 
         <div id="content">
-            <div class="loading-state">Initialisation...</div>
+            <div class="loading-state">Récupération des détails...</div>
         </div>
     </div>
 
-    <script>
-        const content = document.getElementById('content');
-        
-        function logDebug(msg) {
-            const div = document.createElement('div');
-            div.className = 'debug-msg';
-            div.innerText = "DEBUG: " + msg;
-            content.appendChild(div);
-        }
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="../dashboard.html" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Accueil</span>
+        </a>
+        <a href="list.html" class="nav-item active">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            <span>Karfa</span>
+        </a>
+        <a href="../dettes/list.html" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Dettes</span>
+        </a>
+        <a href="../comptes/list.html" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 10v11"/><path d="M9 10v11"/><path d="M15 10v11"/><path d="M19 10v11"/><path d="M12 2 4 10h16Z"/></svg>
+            <span>Comptes</span>
+        </a>
+    </nav>
 
+    <script>
         async function loadDetail() {
             try {
-                content.innerHTML = '<div class="loading-state">Vérification de la session...</div>';
-                
-                // 1. Session
-                if (!window.supabase) {
-                    throw new Error("Supabase non initialisé. Vérifiez la connexion internet ou le SDK.");
-                }
-                
-                const { data: { user }, error: authError } = await window.supabase.auth.getUser();
-                if (authError || !user) {
-                    logDebug("Not logged in");
-                    window.location.replace('../login.html');
-                    return;
-                }
-                logDebug("Utilisateur: " + user.email);
+                const { data: { user } } = await window.supabase.auth.getUser();
+                if (!user) { window.location.replace('../login.html'); return; }
 
-                // 2. ID
                 const params = new URLSearchParams(window.location.search);
                 const id = params.get('id');
-                if (!id) {
-                    content.innerHTML = '<div class="loading-state">Erreur: ID manquant dans l\'URL (?id=...).</div>';
-                    return;
-                }
-                logDebug("ID recherché: " + id);
+                if (!id) { document.getElementById('content').innerHTML = "ID manquant."; return; }
 
-                content.innerHTML = '<div class="loading-state">Chargement du Karfa...</div>';
-
-                // 3. Karfa
-                const { data: karfa, error: kError } = await window.supabase
+                const { data: karfa, error } = await window.supabase
                     .from('karfa')
                     .select('*')
                     .eq('id', id)
                     .single();
 
-                if (kError) {
-                    logDebug("Erreur table 'karfa': " + JSON.stringify(kError));
-                    throw new Error("Impossible de trouver ce Karfa.");
-                }
-                if (!karfa) {
-                    throw new Error("Aucune donnée trouvée pour cet ID.");
-                }
-                
-                logDebug("Karfa trouvé: " + karfa.beneficiaire);
+                if (error || !karfa) throw error || new Error("Engagement introuvable.");
 
-                // 4. Mouvements (Optionnel)
                 let moves = [];
                 try {
-                    const { data: mData, error: mError } = await window.supabase
+                    const { data: mData } = await window.supabase
                         .from('mouvements_karfa')
                         .select('*')
                         .eq('karfa_id', id)
                         .order('created_at', { ascending: false });
-                    
-                    if (!mError && mData) moves = mData;
-                } catch (e) {
-                    logDebug("Erreur table 'mouvements_karfa' (ignorée)");
-                }
+                    if (mData) moves = mData;
+                } catch(e) {}
 
-                const fmt = (v) => new Intl.NumberFormat('fr-FR').format(Math.round(v)) + " GNF";
-                const dateFmt = (d) => new Date(d).toLocaleString('fr-FR');
+                const fmt = (v) => new Intl.NumberFormat('fr-FR').format(Math.round(v));
+                const dateFmt = (d) => {
+                    const date = new Date(d);
+                    const months = ["Jan.", "Fév.", "Mar.", "Avr.", "Mai", "Juin", "Juil.", "Août", "Sep.", "Oct.", "Nov.", "Déc."];
+                    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+                };
 
+                // HISTORIQUE HTML
                 let movesHtml = '';
                 moves.forEach(m => {
                     const isAjout = m.type === 'ajout';
                     movesHtml += `
                         <div class="move-item">
-                            <div class="move-left">
-                                <div class="move-icon ${isAjout ? 'bg-green' : 'bg-red'}">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="${isAjout?12:5}" y1="${isAjout?5:12}" x2="${isAjout?12:19}" y2="${isAjout?19:12}"/></svg>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:36px; height:36px; border-radius:10px; background:${isAjout?'#eff6ff':'#fff1f2'}; color:${isAjout?'#3b82f6':'#f43f5e'}; display:flex; align-items:center; justify-content:center;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="${isAjout?12:5}" y1="${isAjout?5:12}" x2="${isAjout?12:19}" y2="${isAjout?19:12}"/><polyline points="${isAjout?'5 12 12 19 19 12':''}"/></svg>
                                 </div>
-                                <div class="move-info">
-                                    <span class="move-type">${isAjout ? 'Versement' : 'Retrait'}</span>
-                                    <span class="move-date">${dateFmt(m.created_at)}</span>
+                                <div>
+                                    <div style="font-size:14px; font-weight:700; color:#1e293b;">${isAjout?'Dépôt':'Retrait'}</div>
+                                    <div style="font-size:11px; color:#94a3b8; font-weight:500;">${dateFmt(m.created_at)}</div>
                                 </div>
                             </div>
-                            <div class="move-amount" style="color:${isAjout?'#16a34a':'#dc2626'}">${isAjout ? '+' : '-'} ${fmt(m.montant)}</div>
+                            <div style="font-size:14px; font-weight:800; color:${isAjout?'#10b981':'#f43f5e'}">${isAjout?'+':'-'} ${fmt(m.montant)} GNF</div>
                         </div>
                     `;
                 });
 
-                if (moves.length === 0) movesHtml = '<div class="loading-state">Historique vide.</div>';
+                document.getElementById('content').innerHTML = `
+                    <div class="person-header">
+                        <a href="list.html" class="back-circle">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        </a>
+                        <h1 class="person-name">${karfa.beneficiaire}</h1>
+                    </div>
 
-                content.innerHTML = `
-                    <div class="details-hero">
-                        <div class="hero-amount">${fmt(karfa.montant)}</div>
-                        <div class="hero-label">Montant Actuel</div>
+                    <div class="main-card">
+                        <div class="card-label">Montant Actuel</div>
+                        <div class="card-amount">${fmt(karfa.montant)} <span>GNF</span></div>
+                        <div class="badge-status">En main</div>
+
+                        <div class="inner-box">
+                            <div>
+                                <div class="inner-item-label">Motif</div>
+                                <div class="inner-item-value">${karfa.motif || 'Non spécifié'}</div>
+                            </div>
+                            <div>
+                                <div class="inner-item-label">Date de création</div>
+                                <div class="inner-item-value">${dateFmt(karfa.created_at)}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-card">
-                        <div class="info-row"><span class="info-label">Bénéficiaire</span><span class="info-value">${karfa.beneficiaire}</span></div>
-                        <div class="info-row"><span class="info-label">Motif</span><span class="info-value">${karfa.motif || 'Aucun'}</span></div>
-                        <div class="info-row"><span class="info-label">Date</span><span class="info-value">${dateFmt(karfa.created_at)}</span></div>
+
+                    <div class="actions-grid">
+                        <button class="btn-action btn-green" onclick="ouvrirAjout('${id}')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Ajouter
+                        </button>
+                        <button class="btn-action btn-red" onclick="ouvrirRetrait('${id}')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Retirer
+                        </button>
                     </div>
-                    <h3 class="section-title">Historique</h3>
-                    <div class="movement-list">${movesHtml}</div>
-                    <div style="padding: 0 20px; margin-top: 20px;">
-                        <a href="list.html" class="btn-back">Retour à la liste</a>
+
+                    <button class="btn-full" onclick="archiverKarfa('${id}')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+                        Archiver
+                    </button>
+
+                    <div class="movements-section">
+                        <h3 class="section-title">Historique des mouvements</h3>
+                        <div class="move-list">
+                            ${movesHtml || '<div style="text-align:center; color:#94a3b8; font-size:13px; padding:20px;">Aucun mouvement enregistré.</div>'}
+                        </div>
                     </div>
                 `;
 
             } catch (err) {
                 console.error(err);
-                const currentDebug = content.innerHTML;
-                content.innerHTML = `
-                    <div class="loading-state" style="color:#ef4444; padding-top:20px;">
-                        <b>Désolé, une erreur est survenue.</b><br>
-                        ${err.message}<br><br>
-                        <a href="list.html" style="color:#3b82f6; font-weight:bold;">Retourner à la liste</a>
-                    </div>
-                    <div class="debug-msg">LOGS:<br>${currentDebug}</div>
-                `;
+                document.getElementById('content').innerHTML = `<div class="loading-state" style="color:#ef4444">Erreur: ${err.message}</div>`;
             }
         }
+
+        window.ouvrirAjout = function(id) { alert("Fonctionnalité d'ajout de mouvement bientôt disponible"); };
+        window.ouvrirRetrait = function(id) { alert("Fonctionnalité de retrait bientôt disponible"); };
+        window.archiverKarfa = function(id) { alert("Archivage bientôt disponible"); };
 
         document.addEventListener('DOMContentLoaded', loadDetail);
     </script>
