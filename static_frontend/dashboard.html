@@ -573,11 +573,45 @@
                     });
                 }
 
-                // Formatage des montants
-                const fmt = (val) => new Intl.NumberFormat('fr-FR').format(Math.round(val));
-                
-                document.getElementById('balance-liquidites').textContent = fmt(liquidites);
-                document.getElementById('balance-patrimoine').textContent = fmt(patrimoine);
+                // Récupération des 3 derniers Karfas pour les opérations
+                const { data: lastKarfas, error: kError } = await window.supabase
+                    .from('karfa')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+
+                const opContainer = document.querySelector('.history-list');
+                if (!kError && lastKarfas && lastKarfas.length > 0) {
+                    let opHtml = '';
+                    lastKarfas.forEach(k => {
+                        const date = new Date(k.created_at);
+                        const diffTime = Math.abs(new Date() - date);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        const delayText = diffDays === 0 ? "Aujourd'hui" : `il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
+
+                        opHtml += `
+                        <div class="history-item" onclick="window.location.href='karfa/detail.html?id=${k.id}'" style="cursor: pointer;">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-box bg-green">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-dark">${k.beneficiaire}</div>
+                                    <div class="text-xs text-gray mt-1">${k.motif || 'Karfa'}</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="text-sm font-bold text-dark blur-target blurred">${fmt(k.montant)} GNF</div>
+                                <div class="text-xs text-gray mt-1" style="font-size: 10px;">${delayText}</div>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    opContainer.innerHTML = opHtml;
+                } else if (lastKarfas && lastKarfas.length === 0) {
+                    opContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">Aucune opération récente.</div>';
+                }
 
             } catch (err) {
                 console.error("Erreur lors du chargement des données :", err);
