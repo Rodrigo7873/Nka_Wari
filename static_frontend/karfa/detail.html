@@ -116,11 +116,18 @@
                 if (error || !karfa) throw error || new Error("Karfa introuvable.");
 
                 // 4. Chargement Mouvements
-                const { data: moves, error: moveError } = await window.supabase
-                    .from('mouvements_karfa')
-                    .select('*')
-                    .eq('karfa_id', id)
-                    .order('created_at', { ascending: false });
+                let moves = [];
+                try {
+                    const { data: mData, error: mError } = await window.supabase
+                        .from('mouvements_karfa')
+                        .select('*')
+                        .eq('karfa_id', id)
+                        .order('created_at', { ascending: false });
+                    
+                    if (!mError) moves = mData;
+                } catch (e) {
+                    console.warn("Table mouvements_karfa probablement absente ou inaccessible.");
+                }
 
                 // Formatage
                 const fmt = (v) => new Intl.NumberFormat('fr-FR').format(Math.round(v)) + " GNF";

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>N'Ka Wari | Tous les Karfa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -21,7 +24,7 @@
         .max-w { max-width: 500px; margin: 0 auto; }
 
         /* HEADER */
-        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 24px; }
+        .header-top { display: flex; justify-content: space-between; padding: 16px 20px; align-items: center; margin-bottom: 24px; position: sticky; top: 0; background: var(--bg-body); z-index: 100; }
         .icon-btn { background: transparent; border: none; padding: 8px; color: #334155; cursor: pointer; display: flex; align-items: center; }
 
         /* PAGE HEADER */
@@ -38,12 +41,14 @@
         }
 
         /* KARFA LIST */
-        .karfa-list { padding: 0 20px; }
+        .karfa-list { padding: 0 20px; display: flex; flex-direction: column; gap: 16px; }
         .karfa-card {
-            background: #fff; border-radius: 22px; padding: 20px; margin-bottom: 16px;
+            background: #fff; border-radius: 22px; padding: 20px;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0,0,0,0.01);
+            cursor: pointer; transition: transform 0.1s;
         }
+        .karfa-card:active { transform: scale(0.98); }
         .karfa-left { display: flex; align-items: center; gap: 16px; }
         .user-avatar {
             width: 48px; height: 48px; border-radius: 50%; background: #eff6ff;
@@ -57,7 +62,6 @@
         .karfa-amount { font-size: 14px; font-weight: 800; color: #4f46e5; }
         .status-badge { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 8px; }
         .status-actif { background: #eff6ff; color: #3b82f6; }
-        .status-partiel { background: #fffbeb; color: #d97706; }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; height: 75px; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
@@ -69,35 +73,13 @@
         .overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar { position: fixed; top: 0; left: 0; width: 85%; max-width: 310px; height: 100%; background: #fff; z-index: 200; transform: translateX(-100%); transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.05); }
         .sidebar.active { transform: translateX(0); }
+        
+        .loading-state { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenu()"></div>
-    <div class="sidebar" id="sidebar">
-        <!-- Sidebar content same as dashboard -->
-        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding: 24px 20px 16px 20px; border-bottom: 1px solid #f1f5f9;">
-            <div class="sidebar-logo-group" style="display: flex; align-items: center; gap: 12px;">
-                <div class="sidebar-logo" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: white;">
-                    <img src="../../src/frontend/static/images/logo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
-                </div>
-                <div class="sidebar-title" style="font-size: 17px; font-weight: 800; color: #1e293b;">N'Ka Menu</div>
-            </div>
-            <button class="icon-btn" onclick="closeMenu()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        <div class="sidebar-nav" style="padding: 10px 20px; display: flex; flex-direction: column; gap: 5px;">
-            <a href="#" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profil
-            </a>
-            <a href="#" class="sidebar-link" style="display: flex; align-items: center; gap: 16px; padding: 16px 0; text-decoration: none; color: #1e293b; font-size: 15px; font-weight: 600;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Paramètres
-            </a>
-            <button class="logout-btn" onclick="logout()" style="display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 14px 20px; background: #fef2f2; border-radius: 12px; color: #ef4444; font-size: 14px; font-weight: 700; border: none; width: 100%;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Déconnexion
-            </button>
-        </div>
-    </div>
+    <div class="sidebar" id="sidebar"></div>
 
     <div class="max-w">
         <!-- HEADER -->
@@ -120,7 +102,7 @@
         <div class="nav-buttons">
             <a href="list.html" class="pill-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                Accueil
+                Retour
             </a>
             <a href="#" class="pill-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
@@ -129,91 +111,8 @@
         </div>
 
         <!-- KARFA LIST -->
-        <div class="karfa-list">
-            <!-- Card 1 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Gonet</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">2 000 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Saran</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">4 700 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Sacko</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">5 000 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Binta</div>
-                        <div class="karfa-meta">Sans motif • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount">500 000 GNF</div>
-                    <span class="status-badge status-actif">ACTIF</span>
-                </div>
-            </div>
-
-            <!-- Card 5 (PARTIEL) -->
-            <div class="karfa-card">
-                <div class="karfa-left">
-                    <div class="user-avatar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="karfa-info">
-                        <div class="karfa-name">Moussa</div>
-                        <div class="karfa-meta">Gnetais • 21/03/2026</div>
-                    </div>
-                </div>
-                <div class="karfa-right">
-                    <div class="karfa-amount" style="color: #6366f1;">10 000 000 GNF</div>
-                    <span class="status-badge status-partiel">PARTIEL</span>
-                </div>
-            </div>
+        <div class="karfa-list" id="karfa-full-list">
+            <div class="loading-state">Récupération de la liste...</div>
         </div>
     </div>
 
@@ -240,7 +139,61 @@
     <script>
         function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active'); }
         function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
-        function logout() { window.location.replace('../login.html'); }
+
+        async function loadFullList() {
+            try {
+                const { data: { user } } = await window.supabase.auth.getUser();
+                if (!user) {
+                    window.location.replace('../login.html');
+                    return;
+                }
+
+                const { data: karfas, error } = await window.supabase
+                    .from('karfa')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('karfa-full-list');
+                const fmt = (v) => new Intl.NumberFormat('fr-FR').format(Math.round(v)) + " GNF";
+                const dateFmt = (d) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+                if (!karfas || karfas.length === 0) {
+                    container.innerHTML = '<div class="loading-state">Aucun Karfa enregistré.</div>';
+                    return;
+                }
+
+                let html = '';
+                karfas.forEach(k => {
+                    html += `
+                    <div class="karfa-card" onclick="window.location.href='detail.html?id=${k.id}'">
+                        <div class="karfa-left">
+                            <div class="user-avatar">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <div class="karfa-info">
+                                <div class="karfa-name">${k.beneficiaire}</div>
+                                <div class="karfa-meta">${k.motif || 'Sans motif'} • ${dateFmt(k.created_at)}</div>
+                            </div>
+                        </div>
+                        <div class="karfa-right">
+                            <div class="karfa-amount">${fmt(k.montant)}</div>
+                            <span class="status-badge status-actif">ACTIF</span>
+                        </div>
+                    </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('karfa-full-list').innerHTML = '<div class="loading-state" style="color:#ef4444">Erreur de chargement.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFullList);
     </script>
 </body>
 </html>
