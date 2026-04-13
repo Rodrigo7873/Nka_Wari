@@ -168,26 +168,28 @@
                 let html = '';
                 karfas.forEach(k => {
                     html += `
-                    <div class="karfa-card" onclick="window.location.href='detail.html?id=${k.id}'">
-                        <div class="karfa-left">
-                            <div class="user-avatar">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <a href="detail.html?id=${k.id}" style="text-decoration:none; color:inherit; display:block;">
+                        <div class="karfa-card">
+                            <div class="karfa-left">
+                                <div class="user-avatar">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </div>
+                                <div class="karfa-info">
+                                    <div class="karfa-name">${k.beneficiaire}</div>
+                                    <div class="karfa-meta">${k.motif || 'Sans motif'} • ${dateFmt(k.created_at)}</div>
+                                </div>
                             </div>
-                            <div class="karfa-info">
-                                <div class="karfa-name">${k.beneficiaire}</div>
-                                <div class="karfa-meta">${k.motif || 'Sans motif'} • ${dateFmt(k.created_at)}</div>
-                            </div>
-                        </div>
-                        <div class="karfa-right">
-                            <div class="karfa-amount">${fmt(k.montant)}</div>
-                            <div style="display:flex; gap:10px; align-items:center;">
-                                <span class="status-badge status-actif">ACTIF</span>
-                                <div style="background:#f1f5f9; padding:5px; border-radius:6px; color:#64748b;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <div class="karfa-right">
+                                <div class="karfa-amount">${fmt(k.montant)}</div>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <span class="status-badge status-actif">ACTIF</span>
+                                    <div style="background:#f1f5f9; padding:5px; border-radius:6px; color:#64748b;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     `;
                 });
                 container.innerHTML = html;
