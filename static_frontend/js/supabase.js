@@ -4,13 +4,15 @@ console.log("supabase.js initializing...");
 const supabaseUrl = 'https://fvrdaulagutwhlrgrcta.supabase.co';
 const supabaseKey = 'sb_publishable_CxLEYNMH7gsv-zpcIJQmKg_fFfQ1NNu';
 
-if (typeof window.supabase === 'undefined' || typeof window.supabase.createClient !== 'function') {
+if (typeof window.supabase === 'undefined') {
     console.error("ERREUR : Le SDK Supabase (via CDN) n'est pas chargé !");
 } else {
-    // Initialisation et exposition globale du client sur window.supabase
-    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-    window.supabase = supabaseClient;
-    console.log("Supabase client initialisé et exposé sur window.supabase :", window.supabase);
+    // Si window.supabase est déjà un client (possède auth), on ne le réinitialise pas inutilement
+    if (typeof window.supabase.auth === 'undefined') {
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabaseClient;
+        console.log("Supabase client initialisé.");
+    }
 }
 
 // Fonction utilitaire pour trouver l'email à partir d'un identifiant quelconque
